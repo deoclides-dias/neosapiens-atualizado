@@ -175,8 +175,11 @@ const QuestionnaireSection = () => {
                   </div>
                   
                   <div className="mt-8 text-center">
-                    <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md">
-                      Iniciar minha Jornada Completa
+                    <button 
+                    onClick={() => window.location.href = '/auth/signup'}
+                    className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-full font-medium hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                    >
+                      🚀 Iniciar minha Jornada Completa
                     </button>
                   </div>
                 </div>
