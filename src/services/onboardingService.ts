@@ -1,440 +1,214 @@
-// src/services/onboardingService.ts
+// ============================================================================
+// SERVIÇO UNIFICADO DE ONBOARDING - SEM CONFLITOS
+// Arquivo: src/services/onboardingService.ts
+// ============================================================================
+
 import { supabase } from '../lib/supabase';
-
-// Types
-interface PersonalData {
-  fullName: string;
-  email: string;
-  age?: number;
-  gender?: string;
-}
-
-interface BirthData {
-  fullName: string;
-  birthDate: string;
-  birthTime: string;
-  hasExactTime: boolean;
-  birthPlace: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  } | null;
-  timezone: string;
-}
-
-interface BiohackingData {
-  sleepQuality: number;
-  energyLevel: number;
-  exerciseFrequency: string;
-  dietType: string;
-  stressLevel: number;
-  supplements: string[];
-}
-
-interface CognitiveData {
-  learningStyle: string;
-  focusLevel: number;
-  creativityScore: number;
-  memoryQuality: number;
-  problemSolvingStyle: string;
-}
-
-interface OnboardingProgress {
-  currentStep: number;
-  completedSteps: string[];
-  personalDataComplete: boolean;
-  birthDataComplete: boolean;
-  biohackingDataComplete: boolean;
-  cognitiveDataComplete: boolean;
-}
+import type { 
+  PersonalData, 
+  BirthData, 
+  BiohackingData, 
+  PsychologicalData, 
+  CognitiveData,
+  OnboardingProgress 
+} from '../types/onboarding';
 
 export class OnboardingService {
+
+  // ============================================================================
+  // HELPER: Carregar progresso atual do usuário
+  // ============================================================================
   
-  // ===== PERSONAL DATA =====
-  static async savePersonalData(userId: string, personalData: PersonalData) {
-    try {
-      console.log('💾 Salvando dados de nascimento para usuário:', userId);
-      
-        const { data, error } = await supabase
-        .from('personal_data')
-        .upsert({
-          user_id: userId,
-          full_name: personalData.fullName,
-          email: personalData.email,
-          age: personalData.age,
-          gender: personalData.gender,
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      // Update progress
-      await this.updateProgress(userId, 'personal_data');
-      
-      return { success: true, data };
-      
-    } catch (error) {
-      console.error('Erro ao salvar dados pessoais:', error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  static async getPersonalData(userId: string): Promise<PersonalData | null> {
+  private static async getProgress(userId: string): Promise<OnboardingProgress | null> {
     try {
       const { data, error } = await supabase
-        .from('personal_data')
+        .from('onboarding_progress')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();  // ✅ NÃO quebra se não tiver dados
 
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return null;
+      if (error && error.code !== 'PGRST116') {
+        console.error('❌ Erro ao buscar progresso:', error);
+        return null;
+      }
 
-      return {
-        fullName: data.full_name,
-        email: data.email,
-        age: data.age,
-        gender: data.gender
-      };
-      
+      return data;
     } catch (error) {
-      console.error('Erro ao carregar dados pessoais:', error);
+      console.error('❌ Erro na query:', error);
       return null;
     }
   }
 
-  // ===== BIRTH DATA =====
-  static async saveBirthData(userId: string, birthData: BirthData) {
+  // ============================================================================
+  // HELPER: Salvar ou atualizar progresso
+  // ============================================================================
+  
+  private static async upsertProgress(
+    userId: string,
+    updates: Partial<OnboardingProgress>
+  ): Promise<OnboardingProgress | null> {
     try {
+      const existing = await this.getProgress(userId);
+
+      const payload = {
+        user_id: userId,
+        ...existing,
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+
+      // Se não existe, adiciona created_at
+      if (!existing) {
+        payload.created_at = new Date().toISOString();
+        payload.started_at = new Date().toISOString();
+      }
+
       const { data, error } = await supabase
-        .from('birth_data')
-        .upsert({
-          user_id: userId,
-          full_name: birthData.fullName,
-          birth_date: birthData.birthDate,
-          birth_time: birthData.birthTime && birthData.birthTime.trim() !== '' ? birthData.birthTime : null, // 🔧 CORREÇÃO
-          has_exact_time: birthData.hasExactTime,
-          birth_place: birthData.birthPlace,
-          coordinates: birthData.coordinates,
-          timezone: birthData.timezone,
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'user_id',           // 🔧 CORREÇÃO: Especificar a coluna de conflito
-          ignoreDuplicates: false          // 🔧 CORREÇÃO: Não ignorar, mas atualizar
+        .from('onboarding_progress')
+        .upsert(payload, {
+          onConflict: 'user_id',
+          ignoreDuplicates: false
         })
         .select()
         .single();
 
       if (error) {
-        console.error('❌ Erro do Supabase:', error);
-        throw error;
-      }
-      
-      console.log('✅ Dados salvos com sucesso:', data);
-      
-      // Update progress
-      await this.updateProgress(userId, 'birth_data');
-      
-      return { success: true, data };
-      
-    } catch (error) {
-      console.error('❌ Erro ao salvar dados de nascimento:', error);
-      return { success: false, error: error.message };
-    }
-  }
-  static async getBirthData(userId: string): Promise<BirthData | null> {
-    try {
-      const { data, error } = await supabase
-        .from('birth_data')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return null;
-
-      return {
-        fullName: data.full_name,
-        birthDate: data.birth_date,
-        birthTime: data.birth_time || '',
-        hasExactTime: data.has_exact_time,
-        birthPlace: data.birth_place,
-        coordinates: data.coordinates,
-        timezone: data.timezone
-      };
-      
-    } catch (error) {
-      console.error('Erro ao carregar dados de nascimento:', error);
-      return null;
-    }
-  }
-
-  // ===== BIOHACKING DATA =====
-  static async saveBiohackingData(userId: string, biohackingData: BiohackingData) {
-    try {
-      const { data, error } = await supabase
-        .from('biohacking_data')
-        .upsert({
-          user_id: userId,
-          sleep_quality: biohackingData.sleepQuality,
-          energy_level: biohackingData.energyLevel,
-          exercise_frequency: biohackingData.exerciseFrequency,
-          diet_type: biohackingData.dietType,
-          stress_level: biohackingData.stressLevel,
-          supplements: biohackingData.supplements,
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      // Update progress
-      await this.updateProgress(userId, 'biohacking_data');
-      
-      return { success: true, data };
-      
-    } catch (error) {
-      console.error('Erro ao salvar dados de biohacking:', error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  static async getBiohackingData(userId: string): Promise<BiohackingData | null> {
-    try {
-      const { data, error } = await supabase
-        .from('biohacking_data')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return null;
-
-      return {
-        sleepQuality: data.sleep_quality,
-        energyLevel: data.energy_level,
-        exerciseFrequency: data.exercise_frequency,
-        dietType: data.diet_type,
-        stressLevel: data.stress_level,
-        supplements: data.supplements || []
-      };
-      
-    } catch (error) {
-      console.error('Erro ao carregar dados de biohacking:', error);
-      return null;
-    }
-  }
-
-  // ===== COGNITIVE DATA =====
-  static async saveCognitiveData(userId: string, cognitiveData: CognitiveData) {
-    try {
-      const { data, error } = await supabase
-        .from('cognitive_data')
-        .upsert({
-          user_id: userId,
-          learning_style: cognitiveData.learningStyle,
-          focus_level: cognitiveData.focusLevel,
-          creativity_score: cognitiveData.creativityScore,
-          memory_quality: cognitiveData.memoryQuality,
-          problem_solving_style: cognitiveData.problemSolvingStyle,
-          updated_at: new Date().toISOString()
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      // Update progress
-      await this.updateProgress(userId, 'cognitive_data');
-      
-      return { success: true, data };
-      
-    } catch (error) {
-      console.error('Erro ao salvar dados cognitivos:', error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  static async getCognitiveData(userId: string): Promise<CognitiveData | null> {
-    try {
-      const { data, error } = await supabase
-        .from('cognitive_data')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return null;
-
-      return {
-        learningStyle: data.learning_style,
-        focusLevel: data.focus_level,
-        creativityScore: data.creativity_score,
-        memoryQuality: data.memory_quality,
-        problemSolvingStyle: data.problem_solving_style
-      };
-      
-    } catch (error) {
-      console.error('Erro ao carregar dados cognitivos:', error);
-      return null;
-    }
-  }
-
-  // ===== PROGRESS TRACKING =====
-  static async updateProgress(userId: string, stepCompleted: string) {
-    try {
-      // Get current progress
-      const currentProgress = await this.getProgress(userId);
-      
-      const completedSteps = currentProgress?.completedSteps || [];
-      if (!completedSteps.includes(stepCompleted)) {
-        completedSteps.push(stepCompleted);
+        console.error('❌ Erro ao salvar:', error);
+        return null;
       }
 
-      const progressData = {
-        user_id: userId,
-        current_step: completedSteps.length,
-        completed_steps: completedSteps,
-        personal_data_complete: completedSteps.includes('personal_data'),
-        birth_data_complete: completedSteps.includes('birth_data'),
-        biohacking_data_complete: completedSteps.includes('biohacking_data'),
-        cognitive_data_complete: completedSteps.includes('cognitive_data'),
-        updated_at: new Date().toISOString()
-      };
+      console.log('✅ Progresso salvo:', data);
+      return data;
 
-      const { data, error } = await supabase
-        .from('onboarding_progress')
-        .upsert(progressData)
-        .select()
-        .single();
-
-      if (error) throw error;
-      return { success: true, data };
-      
     } catch (error) {
-      console.error('Erro ao atualizar progresso:', error);
-      return { success: false, error: error.message };
-    }
-  }
-
-  static async getProgress(userId: string): Promise<OnboardingProgress | null> {
-    try {
-      const { data, error } = await supabase
-        .from('onboarding_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') throw error;
-      if (!data) return null;
-
-      return {
-        currentStep: data.current_step,
-        completedSteps: data.completed_steps || [],
-        personalDataComplete: data.personal_data_complete,
-        birthDataComplete: data.birth_data_complete,
-        biohackingDataComplete: data.biohacking_data_complete,
-        cognitiveDataComplete: data.cognitive_data_complete
-      };
-      
-    } catch (error) {
-      console.error('Erro ao carregar progresso:', error);
+      console.error('❌ Erro no upsert:', error);
       return null;
     }
   }
 
-  // ===== COMPLETE ONBOARDING =====
-  static async completeOnboarding(userId: string) {
-    try {
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .update({
-          onboarding_completed: true,
-          onboarding_completed_at: new Date().toISOString()
-        })
-        .eq('id', userId)
-        .select()
-        .single();
+  // ============================================================================
+  // ETAPA 1: SALVAR DADOS PESSOAIS (SEM birthDate!)
+  // ============================================================================
+  
+  static async savePersonalData(
+    userId: string,
+    personalData: PersonalData
+  ): Promise<boolean> {
+    console.log('👤 Salvando dados pessoais:', personalData);
 
-      if (error) throw error;
-      return { success: true, data };
-      
-    } catch (error) {
-      console.error('Erro ao completar onboarding:', error);
-      return { success: false, error: error.message };
-    }
+    const result = await this.upsertProgress(userId, {
+      personal_data: personalData,
+      personal_data_complete: true,
+      step: 2  // Próximo: Birth Data
+    });
+
+    return !!result;
   }
 
-  // ===== UTILITY METHODS =====
+  // ============================================================================
+  // ETAPA 2: SALVAR DADOS DE NASCIMENTO (COM birthDate!)
+  // ============================================================================
+  
+  static async saveBirthData(
+    userId: string,
+    birthData: BirthData
+  ): Promise<boolean> {
+    console.log('🌟 Salvando dados de nascimento:', birthData);
+
+    const result = await this.upsertProgress(userId, {
+      birth_data: birthData,
+      birth_data_complete: true,
+      step: 3  // Próximo: Biohacking
+    });
+
+    return !!result;
+  }
+
+  // ============================================================================
+  // ETAPA 3: SALVAR DADOS DE BIOHACKING
+  // ============================================================================
+  
+  static async saveBiohackingData(
+    userId: string,
+    biohackingData: BiohackingData
+  ): Promise<boolean> {
+    console.log('💪 Salvando dados de biohacking:', biohackingData);
+
+    const result = await this.upsertProgress(userId, {
+      biohacking_data: biohackingData,
+      biohacking_data_complete: true,
+      step: 4  // Próximo: Psychological
+    });
+
+    return !!result;
+  }
+
+  // ============================================================================
+  // ETAPA 4: SALVAR DADOS PSICOLÓGICOS
+  // ============================================================================
+  
+  static async savePsychologicalData(
+    userId: string,
+    psychologicalData: PsychologicalData
+  ): Promise<boolean> {
+    console.log('🧠 Salvando dados psicológicos:', psychologicalData);
+
+    const result = await this.upsertProgress(userId, {
+      psychological_data: psychologicalData,
+      psychological_data_complete: true,
+      step: 5  // Próximo: Cognitive
+    });
+
+    return !!result;
+  }
+
+  // ============================================================================
+  // ETAPA 5: SALVAR DADOS COGNITIVOS
+  // ============================================================================
+  
+  static async saveCognitiveData(
+    userId: string,
+    cognitiveData: CognitiveData
+  ): Promise<boolean> {
+    console.log('⚡ Salvando dados cognitivos:', cognitiveData);
+
+    const result = await this.upsertProgress(userId, {
+      cognitive_data: cognitiveData,
+      cognitive_data_complete: true,
+      step: 6,  // Concluído!
+      completed_at: new Date().toISOString()
+    });
+
+    return !!result;
+  }
+
+  // ============================================================================
+  // HELPER: Verificar se onboarding está completo
+  // ============================================================================
+  
   static async isOnboardingComplete(userId: string): Promise<boolean> {
-    try {
-      const progress = await this.getProgress(userId);
-      if (!progress) return false;
+    const progress = await this.getProgress(userId);
+    
+    if (!progress) return false;
 
-      return progress.personalDataComplete && 
-             progress.birthDataComplete && 
-             progress.biohackingDataComplete && 
-             progress.cognitiveDataComplete;
-      
-    } catch (error) {
-      console.error('Erro ao verificar se onboarding está completo:', error);
-      return false;
-    }
+    return !!(
+      progress.personal_data_complete &&
+      progress.birth_data_complete &&
+      progress.biohacking_data_complete &&
+      progress.psychological_data_complete &&
+      progress.cognitive_data_complete
+    );
   }
 
-  static async getAllUserData(userId: string) {
-    try {
-      const [personalData, birthData, biohackingData, cognitiveData, progress] = await Promise.all([
-        this.getPersonalData(userId),
-        this.getBirthData(userId),
-        this.getBiohackingData(userId),
-        this.getCognitiveData(userId),
-        this.getProgress(userId)
-      ]);
-
-      return {
-        personalData,
-        birthData,
-        biohackingData,
-        cognitiveData,
-        progress,
-        isComplete: await this.isOnboardingComplete(userId)
-      };
-      
-    } catch (error) {
-      console.error('Erro ao carregar todos os dados do usuário:', error);
-      return null;
-    }
-  }
-
-  // ===== DELETE USER DATA =====
-  static async deleteAllUserData(userId: string) {
-    try {
-      const tables = ['personal_data', 'birth_data', 'biohacking_data', 'cognitive_data', 'onboarding_progress'];
-      
-      const deletePromises = tables.map(table => 
-        supabase.from(table).delete().eq('user_id', userId)
-      );
-
-      await Promise.all(deletePromises);
-      
-      return { success: true };
-      
-    } catch (error) {
-      console.error('Erro ao deletar dados do usuário:', error);
-      return { success: false, error: error.message };
-    }
+  // ============================================================================
+  // HELPER: Obter dados completos do usuário
+  // ============================================================================
+  
+  static async getUserData(userId: string): Promise<OnboardingProgress | null> {
+    return await this.getProgress(userId);
   }
 }
 
-// Export types for use in components
-export type {
-  PersonalData,
-  BirthData,
-  BiohackingData,
-  CognitiveData,
-  OnboardingProgress
-};
+export default OnboardingService;
