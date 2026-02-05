@@ -2,7 +2,6 @@
 
 export interface BirthData {
   fullName: string;
-  birthDate: string;
   birthTime: string;
   hasExactTime: boolean;
   birthPlace: string;
