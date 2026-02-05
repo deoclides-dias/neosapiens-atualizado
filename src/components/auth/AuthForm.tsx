@@ -1,3 +1,5 @@
+// src/components/auth/AuthForm.tsx - CORRIGIDO
+
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { signIn, signUp, signInWithGoogle } from '../../lib/supabase'
@@ -27,6 +29,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
       if (error) {
         setError(error.message)
       } else if (data.user) {
+        // ✅ Só redireciona se LOGIN/SIGNUP foi bem-sucedido
         router.push('/analysis')
       }
     } catch (err) {
@@ -42,7 +45,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     try {
       await signInWithGoogle()
-      // Redirecionamento é automático
+      // Redirecionamento é automático via Supabase
     } catch (err) {
       setError('Erro ao fazer login com Google.')
       setGoogleLoading(false)
@@ -131,7 +134,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <p>
             Não tem conta?{' '}
             <button
-              onClick={() => router.push('/analysis')}
+              onClick={() => router.push('/auth/signup')}  {/* ✅ CORRIGIDO! */}
               className="text-purple-600 hover:underline"
             >
               Criar conta
@@ -141,7 +144,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <p>
             Já tem conta?{' '}
             <button
-              onClick={() => router.push('/analysis')}
+              onClick={() => router.push('/auth/login')}  {/* ✅ CORRIGIDO! */}
               className="text-purple-600 hover:underline"
             >
               Fazer login
