@@ -1,39 +1,57 @@
-// src/types/biohacking.ts - Interface Unificada para BiohackingForm
+// ============================================================================
+// src/types/onboarding.ts - INTERFACES COMPLETAS E CORRIGIDAS
+// ============================================================================
 
-import { LucideIcon } from 'lucide-react';
+// 👤 DADOS PESSOAIS (SEM birthDate - isso vai pro BirthData!)
+export interface PersonalData {
+  fullName: string;
+  email: string;
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+}
 
-// 🎯 INTERFACE PRINCIPAL - Unificando ambas as versões
+// 🌟 DADOS DE NASCIMENTO (com Google Autocomplete)
+export interface BirthData {
+  fullName: string;
+  birthDate: string;          // YYYY-MM-DD
+  birthTime: string;          // HH:MM
+  hasExactTime: boolean;
+  birthPlace: string;         // Com Google Autocomplete
+  coordinates: {
+    lat: number;
+    lng: number;
+  } | null;
+  timezone: string;
+}
+
+// 💪 DADOS DE BIOHACKING (estrutura completa)
 export interface BiohackingData {
-  // 💪 STEP 1: DADOS FÍSICOS
   anthropometric: {
-    height: number;                    // cm (altura)
-    currentWeight: number;             // kg (peso atual)
-    desiredWeight: number;             // kg (peso desejado)
-    waistCircumference?: number;       // cm (circunferencia cintura)
-    hipCircumference?: number;         // cm (circunferencia quadril)
-    bodyFatPercentage?: number;        // % (opcional)
-    bodyType: string;                  // biotipo: ectomorfo, mesomorfo, etc.
+    height: number;
+    currentWeight: number;
+    desiredWeight: number;
+    waistCircumference?: number;
+    hipCircumference?: number;
+    bodyFatPercentage?: number;
+    bodyType: string;
     weightHistory: {
       maxWeight: number;
       minAdultWeight: number;
-      recentWeightChanges: string; // ✅ ALTERADO: de union type para string simples
-      easyWeightChange: string;    // ✅ ALTERADO: de union type para string simples  
+      recentWeightChanges: string;
+      easyWeightChange: string;
       weightConcerns: string[];
     };
   };
-
-  // 💤 STEP 2: SONO E ENERGIA
   sleep: {
-    averageSleepDuration: number;      // horas por noite (horasDeSono)
-    bedtime: string;                   // "22:00"
-    wakeTime: string;                  // "06:00"
-    sleepQuality: number;              // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    chronotype: string;                // ✅ ALTERADO: de union type para string simples
-    sleepIssues: string[];             // Array de problemas
+    averageSleepDuration: number;
+    bedtime: string;
+    wakeTime: string;
+    sleepQuality: number;
+    chronotype: string;
+    sleepIssues: string[];
     energyLevels: {
-      morning: number;                 // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-      afternoon: number;               // ✅ ALTERADO: de 1|2|3|4|5 para number simples  
-      evening: number;                 // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+      morning: number;
+      afternoon: number;
+      evening: number;
     };
     sleepAids: {
       naturalSupplements: string[];
@@ -41,22 +59,20 @@ export interface BiohackingData {
       other: string[];
     };
   };
-
-  // 🍎 STEP 3: NUTRIÇÃO
   nutrition: {
-    dietaryPattern: string;            // ✅ ALTERADO: de union type para string simples
-    mealsPerDay: number;               // refeicoesPorDia
-    snackingFrequency: string;         // ✅ ALTERADO: de union type para string simples
-    waterIntake: number;               // litrosAguaPorDia (copos por dia)
-    alcoholConsumption: string;        // ✅ ALTERADO: de union type para string simples
+    dietaryPattern: string;
+    mealsPerDay: number;
+    snackingFrequency: string;
+    waterIntake: number;
+    alcoholConsumption: string;
     caffeine: {
-      consumption: string;             // ✅ ALTERADO: de union type para string simples
-      sources: string[];              // café, chá, etc.
-      timing: string[];               // manhã, tarde, etc.
+      consumption: string;
+      sources: string[];
+      timing: string[];
     };
-    foodIntolerances: string[];       // restricoesAlimentares
-    supplements: string[];            // suplementos
-    digestiveHealth: number;          // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+    foodIntolerances: string[];
+    supplements: string[];
+    digestiveHealth: number;
     eatingPatterns: {
       emotionalEating: boolean;
       socialEating: boolean;
@@ -64,111 +80,103 @@ export interface BiohackingData {
       lateNightEating: boolean;
     };
   };
-
-  // 🏃‍♂️ STEP 4: ATIVIDADE FÍSICA
   physicalActivity: {
-    weeklyFrequency: number;          // frequenciaExercicio (dias por semana)
-    averageSessionDuration: number;   // minutos por sessão
-    preferredIntensity: string;       // ✅ ALTERADO: de union type para string simples
-    activityTypes: string[];          // tiposExercicio
-    currentFitnessLevel: number;      // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    functionalCapacity: number;       // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    limitations: string[];            // limitações físicas
-    goals: string[];                  // objetivos fitness
+    weeklyFrequency: number;
+    averageSessionDuration: number;
+    preferredIntensity: string;
+    activityTypes: string[];
+    currentFitnessLevel: number;
+    functionalCapacity: number;
+    limitations: string[];
+    goals: string[];
     recovery: {
-      quality: number;                // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-      methods: string[];              // métodos de recuperação
+      quality: number;
+      methods: string[];
     };
   };
-
-  // 🏥 STEP 5: SAÚDE GERAL
   healthStatus: {
-    overallHealth: number;            // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    mentalHealth: number;             // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+    overallHealth: number;
+    mentalHealth: number;
     chronicConditions: string[];
-    medications: string[];            // medicamentos
-    regularSupplements: string[];     // suplementosRegulares
-    nutritionalDeficiencies: string[]; // deficienciasNutricionais
+    medications: string[];
+    regularSupplements: string[];
+    nutritionalDeficiencies: string[];
     allergies: string[];
     recentHealthChanges: string[];
-    stressLevel: number;              // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+    stressLevel: number;
     medicalHistory: {
       surgeries: string[];
       hospitalizations: string[];
       significantIllnesses: string[];
-      familyHistory: string[]; // ← ADICIONAR ESTA LINHA
+      familyHistory: string[];
     };
   };
-
-  // 🧬 STEP 6: MEDICINA FUNCIONAL + COGNITIVO
   functionalMedicine: {
     fiveElements: {
       wood: {
-        liverHealth: 1 | 2 | 3 | 4 | 5; // elementoMadeira
-        angerManagement: 1 | 2 | 3 | 4 | 5;
-        flexibility: 1 | 2 | 3 | 4 | 5;
-        visionHealth: 1 | 2 | 3 | 4 | 5;
-        decisionMaking: 1 | 2 | 3 | 4 | 5;
-        planningAbility: 1 | 2 | 3 | 4 | 5;
-        muscleStrength: 1 | 2 | 3 | 4 | 5;
-        creativity: 1 | 2 | 3 | 4 | 5;
-        adaptability: 1 | 2 | 3 | 4 | 5;
+        liverHealth: number;
+        angerManagement: number;
+        flexibility: number;
+        visionHealth: number;
+        decisionMaking: number;
+        planningAbility: number;
+        muscleStrength: number;
+        creativity: number;
+        adaptability: number;
       };
       fire: {
-        heartHealth: 1 | 2 | 3 | 4 | 5; // elementoFogo
-        circulation: 1 | 2 | 3 | 4 | 5;
-        socialConnection: 1 | 2 | 3 | 4 | 5;
-        emotionalExpression: 1 | 2 | 3 | 4 | 5;
-        joyfulness: 1 | 2 | 3 | 4 | 5;
-        communicationSkills: 1 | 2 | 3 | 4 | 5;
-        enthusiasm: 1 | 2 | 3 | 4 | 5;
+        heartHealth: number;
+        circulation: number;
+        socialConnection: number;
+        emotionalExpression: number;
+        joyfulness: number;
+        communicationSkills: number;
+        enthusiasm: number;
         sleepDisturbances: boolean;
         anxietyTendency: boolean;
       };
       earth: {
-        digestiveStrength: 1 | 2 | 3 | 4 | 5; // elementoTerra
-        worryTendency: 1 | 2 | 3 | 4 | 5;
-        overthinking: 1 | 2 | 3 | 4 | 5;
+        digestiveStrength: number;
+        worryTendency: number;
+        overthinking: number;
         sweetCravings: boolean;
         bloatingAfterMeals: boolean;
         concentrationIssues: boolean;
-        empathy: 1 | 2 | 3 | 4 | 5;
-        groundedness: 1 | 2 | 3 | 4 | 5;
-        nurturingAbility: 1 | 2 | 3 | 4 | 5;
+        empathy: number;
+        groundedness: number;
+        nurturingAbility: number;
       };
       metal: {
-        respiratoryHealth: 1 | 2 | 3 | 4 | 5; // elementoMetal
-        skinHealth: 1 | 2 | 3 | 4 | 5;
-        griefProcessing: 1 | 2 | 3 | 4 | 5;
-        detoxCapacity: 1 | 2 | 3 | 4 | 5;
-        immuneStrength: 1 | 2 | 3 | 4 | 5;
-        breathingQuality: 1 | 2 | 3 | 4 | 5;
-        organizationSkills: 1 | 2 | 3 | 4 | 5;
-        perfectionism: 1 | 2 | 3 | 4 | 5;
-        boundariesSetting: 1 | 2 | 3 | 4 | 5;
+        respiratoryHealth: number;
+        skinHealth: number;
+        griefProcessing: number;
+        detoxCapacity: number;
+        immuneStrength: number;
+        breathingQuality: number;
+        organizationSkills: number;
+        perfectionism: number;
+        boundariesSetting: number;
       };
       water: {
-        adrenalFatigue: 1 | 2 | 3 | 4 | 5; // elementoAgua
-        fearAnxiety: 1 | 2 | 3 | 4 | 5;
-        sexualVitality: 1 | 2 | 3 | 4 | 5;
-        boneHealth: 1 | 2 | 3 | 4 | 5;
-        willpower: 1 | 2 | 3 | 4 | 5;
-        coldTolerance: 1 | 2 | 3 | 4 | 5;
-        urinaryHealth: 1 | 2 | 3 | 4 | 5;
-        memoryRetention: 1 | 2 | 3 | 4 | 5;
-        motivation: 1 | 2 | 3 | 4 | 5;
-        resilience: 1 | 2 | 3 | 4 | 5;
+        adrenalFatigue: number;
+        fearAnxiety: number;
+        sexualVitality: number;
+        boneHealth: number;
+        willpower: number;
+        coldTolerance: number;
+        urinaryHealth: number;
+        memoryRetention: number;
+        motivation: number;
+        resilience: number;
       };
     };
   };
-
-  // 🧠 AVALIAÇÃO COGNITIVA
   cognitive: {
-    focusQuality: number;              // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    memoryQuality: number;             // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    mentalClarity: number;             // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    creativityLevel: number;           // ✅ ALTERADO: de 1|2|3|4|5 para number simples
-    learningSpeed: number;             // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+    focusQuality: number;
+    memoryQuality: number;
+    mentalClarity: number;
+    creativityLevel: number;
+    learningSpeed: number;
     cognitiveSymptoms: {
       brainFog: boolean;
       concentrationDifficulty: boolean;
@@ -178,134 +186,83 @@ export interface BiohackingData {
       wordFinding: boolean;
       multitaskingDifficulty: boolean;
     };
-    preferredLearningStyle: string;    // ✅ ALTERADO: de union type para string simples
-    attentionSpan: number; // minutos
+    preferredLearningStyle: string;
+    attentionSpan: number;
     stressResponse: {
       stressTriggers: string[];
       copingMechanisms: string[];
-      stressRecovery: number;          // ✅ ALTERADO: de 1|2|3|4|5 para number simples
+      stressRecovery: number;
     };
   };
 }
 
-// 🎯 STEPS DO FORMULÁRIO
-export interface BiohackingStep {
-  id: number;
-  title: string;
-  icon: LucideIcon;
-  description: string;
-  fields: string[];
-  estimatedTime: number; // minutos
-}
-
-// 📝 PROPS DO COMPONENTE
-export interface BiohackingFormProps {
-  onComplete: (data: BiohackingData) => Promise<void>;
-  onBack?: () => void;
-  initialData?: Partial<BiohackingData>;
-  onStepChange?: (step: number) => void;
-  onDataUpdate?: (data: Partial<BiohackingData>) => void;
-}
-
-// 🔍 TIPOS DE VALIDAÇÃO
-export interface BiohackingValidation {
-  isValid: boolean;
-  errors: Record<string, string>;
-  warnings: Record<string, string>;
-  completionPercentage: number;
-}
-
-// 📈 PROGRESSO DO FORMULÁRIO
-export interface BiohackingProgress {
-  currentStep: number;
-  completedSteps: number[];
-  totalSteps: number;
-  estimatedTimeRemaining: number;
-  canProceed: boolean;
-  canGoBack: boolean;
-}
-
-// 📊 RESULTADO DA ANÁLISE BIOHACKING
-export interface BiohackingAnalysis {
-  userId: string;
-  
-  // Scores calculados
-  scores: {
-    overallHealth: number;
-    biotype: string;
-    chronotype: string;
-    metabolicProfile: string;
-    stressLevel: number;
-    fitnessLevel: number;
-    dominantElement: string;
+// 🧠 DADOS PSICOLÓGICOS (INTERFACE QUE ESTAVA FALTANDO!)
+export interface PsychologicalData {
+  bigFive: {
+    openness: number;
+    conscientiousness: number;
+    extraversion: number;
+    agreeableness: number;
+    neuroticism: number;
   };
-  
-  // Recomendações personalizadas
-  recommendations: {
-    nutrition: {
-      macroTargets: {
-        protein: number;
-        carbs: number;
-        fat: number;
-      };
-      supplements: string[];
-      mealTiming: string[];
-      foods: {
-        include: string[];
-        avoid: string[];
-        moderate: string[];
-      };
-    };
-    exercise: {
-      weeklyPlan: {
-        cardio: number;
-        strength: number;
-        flexibility: number;
-        recovery: number;
-      };
-      specificActivities: string[];
-      intensity: string;
-      timing: string[];
-    };
-    sleep: {
-      optimalSchedule: {
-        bedtime: string;
-        wakeTime: string;
-        duration: number;
-      };
-      sleepHygiene: string[];
-      environment: string[];
-      supplements: string[];
-    };
-    stress: {
-      techniques: string[];
-      lifestyle: string[];
-      professional: string[];
-    };
-    functionalMedicine: {
-      elementBalancing: {
-        overactive: string[];
-        deficient: string[];
-        strategies: string[];
-      };
-      organSupport: {
-        liver: string[];
-        heart: string[];
-        spleen: string[];
-        lungs: string[];
-        kidneys: string[];
-      };
-    };
+  disc: {
+    dominance: number;
+    influence: number;
+    steadiness: number;
+    conscientiousness: number;
   };
-  
-  // Métricas de progresso
-  tracking: {
-    keyMetrics: string[];
-    frequency: string;
-    targets: Record<string, number>;
-    timeline: string;
+  vark: {
+    visual: number;
+    auditory: number;
+    reading: number;
+    kinesthetic: number;
   };
+  yinyang: {
+    yin: number;
+    yang: number;
+  };
+  mtc: {
+    wood: number;
+    fire: number;
+    earth: number;
+    metal: number;
+    water: number;
+  };
+  completionDate?: string;
+}
+
+// ⚡ DADOS COGNITIVOS
+export interface CognitiveData {
+  learningStyle?: string;
+  focusLevel?: number;
+  creativityAreas?: string[];
+  mentalChallenges?: string[];
+  currentPractices?: string[];
+}
+
+// 📊 ESTADO COMPLETO DO ONBOARDING
+export interface OnboardingProgress {
+  id?: string;
+  user_id: string;
+  step: number;
   
-  createdAt: Date;
-  updatedAt: Date;
+  // Dados de cada etapa
+  personal_data?: PersonalData;
+  birth_data?: BirthData;
+  biohacking_data?: BiohackingData;
+  psychological_data?: PsychologicalData;
+  cognitive_data?: CognitiveData;
+  
+  // Flags de conclusão
+  personal_data_complete: boolean;
+  birth_data_complete: boolean;
+  biohacking_data_complete: boolean;
+  psychological_data_complete: boolean;
+  cognitive_data_complete: boolean;
+  
+  // Timestamps
+  created_at?: string;
+  updated_at?: string;
+  started_at?: string;
+  completed_at?: string;
 }
