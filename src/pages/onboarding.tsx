@@ -62,8 +62,7 @@ interface PersonalData {
   fullName: string;
   email: string;
   gender?: string;
-  birthDate: string;
-}
+ }
 
 // Dados de Nascimento
 interface BirthData {
@@ -390,8 +389,7 @@ const OnboardingPage: React.FC = () => {
                         handlePersonalComplete({
                           fullName: e.target.value,
                           email: user?.email || '',
-                          birthDate: new Date().toISOString().split('T')[0]
-                        });
+                          });
                       }
                     }}
                   />
