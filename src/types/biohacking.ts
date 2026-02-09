@@ -1,8 +1,30 @@
 // ============================================================================
-// src/types/biohacking.ts - COMPATÍVEL COM BiohackingForm.tsx EXISTENTE
+// src/types/biohacking.ts - COMPATÍVEL COM BiohackingForm.tsx
 // ============================================================================
 
 import { LucideIcon } from 'lucide-react';
+
+// ============================================================================
+// 🎯 TIPOS AUXILIARES
+// ============================================================================
+
+export interface Medication {
+  name: string;
+  dosage: string;
+  frequency: string;
+  purpose: string;
+}
+
+export interface Supplement {
+  name: string;
+  dosage: string;
+  frequency: string;
+  purpose: string;
+}
+
+// ============================================================================
+// 🎯 INTERFACE PRINCIPAL - BiohackingData
+// ============================================================================
 
 export interface BiohackingData {
   anthropometric: {
@@ -101,8 +123,8 @@ export interface BiohackingData {
   healthStatus: {
     chronicConditions: string[];
     familyHistory: string[];
-    currentMedications: string[];
-    supplements: string[];
+    currentMedications: Medication[];  // ✅ CORRIGIDO: Array de objetos
+    supplements: Supplement[];          // ✅ CORRIGIDO: Array de objetos
     allergies: string[];
     deficiencySymptoms: {
       chronicFatigue: boolean;
