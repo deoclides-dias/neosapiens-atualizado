@@ -1265,7 +1265,7 @@ const BiohackingForm: React.FC<BiohackingFormProps> = ({
       <div className="bg-gray-50 p-6 rounded-lg">
         <h3 className="text-lg font-medium text-gray-900 mb-4">💊 Medicamentos Atuais</h3>
         <div className="space-y-4">
-          {formData.healthStatus.currentMedications.map((med, index) => (
+          {formData.healthStatus.currentMedications.map((med: { name: string; dosage: string; frequency: string; purpose: string }, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 bg-white rounded border">
               <input
                 type="text"
