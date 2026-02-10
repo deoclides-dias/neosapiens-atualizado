@@ -6,6 +6,8 @@ import {
   User, Scale, Bed, Coffee, Dumbbell, Stethoscope
 } from 'lucide-react';
 import { BiohackingData, BiohackingFormProps, BiohackingStep } from '../../types/biohacking';
+type Medication = { name: string; dosage: string; frequency: string; purpose: string };
+type Supplement = { name: string; dosage: string; frequency: string; purpose: string };
 
 // 🎯 CONSTANTES
 const BODY_TYPES = [
@@ -1265,7 +1267,7 @@ const BiohackingForm: React.FC<BiohackingFormProps> = ({
       <div className="bg-gray-50 p-6 rounded-lg">
         <h3 className="text-lg font-medium text-gray-900 mb-4">💊 Medicamentos Atuais</h3>
         <div className="space-y-4">
-          {formData.healthStatus.currentMedications.map((med: { name: string; dosage: string; frequency: string; purpose: string }, index) => (
+          {(formData.healthStatus.currentMedications as Medication[]).map((med, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3 bg-white rounded border">
               <input
                 type="text"
@@ -1327,7 +1329,7 @@ const BiohackingForm: React.FC<BiohackingFormProps> = ({
       <div className="bg-green-50 p-6 rounded-lg">
         <h3 className="text-lg font-medium text-gray-900 mb-4">💊 Suplementos</h3>
         <div className="space-y-4">
-          {formData.healthStatus.supplements.map((supplement, index) => (
+          {(formData.healthStatus.supplements as Supplement[]).map((supplement, index) => (
             <div key={index} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-3 bg-white rounded border">
               <input
                 type="text"
