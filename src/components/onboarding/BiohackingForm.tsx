@@ -9,6 +9,36 @@ import { BiohackingData, BiohackingFormProps, BiohackingStep } from '../../types
 type Medication = { name: string; dosage: string; frequency: string; purpose: string };
 type Supplement = { name: string; dosage: string; frequency: string; purpose: string };
 
+// 🔧 SOBRESCREVER interface BiohackingData localmente
+interface LocalBiohackingData extends Omit<BiohackingData, 'healthStatus'> {
+  healthStatus: {
+    chronicConditions: string[];
+    familyHistory: string[];
+    currentMedications: Medication[];
+    supplements: Supplement[];
+    allergies: string[];
+    deficiencySymptoms: {
+      chronicFatigue: boolean;
+      hairLoss: boolean;
+      weakNails: boolean;
+      skinProblems: boolean;
+      slowHealing: boolean;
+      frequentInfections: boolean;
+      muscleCramps: boolean;
+      moodSwings: boolean;
+      memoryIssues: boolean;
+      coldIntolerance: boolean;
+    };
+    mentalHealth: {
+      stressLevel: number;
+      anxietyLevel: number;
+      depressionSymptoms: boolean;
+      panicAttacks: boolean;
+      therapyHistory: boolean;
+    };
+  };
+}
+
 // 🎯 CONSTANTES
 const BODY_TYPES = [
   { value: 'ectomorph', label: 'Ectomorfo', description: 'Magro, dificuldade para ganhar peso' },
@@ -32,7 +62,7 @@ const BiohackingForm: React.FC<BiohackingFormProps> = ({
 }) => {
   // 📊 ESTADOS DO FORMULÁRIO
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<BiohackingData>(() => {
+  const [formData, setFormData] = useState<LocalBiohackingData>(() => {
     const initial = getInitialFormData();
     return initialData ? { ...initial, ...initialData } : initial;
   });
