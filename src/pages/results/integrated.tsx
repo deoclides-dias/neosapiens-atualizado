@@ -218,8 +218,6 @@ const IntegratedAnalysis = () => {
             </div>
           ))}
         </div>
-        // src/pages/results/integrated.tsx - PARTE 2/2
-// CONTINUA DA PARTE 1/2...
 
         {/* Insights Principais */}
         <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
