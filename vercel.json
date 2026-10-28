@@ -1,1 +1,13 @@
-{"framework":"nextjs","buildCommand":"npm run build","outputDirectory":".next","cleanUrls":true,"trailingSlash":false}
+{
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "crons": [
+    {
+      "path": "/api/keepalive",
+      "schedule": "17 9 * * *"
+    }
+  ]
+}
