@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { ArrowLeft, Star, Moon, Sun, Calendar, MapPin, Clock } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
+import { formatDateBR, parseLocalDate } from '../../utils/dates';
 
 interface BirthData {
   fullName: string;
@@ -144,7 +145,7 @@ const AstrologyResults = () => {
   };
 
   const generateRobustSimulatedAnalysis = (birthData: BirthData): AstrologyAnalysis => {
-    const birthDate = new Date(birthData.birthDate);
+    const birthDate = parseLocalDate(birthData.birthDate, birthData.birthTime);
     
     // Cálculos astrológicos básicos mas precisos
     const sunSign = calculateSunSign(birthDate);
@@ -536,7 +537,7 @@ const AstrologyResults = () => {
                 <Calendar className="w-5 h-5 text-indigo-600" />
                 <div>
                   <h3 className="font-semibold text-gray-700">Data</h3>
-                  <p className="text-gray-600">{new Date(birthData.birthDate).toLocaleDateString('pt-BR')}</p>
+                  <p className="text-gray-600">{formatDateBR(birthData.birthDate)}</p>
                 </div>
               </div>
               
