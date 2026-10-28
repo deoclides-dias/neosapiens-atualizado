@@ -147,11 +147,15 @@ export default function PlaceAutocomplete({ value, onChange, inputClass, labelCl
         place.displayName ||
         s.main;
 
+      const state = pickComponent(comps, 'administrative_area_level_1', true);
+      const country = pickComponent(comps, 'country');
+
       onChange({
-        name: place.formattedAddress || `${s.main}, ${s.secondary}`,
+        // formattedAddress traz CEP ("Pinheiro, MA, 65200-000"); montamos o nome limpo
+        name: [city, state, country].filter(Boolean).join(', ') || `${s.main}, ${s.secondary}`,
         city,
-        state: pickComponent(comps, 'administrative_area_level_1', true),
-        country: pickComponent(comps, 'country'),
+        state,
+        country,
         latitude: typeof lat === 'number' ? Number(lat.toFixed(6)) : undefined,
         longitude: typeof lng === 'number' ? Number(lng.toFixed(6)) : undefined,
         timezone:
