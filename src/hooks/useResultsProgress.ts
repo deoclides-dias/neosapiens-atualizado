@@ -63,9 +63,9 @@ function useResultsProgress() {
         traditionsCount: traditionsData?.length || 0
       });
 
-      const astrologyComplete = Boolean(
-        onboardingData?.birth_data_complete && traditionsData && traditionsData.length > 0
-      );
+      // A tabela traditions_analysis ainda não existe no banco; a análise
+      // astrológica é calculada na hora a partir de birth_data.
+      const astrologyComplete = Boolean(onboardingData?.birth_data_complete);
       
       const biohackingComplete = Boolean(
         onboardingData?.biohacking_data_complete

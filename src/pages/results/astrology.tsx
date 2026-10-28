@@ -11,10 +11,32 @@ interface BirthData {
   birthTime: string;
   birthPlace: {
     name: string;
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
   };
 }
+
+// O formulário /analysis/birth salva birthPlace como { city, state, country }.
+// Aqui convertemos para o formato usado nesta página.
+const normalizeBirthData = (raw: any): BirthData => {
+  const place = raw.birthPlace;
+  const name =
+    typeof place === 'string'
+      ? place
+      : place?.name ||
+        [place?.city, place?.state, place?.country].filter(Boolean).join(', ');
+
+  return {
+    fullName: raw.fullName,
+    birthDate: raw.birthDate,
+    birthTime: raw.birthTime || '',
+    birthPlace: {
+      name: name || 'Local não informado',
+      latitude: typeof place?.latitude === 'number' ? place.latitude : undefined,
+      longitude: typeof place?.longitude === 'number' ? place.longitude : undefined
+    }
+  };
+};
 
 interface AstrologyAnalysis {
   western: any;
@@ -32,8 +54,8 @@ interface UserDataForModules {
   birthTime: string;
   birthPlace: {
     name: string;
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
   };
 }
 
@@ -62,19 +84,22 @@ const AstrologyResults = () => {
     try {
       setLoading(true);
       
-      // Buscar dados de nascimento do usuário
-      const { data: progressData, error: progressError } = await supabase
+      // Buscar dados de nascimento salvos pela análise /analysis/birth
+      const { data: rows, error: progressError } = await supabase
         .from('onboarding_progress')
-        .select('birth_data_formatted')
+        .select('birth_data')
         .eq('user_id', user?.id)
-        .single();
+        .order('updated_at', { ascending: false })
+        .limit(1);
 
       if (progressError) throw progressError;
-      
-      if (progressData?.birth_data_formatted) {
-        const birthData = JSON.parse(progressData.birth_data_formatted);
+
+      const raw = rows?.[0]?.birth_data;
+
+      if (raw?.fullName && raw?.birthDate) {
+        const birthData = normalizeBirthData(raw);
         setBirthData(birthData);
-        
+
         // Gerar análise REAL usando módulos simulados (por segurança)
         const realAnalysis = await generateSimulatedAnalysis(birthData);
         setAnalysis(realAnalysis);
@@ -536,7 +561,9 @@ const AstrologyResults = () => {
                 <div>
                   <h3 className="font-semibold text-gray-700">Coordenadas</h3>
                   <p className="text-gray-600 text-sm">
-                    {birthData.birthPlace.latitude.toFixed(2)}, {birthData.birthPlace.longitude.toFixed(2)}
+                    {typeof birthData.birthPlace.latitude === 'number' && typeof birthData.birthPlace.longitude === 'number'
+                      ? `${birthData.birthPlace.latitude.toFixed(2)}, ${birthData.birthPlace.longitude.toFixed(2)}`
+                      : 'Não informadas'}
                   </p>
                 </div>
               </div>
