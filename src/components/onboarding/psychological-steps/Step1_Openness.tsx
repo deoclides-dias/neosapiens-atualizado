@@ -171,20 +171,20 @@ const Step1_Openness: React.FC<StepProps> = ({
             <Lightbulb className="w-8 h-8 text-white" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-white mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Abertura à Experiência
         </h2>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           Como você se relaciona com ideias novas, criatividade e experiências diferentes?
         </p>
         
         {/* Barra de Progresso */}
         <div className="mt-6 max-w-md mx-auto">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-400 text-sm">Progresso do Step</span>
-            <span className="text-slate-400 text-sm">{Math.round(progress)}%</span>
+            <span className="text-gray-600 text-sm">Progresso do Step</span>
+            <span className="text-gray-600 text-sm">{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-2">
             <div 
               className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
@@ -196,11 +196,11 @@ const Step1_Openness: React.FC<StepProps> = ({
         {isComplete && (
           <div className="mt-4 p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl border border-purple-500/30">
             <div className="flex items-center justify-center space-x-3">
-              <Sparkles className="w-5 h-5 text-purple-400" />
-              <span className="text-white font-medium">
-                Seu Score de Abertura: <span className="text-2xl font-bold text-purple-300">{opennessScore}</span>/100
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              <span className="text-gray-900 font-medium">
+                Seu Score de Abertura: <span className="text-2xl font-bold text-purple-700">{opennessScore}</span>/100
               </span>
-              <Brain className="w-5 h-5 text-pink-400" />
+              <Brain className="w-5 h-5 text-pink-600" />
             </div>
           </div>
         )}
@@ -218,7 +218,7 @@ const Step1_Openness: React.FC<StepProps> = ({
                 ? 'bg-purple-500 text-white scale-110'
                 : answers[index] > 0
                 ? 'bg-green-500 text-white'
-                : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }
             `}
           >
@@ -248,8 +248,8 @@ const Step1_Openness: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === 0
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -257,7 +257,7 @@ const Step1_Openness: React.FC<StepProps> = ({
           Questão Anterior
         </button>
 
-        <div className="text-slate-400 text-sm">
+        <div className="text-gray-600 text-sm">
           Questão {currentQuestion + 1} de {OPENNESS_QUESTIONS.length}
         </div>
 
@@ -267,8 +267,8 @@ const Step1_Openness: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === OPENNESS_QUESTIONS.length - 1
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -278,21 +278,21 @@ const Step1_Openness: React.FC<StepProps> = ({
       </div>
 
       {/* Botões de navegação do step */}
-      <div className="flex items-center justify-between pt-8 border-t border-slate-700">
+      <div className="flex items-center justify-between pt-8 border-t border-gray-200">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 text-slate-300 hover:text-white transition-colors"
+          className="flex items-center px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Step Anterior
         </button>
 
         <div className="text-center">
-          <div className="text-slate-400 text-sm mb-1">
+          <div className="text-gray-600 text-sm mb-1">
             {answers.filter(a => a > 0).length} de {OPENNESS_QUESTIONS.length} questões respondidas
           </div>
           {!canProceed && (
-            <div className="text-amber-400 text-xs">
+            <div className="text-amber-600 text-xs">
               ⚠️ Responda todas as questões para continuar
             </div>
           )}
@@ -305,7 +305,7 @@ const Step1_Openness: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-lg font-medium transition-all
             ${canProceed
               ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg hover:scale-105'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-500 cursor-not-allowed'
             }
           `}
         >

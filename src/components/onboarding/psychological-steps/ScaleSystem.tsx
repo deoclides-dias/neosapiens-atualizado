@@ -217,7 +217,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
       {/* Título da Escala */}
       {!compact && (
         <div className="text-center">
-          <h4 className="text-slate-300 text-sm font-medium">
+          <h4 className="text-gray-700 text-sm font-medium">
             {scale.title}
           </h4>
         </div>
@@ -233,7 +233,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
               relative p-4 rounded-xl border-2 transition-all duration-300 text-center group
               ${selectedValue === option.value
                 ? `border-${option.color} bg-gradient-to-br from-${option.gradientFrom} to-${option.gradientTo} text-white shadow-lg scale-105`
-                : 'border-slate-700 bg-slate-800/50 text-slate-300 hover:border-slate-600 hover:bg-slate-800/70'
+                : 'border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-gray-100'
               }
             `}
           >
@@ -242,7 +242,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
               absolute -top-2 -right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center
               ${selectedValue === option.value
                 ? 'border-white bg-white'
-                : 'border-slate-600 bg-slate-800'
+                : 'border-gray-300 bg-gray-200'
               }
             `}>
               {selectedValue === option.value && (
@@ -253,7 +253,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
             {/* Valor numérico (pequeno, discreto) */}
             <div className={`
               text-xs font-bold mb-2
-              ${selectedValue === option.value ? 'text-white/80' : 'text-slate-500'}
+              ${selectedValue === option.value ? 'text-gray-700' : 'text-gray-500'}
             `}>
               {option.value}
             </div>
@@ -270,7 +270,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
             {!compact && (
               <div className={`
                 text-xs opacity-80
-                ${selectedValue === option.value ? 'text-white/70' : 'text-slate-400'}
+                ${selectedValue === option.value ? 'text-gray-600' : 'text-gray-600'}
               `}>
                 {option.description}
               </div>
@@ -288,7 +288,7 @@ export const ScaleSelector: React.FC<ScaleSelectorProps> = ({
       {/* Indicador visual de progresso */}
       {selectedValue > 0 && (
         <div className="flex items-center justify-center space-x-2 mt-4">
-          <div className="text-slate-400 text-xs">Sua escolha:</div>
+          <div className="text-gray-600 text-xs">Sua escolha:</div>
           <div className={`
             px-3 py-1 rounded-full text-xs font-medium
             bg-gradient-to-r from-${scale.options[selectedValue - 1].gradientFrom} to-${scale.options[selectedValue - 1].gradientTo}
@@ -326,23 +326,23 @@ export const QuestionCardWithScale: React.FC<QuestionCardWithScaleProps> = ({
   hint
 }) => {
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/70 transition-all duration-300">
+    <div className="bg-gray-50 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 hover:bg-gray-100 transition-all duration-300">
       {/* Header da questão */}
       <div className="flex items-start gap-4 mb-6">
         <div className="bg-purple-500/20 rounded-lg p-2 flex-shrink-0">
-          <span className="text-purple-300 font-bold text-sm">{questionNumber}</span>
+          <span className="text-purple-700 font-bold text-sm">{questionNumber}</span>
         </div>
         <div className="flex-grow">
-          <h3 className="text-white text-lg font-medium leading-relaxed mb-2">
+          <h3 className="text-gray-900 text-lg font-medium leading-relaxed mb-2">
             {questionText}
           </h3>
           {category && (
-            <div className="text-slate-400 text-sm">
+            <div className="text-gray-600 text-sm">
               📊 {category}
             </div>
           )}
           {hint && (
-            <div className="text-slate-500 text-xs mt-2 italic">
+            <div className="text-gray-500 text-xs mt-2 italic">
               💡 {hint}
             </div>
           )}

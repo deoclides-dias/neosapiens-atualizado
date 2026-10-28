@@ -182,20 +182,20 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
             <Target className="w-8 h-8 text-white" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-white mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Conscienciosidade
         </h2>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           Como você se organiza e se disciplina para alcançar seus objetivos?
         </p>
         
         {/* Barra de Progresso */}
         <div className="mt-6 max-w-md mx-auto">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-400 text-sm">Progresso do Step</span>
-            <span className="text-slate-400 text-sm">{Math.round(progress)}%</span>
+            <span className="text-gray-600 text-sm">Progresso do Step</span>
+            <span className="text-gray-600 text-sm">{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-2">
             <div 
               className="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
@@ -207,11 +207,11 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
         {isComplete && (
           <div className="mt-4 p-4 bg-gradient-to-r from-blue-500/20 to-indigo-600/20 rounded-xl border border-blue-500/30">
             <div className="flex items-center justify-center space-x-3 mb-2">
-              <CheckSquare className="w-5 h-5 text-blue-400" />
-              <span className="text-white font-medium">
-                Seu Score de Conscienciosidade: <span className="text-2xl font-bold text-blue-300">{conscientiousnessScore}</span>/100
+              <CheckSquare className="w-5 h-5 text-blue-600" />
+              <span className="text-gray-900 font-medium">
+                Seu Score de Conscienciosidade: <span className="text-2xl font-bold text-blue-700">{conscientiousnessScore}</span>/100
               </span>
-              <Target className="w-5 h-5 text-indigo-400" />
+              <Target className="w-5 h-5 text-indigo-600" />
             </div>
             <div className={`text-${interpretation.color}-400 text-sm font-medium`}>
               {interpretation.level}: {interpretation.desc}
@@ -232,7 +232,7 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
                 ? 'bg-blue-500 text-white scale-110'
                 : answers[index] > 0
                 ? 'bg-green-500 text-white'
-                : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }
             `}
           >
@@ -256,19 +256,19 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
 
       {/* Indicadores de características (se completo) */}
       {isComplete && (
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="text-white font-medium mb-4 flex items-center">
-            <Zap className="w-5 h-5 text-blue-400 mr-2" />
+        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+            <Zap className="w-5 h-5 text-blue-600 mr-2" />
             Características Identificadas
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {conscientiousnessScore >= 65 && (
               <>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <CheckSquare className="w-4 h-4 mr-2" />
                   <span className="text-sm">Organização natural</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Clock className="w-4 h-4 mr-2" />
                   <span className="text-sm">Pontualidade consistente</span>
                 </div>
@@ -276,11 +276,11 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
             )}
             {conscientiousnessScore >= 50 && conscientiousnessScore < 65 && (
               <>
-                <div className="flex items-center text-blue-400">
+                <div className="flex items-center text-blue-600">
                   <Target className="w-4 h-4 mr-2" />
                   <span className="text-sm">Equilibrio ordem/flexibilidade</span>
                 </div>
-                <div className="flex items-center text-blue-400">
+                <div className="flex items-center text-blue-600">
                   <CheckSquare className="w-4 h-4 mr-2" />
                   <span className="text-sm">Organização situacional</span>
                 </div>
@@ -288,11 +288,11 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
             )}
             {conscientiousnessScore < 50 && (
               <>
-                <div className="flex items-center text-orange-400">
+                <div className="flex items-center text-orange-600">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="text-sm">Espontaneidade natural</span>
                 </div>
-                <div className="flex items-center text-orange-400">
+                <div className="flex items-center text-orange-600">
                   <Target className="w-4 h-4 mr-2" />
                   <span className="text-sm">Adaptabilidade alta</span>
                 </div>
@@ -310,8 +310,8 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === 0
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -319,7 +319,7 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
           Questão Anterior
         </button>
 
-        <div className="text-slate-400 text-sm">
+        <div className="text-gray-600 text-sm">
           Questão {currentQuestion + 1} de {CONSCIENTIOUSNESS_QUESTIONS.length}
         </div>
 
@@ -329,8 +329,8 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === CONSCIENTIOUSNESS_QUESTIONS.length - 1
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -340,21 +340,21 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
       </div>
 
       {/* Botões de navegação do step */}
-      <div className="flex items-center justify-between pt-8 border-t border-slate-700">
+      <div className="flex items-center justify-between pt-8 border-t border-gray-200">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 text-slate-300 hover:text-white transition-colors"
+          className="flex items-center px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Step Anterior
         </button>
 
         <div className="text-center">
-          <div className="text-slate-400 text-sm mb-1">
+          <div className="text-gray-600 text-sm mb-1">
             {answers.filter(a => a > 0).length} de {CONSCIENTIOUSNESS_QUESTIONS.length} questões respondidas
           </div>
           {!canProceed && (
-            <div className="text-amber-400 text-xs">
+            <div className="text-amber-600 text-xs">
               ⚠️ Responda todas as questões para continuar
             </div>
           )}
@@ -367,7 +367,7 @@ const Step2_Conscientiousness: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-lg font-medium transition-all
             ${canProceed
               ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:shadow-lg hover:scale-105'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-500 cursor-not-allowed'
             }
           `}
         >

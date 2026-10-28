@@ -440,16 +440,16 @@ const Step6_DiscVark: React.FC<StepProps> = ({
         <div className="flex items-center justify-center space-x-3">
           <div className="bg-orange-500/20 p-3 rounded-xl">
             {currentSection === 'DISC' ? (
-              <Target className="w-8 h-8 text-orange-400" />
+              <Target className="w-8 h-8 text-orange-600" />
             ) : (
-              <BookOpen className="w-8 h-8 text-orange-400" />
+              <BookOpen className="w-8 h-8 text-orange-600" />
             )}
           </div>
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-gray-900">
             {currentSection === 'DISC' ? 'Perfil DISC' : 'Estilo VARK'}
           </h2>
         </div>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           {currentSection === 'DISC' 
             ? 'Descubra como você se comporta em ambientes de trabalho e liderança.'
             : 'Identifique seu estilo preferido de aprendizagem e processamento de informação.'
@@ -457,13 +457,13 @@ const Step6_DiscVark: React.FC<StepProps> = ({
         </p>
 
         {/* Progress Bar */}
-        <div className="bg-slate-800 rounded-full h-3 overflow-hidden">
+        <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
           <div 
             className="bg-gradient-to-r from-orange-500 to-red-500 h-full transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-slate-400 text-sm">
+        <p className="text-gray-600 text-sm">
           {answers.filter(answer => answer > 0).length} de {DISC_VARK_QUESTIONS.length} questões respondidas
         </p>
       </div>
@@ -479,7 +479,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${currentSection === 'DISC'
               ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -495,7 +495,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${currentSection === 'VARK'
               ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -520,7 +520,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
                   ? 'bg-orange-500 text-white scale-110'
                   : answers[index] > 0
                   ? 'bg-green-500 text-white'
-                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }
               `}
             >
@@ -547,27 +547,27 @@ const Step6_DiscVark: React.FC<StepProps> = ({
       {isComplete && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Perfil DISC */}
-          <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-            <h3 className="text-white font-medium mb-4 flex items-center">
-              <Target className="w-5 h-5 text-orange-400 mr-2" />
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+              <Target className="w-5 h-5 text-orange-600 mr-2" />
               Perfil DISC Identificado
             </h3>
             <div>
-              <h4 className="text-orange-400 font-medium mb-2">{discInterpretation.type}</h4>
-              <p className="text-slate-300 text-sm mb-4">{discInterpretation.description}</p>
+              <h4 className="text-orange-600 font-medium mb-2">{discInterpretation.type}</h4>
+              <p className="text-gray-700 text-sm mb-4">{discInterpretation.description}</p>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <div className="text-red-400 text-2xl font-bold">D: {discScores.D}%</div>
-                  <div className="text-yellow-400 text-2xl font-bold">I: {discScores.I}%</div>
+                  <div className="text-red-600 text-2xl font-bold">D: {discScores.D}%</div>
+                  <div className="text-amber-600 text-2xl font-bold">I: {discScores.I}%</div>
                 </div>
                 <div>
-                  <div className="text-green-400 text-2xl font-bold">S: {discScores.S}%</div>
-                  <div className="text-blue-400 text-2xl font-bold">C: {discScores.C}%</div>
+                  <div className="text-green-600 text-2xl font-bold">S: {discScores.S}%</div>
+                  <div className="text-blue-600 text-2xl font-bold">C: {discScores.C}%</div>
                 </div>
               </div>
               <div className="space-y-2">
                 {discInterpretation.characteristics.map((char, idx) => (
-                  <div key={idx} className="flex items-center text-green-400">
+                  <div key={idx} className="flex items-center text-green-600">
                     <CheckCircle className="w-4 h-4 mr-2" />
                     <span className="text-sm">{char}</span>
                   </div>
@@ -577,31 +577,31 @@ const Step6_DiscVark: React.FC<StepProps> = ({
           </div>
 
           {/* Perfil VARK */}
-          <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-            <h3 className="text-white font-medium mb-4 flex items-center">
-              <BookOpen className="w-5 h-5 text-orange-400 mr-2" />
+          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+            <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+              <BookOpen className="w-5 h-5 text-orange-600 mr-2" />
               Estilo VARK Identificado
             </h3>
             <div>
-              <h4 className="text-orange-400 font-medium mb-2">{varkInterpretation.type}</h4>
-              <p className="text-slate-300 text-sm mb-4">{varkInterpretation.description}</p>
+              <h4 className="text-orange-600 font-medium mb-2">{varkInterpretation.type}</h4>
+              <p className="text-gray-700 text-sm mb-4">{varkInterpretation.description}</p>
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <div className="text-purple-400 text-2xl font-bold flex items-center">
+                  <div className="text-purple-600 text-2xl font-bold flex items-center">
                     <Eye className="w-5 h-5 mr-1" />
                     V: {varkScores.V}%
                   </div>
-                  <div className="text-blue-400 text-2xl font-bold flex items-center">
+                  <div className="text-blue-600 text-2xl font-bold flex items-center">
                     <Ear className="w-5 h-5 mr-1" />
                     A: {varkScores.A}%
                   </div>
                 </div>
                 <div>
-                  <div className="text-green-400 text-2xl font-bold flex items-center">
+                  <div className="text-green-600 text-2xl font-bold flex items-center">
                     <BookOpen className="w-5 h-5 mr-1" />
                     R: {varkScores.R}%
                   </div>
-                  <div className="text-orange-400 text-2xl font-bold flex items-center">
+                  <div className="text-orange-600 text-2xl font-bold flex items-center">
                     <Hand className="w-5 h-5 mr-1" />
                     K: {varkScores.K}%
                   </div>
@@ -609,7 +609,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
               </div>
               <div className="space-y-2">
                 {varkInterpretation.characteristics.map((char, idx) => (
-                  <div key={idx} className="flex items-center text-green-400">
+                  <div key={idx} className="flex items-center text-green-600">
                     <CheckCircle className="w-4 h-4 mr-2" />
                     <span className="text-sm">{char}</span>
                   </div>
@@ -624,7 +624,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
       <div className="flex justify-between pt-8">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors"
+          className="flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl transition-colors"
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           Anterior
@@ -637,7 +637,7 @@ const Step6_DiscVark: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${canProceed
               ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white'
-              : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-600 cursor-not-allowed'
             }
           `}
         >

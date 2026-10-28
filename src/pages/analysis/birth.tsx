@@ -1,8 +1,9 @@
+// src/pages/analysis/birth.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { ArrowLeft, Calendar, Clock, MapPin, Save } from 'lucide-react';
-import { useAuth } from '../../hooks/useAuth';
-// IMPORT DIRETO - teste para ver se funciona
+import { Calendar, Clock, MapPin, Save } from 'lucide-react';
+import AnalysisLayout from '../../components/ui/AnalysisLayout';
+import FormCard from '../../components/ui/FormCard';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 
 interface BirthData {
@@ -77,147 +78,125 @@ const BirthAnalysis = () => {
     }));
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 py-8">
-      <div className="container mx-auto px-4 max-w-2xl">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <button
-            onClick={() => router.push('/analysis')}
-            className="text-white hover:text-purple-200 transition-colors p-2 rounded-lg hover:bg-white/10"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-2">
-              🌟 Dados de Nascimento
-            </h1>
-            <p className="text-purple-200">
-              Informações para análise astrológica e numerológica
-            </p>
-          </div>
-        </div>
+  const inputClass =
+    'w-full px-4 py-3 rounded-lg bg-white border border-gray-300 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500';
+  const labelClass = 'block text-sm font-medium text-gray-700 mb-2';
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
+  return (
+    <AnalysisLayout
+      title="Dados de Nascimento"
+      subtitle="Base para a análise astrológica e numerológica"
+      icon={<Calendar className="w-5 h-5" />}
+      maxWidth="md"
+    >
+      <form onSubmit={handleSubmit}>
+        <FormCard className="space-y-8">
+          <section>
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-purple-600" />
               Informações Pessoais
             </h2>
 
-            {/* Nome Completo */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-purple-200 mb-2">
-                Nome Completo
-              </label>
-              <input
-                type="text"
-                value={formData.fullName}
-                onChange={(e) => handleInputChange('fullName', e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="Seu nome completo"
-                required
-              />
-            </div>
+            <div className="space-y-4">
+              <div>
+                <label className={labelClass}>Nome Completo</label>
+                <input
+                  type="text"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange('fullName', e.target.value)}
+                  className={inputClass}
+                  placeholder="Seu nome completo"
+                  required
+                />
+              </div>
 
-            {/* Data de Nascimento */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-purple-200 mb-2">
-                Data de Nascimento
-              </label>
-              <input
-                type="date"
-                value={formData.birthDate}
-                onChange={(e) => handleInputChange('birthDate', e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className={labelClass}>Data de Nascimento</label>
+                  <input
+                    type="date"
+                    value={formData.birthDate}
+                    onChange={(e) => handleInputChange('birthDate', e.target.value)}
+                    className={inputClass}
+                    required
+                  />
+                </div>
 
-            {/* Horário de Nascimento */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-purple-200 mb-2 flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                Horário de Nascimento
-              </label>
-              <input
-                type="time"
-                value={formData.birthTime}
-                onChange={(e) => handleInputChange('birthTime', e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-              />
-              <p className="text-xs text-purple-300 mt-1">
-                Procure no documento de nascimento ou pergunte aos familiares
+                <div>
+                  <label className={`${labelClass} flex items-center gap-2`}>
+                    <Clock className="w-4 h-4 text-purple-600" />
+                    Horário de Nascimento
+                  </label>
+                  <input
+                    type="time"
+                    value={formData.birthTime}
+                    onChange={(e) => handleInputChange('birthTime', e.target.value)}
+                    className={inputClass}
+                    required
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500">
+                Procure no documento de nascimento ou pergunte aos familiares.
               </p>
             </div>
-          </div>
+          </section>
 
-          {/* Local de Nascimento */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
+          <section className="pt-6 border-t border-gray-100">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-purple-600" />
               Local de Nascimento
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-purple-200 mb-2">
-                  Cidade
-                </label>
+                <label className={labelClass}>Cidade</label>
                 <input
                   type="text"
                   value={formData.birthPlace.city}
                   onChange={(e) => handlePlaceChange('city', e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Ex: São Paulo"
+                  className={inputClass}
+                  placeholder="Ex: São Luís"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-purple-200 mb-2">
-                  Estado/Região
-                </label>
+                <label className={labelClass}>Estado/Região</label>
                 <input
                   type="text"
                   value={formData.birthPlace.state}
                   onChange={(e) => handlePlaceChange('state', e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  placeholder="Ex: SP"
+                  className={inputClass}
+                  placeholder="Ex: MA"
                   required
                 />
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-purple-200 mb-2">
-                  País
-                </label>
+              <div className="sm:col-span-2">
+                <label className={labelClass}>País</label>
                 <input
                   type="text"
                   value={formData.birthPlace.country}
                   onChange={(e) => handlePlaceChange('country', e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg bg-white/10 border border-white/20 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className={inputClass}
                   placeholder="Brasil"
                   required
                 />
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Error Display */}
           {error && (
-            <div className="bg-red-900/30 border border-red-400 rounded-lg p-4">
-              <p className="text-red-300">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-lg hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 px-6 rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -231,16 +210,13 @@ const BirthAnalysis = () => {
               </>
             )}
           </button>
-        </form>
 
-        {/* Footer */}
-        <div className="text-center mt-8">
-          <p className="text-purple-300 text-sm">
-            💡 Suas informações são usadas apenas para cálculos precisos de análise
+          <p className="text-center text-gray-500 text-xs">
+            💡 Suas informações são usadas apenas para os cálculos da análise.
           </p>
-        </div>
-      </div>
-    </div>
+        </FormCard>
+      </form>
+    </AnalysisLayout>
   );
 };
 

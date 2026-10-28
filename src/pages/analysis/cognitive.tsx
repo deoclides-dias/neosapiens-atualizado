@@ -57,7 +57,7 @@ const CognitivePage: React.FC = () => {
 
   if (!canAccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -104,7 +104,7 @@ const CognitivePage: React.FC = () => {
 
   if (completed) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -131,7 +131,7 @@ const CognitivePage: React.FC = () => {
 
   if (isCompleting) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -159,9 +159,9 @@ const CognitivePage: React.FC = () => {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950">
       {/* HEADER */}
-      <div className="container mx-auto px-4 pt-8">
+      <div className="max-w-4xl mx-auto px-4 pt-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -230,9 +230,9 @@ const CognitivePage: React.FC = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.4 }}
-        className="container mx-auto px-4 pb-8"
+        className="max-w-4xl mx-auto px-4 pb-8"
       >
-        <div className="bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 overflow-hidden">
+        <div className="bg-white text-gray-900 rounded-2xl shadow-xl shadow-black/20 ring-1 ring-black/5 overflow-hidden">
           <CognitiveForm
             onComplete={handleCognitiveComplete}
             onBack={handleBack}

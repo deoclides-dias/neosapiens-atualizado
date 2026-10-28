@@ -5,6 +5,13 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // Classes montadas dinamicamente (ex.: `bg-${color}-500` em results/integrated.tsx)
+  // não aparecem literais no código, então o Tailwind precisa gerá-las sempre.
+  safelist: [
+    {
+      pattern: /^(bg|text|border)-(indigo|green|purple|orange|blue|gray)-(50|500|600)$/,
+    },
+  ],
   theme: {
     extend: {
       fontFamily: {

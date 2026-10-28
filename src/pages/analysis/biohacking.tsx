@@ -1,7 +1,9 @@
 // src/pages/analysis/biohacking.tsx
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { ArrowLeft, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
+import AnalysisLayout from '../../components/ui/AnalysisLayout';
+import FormCard from '../../components/ui/FormCard';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 import { useAuth } from '../../hooks/useAuth';
 import BiohackingForm from '../../components/onboarding/BiohackingForm';
@@ -62,7 +64,8 @@ const BiohackingAnalysisPage = () => {
   // Verificar autenticação
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 flex items-center justify-center p-4">
+        <FormCard className="max-w-md w-full">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Acesso Restrito
@@ -72,50 +75,29 @@ const BiohackingAnalysisPage = () => {
           </p>
           <button
             onClick={() => router.push('/auth/login')}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"
           >
             Fazer Login
           </button>
         </div>
+        </FormCard>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <button
-              onClick={handleBack}
-              className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Voltar ao Hub
-            </button>
-            
-            <div className="flex items-center space-x-3">
-              <Activity className="w-6 h-6 text-green-600" />
-              <h1 className="text-xl font-semibold text-gray-900">
-                Avaliação Biohacking
-              </h1>
-            </div>
-            
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <span>👤 {user.email}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Conteúdo Principal */}
-      <div className="py-8">
+    <AnalysisLayout
+      title="Avaliação Biohacking"
+      subtitle="Corpo & Energia"
+      icon={<Activity className="w-5 h-5" />}
+      rightSlot={<span className="hidden md:inline">{user.email}</span>}
+    >
+      <FormCard>
         {isLoading ? (
-          <div className="flex items-center justify-center min-h-64">
+          <div className="flex items-center justify-center py-16">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Salvando seus dados no Supabase...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+              <p className="text-gray-600">Salvando seus dados...</p>
             </div>
           </div>
         ) : (
@@ -124,8 +106,8 @@ const BiohackingAnalysisPage = () => {
             onBack={handleBack}
           />
         )}
-      </div>
-    </div>
+      </FormCard>
+    </AnalysisLayout>
   );
 };
 

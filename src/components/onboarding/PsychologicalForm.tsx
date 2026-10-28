@@ -319,13 +319,13 @@ const PsychologicalFormDebug: React.FC<PsychologicalFormProps> = ({
       )}
 
       {/* Header Principal */}
-      <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 mb-8">
+      <div className="bg-gray-50 backdrop-blur-md rounded-3xl border border-gray-200 p-8 mb-8">
         <div className="text-center mb-6">
           <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
             <Brain className="w-8 h-8 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-2">Avaliação Psicológica</h2>
-          <p className="text-slate-300 text-lg">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Avaliação Psicológica</h2>
+          <p className="text-gray-700 text-lg">
             Sistema científico completo com {totalQuestions} questões validadas
           </p>
         </div>
@@ -333,43 +333,43 @@ const PsychologicalFormDebug: React.FC<PsychologicalFormProps> = ({
         {/* Barra de Progresso Global */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-slate-400">Progresso Geral</span>
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-gray-600">Progresso Geral</span>
+            <span className="text-sm text-gray-600">
               Step {currentStep} de {STEPS_CONFIG.length}
             </span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-3">
+          <div className="w-full bg-gray-200 rounded-full h-3">
             <div 
               className="bg-gradient-to-r from-purple-500 to-blue-500 h-3 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="text-center mt-2 text-slate-400 text-sm">
+          <div className="text-center mt-2 text-gray-600 text-sm">
             {progress.toFixed(1)}% concluído
           </div>
         </div>
 
         {/* Info do Step Atual */}
         {currentStepConfig && (
-          <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+          <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="flex items-center space-x-3 mb-2">
                   <span className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-medium">
                     {currentStepConfig.category}
                   </span>
-                  <span className="text-slate-400 text-sm">
+                  <span className="text-gray-600 text-sm">
                     {currentStepConfig.questionsCount} questões
                   </span>
                 </div>
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-gray-900">
                   {currentStepConfig.title}
                 </h3>
-                <p className="text-slate-300">
+                <p className="text-gray-700">
                   {currentStepConfig.subtitle}
                 </p>
               </div>
-              <div className="flex items-center space-x-2 text-slate-400">
+              <div className="flex items-center space-x-2 text-gray-600">
                 <Clock className="w-4 h-4" />
                 <span className="text-sm">~{currentStepConfig.estimatedTime} min</span>
               </div>
@@ -379,17 +379,17 @@ const PsychologicalFormDebug: React.FC<PsychologicalFormProps> = ({
       </div>
 
       {/* Conteúdo do Step */}
-      <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 mb-8">
+      <div className="bg-gray-50 backdrop-blur-md rounded-3xl border border-gray-200 p-8 mb-8">
         {renderCurrentStep()}
       </div>
 
       {/* Navegação */}
-      <div className="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-6">
+      <div className="bg-gray-50 backdrop-blur-md rounded-3xl border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <button
             onClick={goToPreviousStep}
             disabled={currentStep === 1}
-            className="flex items-center px-6 py-3 text-slate-300 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Step Anterior
@@ -404,7 +404,7 @@ const PsychologicalFormDebug: React.FC<PsychologicalFormProps> = ({
                     ? 'bg-purple-500 w-8'
                     : step.id < currentStep
                     ? 'bg-green-500'
-                    : 'bg-slate-600'
+                    : 'bg-gray-300'
                 }`}
               />
             ))}

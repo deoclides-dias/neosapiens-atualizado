@@ -213,20 +213,20 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
             <Zap className="w-8 h-8 text-white" />
           </div>
         </div>
-        <h2 className="text-3xl font-bold text-white mb-2">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
           Neuroticismo
         </h2>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           Como você lida com estresse, emoções intensas e adversidades?
         </p>
         
         {/* Barra de Progresso */}
         <div className="mt-6 max-w-md mx-auto">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-slate-400 text-sm">Progresso do Step</span>
-            <span className="text-slate-400 text-sm">{Math.round(progress)}%</span>
+            <span className="text-gray-600 text-sm">Progresso do Step</span>
+            <span className="text-gray-600 text-sm">{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-gray-100 rounded-full h-2">
             <div 
               className="bg-gradient-to-r from-red-500 to-pink-500 h-2 rounded-full transition-all duration-500"
               style={{ width: `${progress}%` }}
@@ -238,19 +238,19 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
         {isComplete && (
           <div className="mt-4 p-4 bg-gradient-to-r from-red-500/20 to-pink-500/20 rounded-xl border border-red-500/30">
             <div className="flex items-center justify-center space-x-3 mb-2">
-              <Brain className="w-5 h-5 text-red-400" />
-              <span className="text-white font-medium">
-                Seu Score de Neuroticismo: <span className="text-2xl font-bold text-red-300">{neuroticismScore}</span>/100
+              <Brain className="w-5 h-5 text-red-600" />
+              <span className="text-gray-900 font-medium">
+                Seu Score de Neuroticismo: <span className="text-2xl font-bold text-red-700">{neuroticismScore}</span>/100
               </span>
-              <Shield className="w-5 h-5 text-pink-400" />
+              <Shield className="w-5 h-5 text-pink-600" />
             </div>
             <div className={`text-${interpretation.color}-400 text-sm font-medium`}>
               {interpretation.level}: {interpretation.desc}
             </div>
-            <div className="mt-2 text-slate-300 text-xs">
+            <div className="mt-2 text-gray-700 text-xs">
               Perfil: <span className={`font-bold text-${interpretation.color}-300`}>{interpretation.type}</span>
             </div>
-            <div className="mt-1 text-slate-400 text-xs">
+            <div className="mt-1 text-gray-600 text-xs">
               {interpretation.stability}
             </div>
           </div>
@@ -269,7 +269,7 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
                 ? 'bg-red-500 text-white scale-110'
                 : answers[index] > 0
                 ? 'bg-green-500 text-white'
-                : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }
             `}
           >
@@ -293,27 +293,27 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
 
       {/* Perfil de estabilidade emocional (se completo) */}
       {isComplete && (
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="text-white font-medium mb-4 flex items-center">
-            <TrendingUp className="w-5 h-5 text-red-400 mr-2" />
+        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+            <TrendingUp className="w-5 h-5 text-red-600 mr-2" />
             Perfil de Estabilidade Emocional
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {interpretation.type === "MUITO ESTÁVEL" && (
               <>
-                <div className="flex items-center text-emerald-400">
+                <div className="flex items-center text-emerald-600">
                   <Shield className="w-4 h-4 mr-2" />
                   <span className="text-sm">Resiliência excepcional</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Brain className="w-4 h-4 mr-2" />
                   <span className="text-sm">Controle emocional alto</span>
                 </div>
-                <div className="flex items-center text-emerald-400">
+                <div className="flex items-center text-emerald-600">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   <span className="text-sm">Recuperação rápida</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="text-sm">Baixa reatividade</span>
                 </div>
@@ -321,19 +321,19 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
             )}
             {interpretation.type === "ESTÁVEL" && (
               <>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Shield className="w-4 h-4 mr-2" />
                   <span className="text-sm">Boa resiliência</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Brain className="w-4 h-4 mr-2" />
                   <span className="text-sm">Autocontrole desenvolvido</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   <span className="text-sm">Otimismo natural</span>
                 </div>
-                <div className="flex items-center text-green-400">
+                <div className="flex items-center text-green-600">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="text-sm">Calma sob pressão</span>
                 </div>
@@ -341,19 +341,19 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
             )}
             {interpretation.type === "EQUILIBRADO" && (
               <>
-                <div className="flex items-center text-yellow-400">
+                <div className="flex items-center text-amber-600">
                   <Shield className="w-4 h-4 mr-2" />
                   <span className="text-sm">Resiliência situacional</span>
                 </div>
-                <div className="flex items-center text-yellow-400">
+                <div className="flex items-center text-amber-600">
                   <Brain className="w-4 h-4 mr-2" />
                   <span className="text-sm">Sensibilidade balanceada</span>
                 </div>
-                <div className="flex items-center text-yellow-400">
+                <div className="flex items-center text-amber-600">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   <span className="text-sm">Reações proporcionais</span>
                 </div>
-                <div className="flex items-center text-yellow-400">
+                <div className="flex items-center text-amber-600">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="text-sm">Adaptabilidade emocional</span>
                 </div>
@@ -361,19 +361,19 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
             )}
             {(interpretation.type === "MODERADAMENTE SENSÍVEL" || interpretation.type === "ALTAMENTE SENSÍVEL") && (
               <>
-                <div className="flex items-center text-orange-400">
+                <div className="flex items-center text-orange-600">
                   <Shield className="w-4 h-4 mr-2" />
                   <span className="text-sm">Sensibilidade elevada</span>
                 </div>
-                <div className="flex items-center text-red-400">
+                <div className="flex items-center text-red-600">
                   <Brain className="w-4 h-4 mr-2" />
                   <span className="text-sm">Reações emocionais intensas</span>
                 </div>
-                <div className="flex items-center text-orange-400">
+                <div className="flex items-center text-orange-600">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   <span className="text-sm">Empatia profunda</span>
                 </div>
-                <div className="flex items-center text-red-400">
+                <div className="flex items-center text-red-600">
                   <Zap className="w-4 h-4 mr-2" />
                   <span className="text-sm">Alta reatividade</span>
                 </div>
@@ -382,9 +382,9 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
           </div>
           
           {/* Dicas de desenvolvimento */}
-          <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
-            <h4 className="text-slate-300 text-sm font-medium mb-2">💡 Insights para Desenvolvimento:</h4>
-            <div className="text-slate-400 text-xs">
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <h4 className="text-gray-700 text-sm font-medium mb-2">💡 Insights para Desenvolvimento:</h4>
+            <div className="text-gray-600 text-xs">
               {neuroticismScore >= 65 && "Considere técnicas de mindfulness, respiração e terapia para maior equilíbrio emocional."}
               {neuroticismScore >= 50 && neuroticismScore < 65 && "Seu equilíbrio emocional é bom. Continue desenvolvendo estratégias de autorregulação."}
               {neuroticismScore < 50 && "Sua estabilidade emocional é um ponto forte. Use-a para apoiar outros em momentos difíceis."}
@@ -401,8 +401,8 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === 0
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -410,7 +410,7 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
           Questão Anterior
         </button>
 
-        <div className="text-slate-400 text-sm">
+        <div className="text-gray-600 text-sm">
           Questão {currentQuestion + 1} de {NEUROTICISM_QUESTIONS.length}
         </div>
 
@@ -420,8 +420,8 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
           className={`
             flex items-center px-4 py-2 rounded-lg transition-colors
             ${currentQuestion === NEUROTICISM_QUESTIONS.length - 1
-              ? 'text-slate-500 cursor-not-allowed'
-              : 'text-slate-300 hover:text-white hover:bg-slate-700'
+              ? 'text-gray-500 cursor-not-allowed'
+              : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
             }
           `}
         >
@@ -431,26 +431,26 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
       </div>
 
       {/* Botões de navegação do step */}
-      <div className="flex items-center justify-between pt-8 border-t border-slate-700">
+      <div className="flex items-center justify-between pt-8 border-t border-gray-200">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 text-slate-300 hover:text-white transition-colors"
+          className="flex items-center px-6 py-3 text-gray-700 hover:text-gray-900 transition-colors"
         >
           <ChevronLeft className="w-4 h-4 mr-2" />
           Step Anterior
         </button>
 
         <div className="text-center">
-          <div className="text-slate-400 text-sm mb-1">
+          <div className="text-gray-600 text-sm mb-1">
             {answers.filter(a => a > 0).length} de {NEUROTICISM_QUESTIONS.length} questões respondidas
           </div>
           {!canProceed && (
-            <div className="text-amber-400 text-xs">
+            <div className="text-amber-600 text-xs">
               ⚠️ Responda todas as questões para continuar
             </div>
           )}
           {isComplete && (
-            <div className="text-green-400 text-xs">
+            <div className="text-green-600 text-xs">
               🎉 Big Five completo! Próximo: DISC + VARK
             </div>
           )}
@@ -463,7 +463,7 @@ const Step5_Neuroticism: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-lg font-medium transition-all
             ${canProceed
               ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white hover:shadow-lg hover:scale-105'
-              : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-500 cursor-not-allowed'
             }
           `}
         >
