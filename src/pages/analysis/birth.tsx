@@ -4,18 +4,17 @@ import { useRouter } from 'next/router';
 import { Calendar, Clock, MapPin, Save } from 'lucide-react';
 import AnalysisLayout from '../../components/ui/AnalysisLayout';
 import FormCard from '../../components/ui/FormCard';
+import PlaceAutocomplete, { BirthPlace } from '../../components/forms/PlaceAutocomplete';
+import { formatUtcOffset, utcOffsetForLocalTime } from '../../utils/timezone';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 
 interface BirthData {
   fullName: string;
   birthDate: string;
   birthTime: string;
-  birthPlace: {
-    city: string;
-    state: string;
-    country: string;
-    latitude?: number;
-    longitude?: number;
+  birthPlace: BirthPlace & {
+    utcOffset?: string;
+    utcOffsetMinutes?: number;
   };
 }
 
@@ -42,10 +41,27 @@ const BirthAnalysis = () => {
     setLoading(true);
     setError(null);
 
+    if (!formData.birthPlace.city) {
+      setError('Escolha a cidade de nascimento na lista de sugestões.');
+      setLoading(false);
+      return;
+    }
+
     try {
-      console.log('💾 Salvando dados de nascimento:', formData);
-      
-      const success = await markAnalysisComplete('birth', formData);
+      // Offset UTC histórico na data/hora do nascimento (inclui horário de verão)
+      const place = { ...formData.birthPlace };
+      if (place.timezone) {
+        const minutes = utcOffsetForLocalTime(place.timezone, formData.birthDate, formData.birthTime);
+        if (minutes !== null) {
+          place.utcOffsetMinutes = minutes;
+          place.utcOffset = formatUtcOffset(minutes);
+        }
+      }
+      const payload = { ...formData, birthPlace: place };
+
+      console.log('💾 Salvando dados de nascimento:', payload);
+
+      const success = await markAnalysisComplete('birth', payload);
       
       if (success) {
         console.log('✅ Dados salvos com sucesso');
@@ -65,16 +81,6 @@ const BirthAnalysis = () => {
     setFormData(prev => ({
       ...prev,
       [field]: value
-    }));
-  };
-
-  const handlePlaceChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      birthPlace: {
-        ...prev.birthPlace,
-        [field]: value
-      }
     }));
   };
 
@@ -148,43 +154,12 @@ const BirthAnalysis = () => {
               Local de Nascimento
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>Cidade</label>
-                <input
-                  type="text"
-                  value={formData.birthPlace.city}
-                  onChange={(e) => handlePlaceChange('city', e.target.value)}
-                  className={inputClass}
-                  placeholder="Ex: São Luís"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className={labelClass}>Estado/Região</label>
-                <input
-                  type="text"
-                  value={formData.birthPlace.state}
-                  onChange={(e) => handlePlaceChange('state', e.target.value)}
-                  className={inputClass}
-                  placeholder="Ex: MA"
-                  required
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className={labelClass}>País</label>
-                <input
-                  type="text"
-                  value={formData.birthPlace.country}
-                  onChange={(e) => handlePlaceChange('country', e.target.value)}
-                  className={inputClass}
-                  placeholder="Brasil"
-                  required
-                />
-              </div>
-            </div>
+            <PlaceAutocomplete
+              value={formData.birthPlace}
+              onChange={(place) => setFormData((prev) => ({ ...prev, birthPlace: place }))}
+              inputClass={inputClass}
+              labelClass={labelClass}
+            />
           </section>
 
           {error && (
