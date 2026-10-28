@@ -313,11 +313,11 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
               <Flame className={`w-8 h-8 text-${getElementColor(currentElement)}-400`} />
             )}
           </div>
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-gray-900">
             Elemento {currentElement === 'WOOD' ? 'Madeira' : 'Fogo'}
           </h2>
         </div>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           {currentElement === 'WOOD' 
             ? 'Explore sua conexão com crescimento, visão, liderança e desenvolvimento pessoal.'
             : 'Descubra sua afinidade com comunicação, relacionamentos, alegria e conexões sociais.'
@@ -325,7 +325,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
         </p>
 
         {/* Progress Bar */}
-        <div className="bg-slate-800 rounded-full h-3 overflow-hidden">
+        <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
           <div 
             className={`bg-gradient-to-r ${currentElement === 'WOOD' 
               ? 'from-emerald-500 to-green-500' 
@@ -334,7 +334,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-slate-400 text-sm">
+        <p className="text-gray-600 text-sm">
           {answers.filter(answer => answer > 0).length} de {MTC_WOOD_FIRE_QUESTIONS.length} questões respondidas
         </p>
       </div>
@@ -350,7 +350,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${currentElement === 'WOOD'
               ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -366,7 +366,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${currentElement === 'FIRE'
               ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -391,7 +391,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
                   ? `bg-${getElementColor(currentElement)}-500 text-white scale-110`
                   : answers[index] > 0
                   ? 'bg-green-500 text-white'
-                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }
               `}
             >
@@ -416,9 +416,9 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
 
       {/* Perfil dos elementos identificado (se completo) */}
       {isComplete && (
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="text-white font-medium mb-4 flex items-center">
-            <Sun className="w-5 h-5 text-yellow-400 mr-2" />
+        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+            <Sun className="w-5 h-5 text-amber-600 mr-2" />
             Perfil Elemental Identificado
           </h3>
           
@@ -428,33 +428,33 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
               <h4 className={`text-${interpretation.element === 'WOOD' ? 'emerald' : interpretation.element === 'FIRE' ? 'red' : 'yellow'}-400 font-medium mb-2`}>
                 {interpretation.type}
               </h4>
-              <p className="text-slate-300 text-sm mb-4">{interpretation.description}</p>
+              <p className="text-gray-700 text-sm mb-4">{interpretation.description}</p>
               
               {/* Scores dos elementos */}
               <div className="flex space-x-4 mb-4">
                 <div className="text-center">
-                  <div className="text-emerald-400 text-2xl font-bold flex items-center justify-center">
+                  <div className="text-emerald-600 text-2xl font-bold flex items-center justify-center">
                     <TreePine className="w-6 h-6 mr-1" />
                     {scores.WOOD}%
                   </div>
-                  <div className="text-slate-400 text-sm">Madeira</div>
+                  <div className="text-gray-600 text-sm">Madeira</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-red-400 text-2xl font-bold flex items-center justify-center">
+                  <div className="text-red-600 text-2xl font-bold flex items-center justify-center">
                     <Flame className="w-6 h-6 mr-1" />
                     {scores.FIRE}%
                   </div>
-                  <div className="text-slate-400 text-sm">Fogo</div>
+                  <div className="text-gray-600 text-sm">Fogo</div>
                 </div>
               </div>
             </div>
 
             {/* Características */}
             <div>
-              <h5 className="text-white font-medium mb-3">Características Identificadas:</h5>
+              <h5 className="text-gray-900 font-medium mb-3">Características Identificadas:</h5>
               <div className="space-y-2">
                 {interpretation.characteristics.map((char, idx) => (
-                  <div key={idx} className="flex items-center text-green-400">
+                  <div key={idx} className="flex items-center text-green-600">
                     {interpretation.element === 'WOOD' ? (
                       <Sprout className="w-4 h-4 mr-2" />
                     ) : interpretation.element === 'FIRE' ? (
@@ -468,9 +468,9 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
               </div>
 
               {/* Dicas de desenvolvimento */}
-              <div className="mt-4 p-3 bg-slate-700/30 rounded-lg">
-                <h6 className="text-yellow-400 font-medium text-sm mb-2">💡 Dica de Desenvolvimento:</h6>
-                <p className="text-slate-300 text-xs">
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <h6 className="text-amber-600 font-medium text-sm mb-2">💡 Dica de Desenvolvimento:</h6>
+                <p className="text-gray-700 text-xs">
                   {interpretation.element === 'WOOD' 
                     ? "Desenvolva mais sua capacidade de conexão emocional e comunicação calorosa para equilibrar sua energia de crescimento."
                     : interpretation.element === 'FIRE'
@@ -488,7 +488,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
       <div className="flex justify-between pt-8">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors"
+          className="flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl transition-colors"
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           Anterior
@@ -501,7 +501,7 @@ const Step7_MtcWoodFire: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${canProceed
               ? `bg-gradient-to-r from-${getElementColor(currentElement)}-500 to-${currentElement === 'WOOD' ? 'green' : 'orange'}-500 hover:from-${getElementColor(currentElement)}-600 hover:to-${currentElement === 'WOOD' ? 'green' : 'orange'}-600 text-white`
-              : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-600 cursor-not-allowed'
             }
           `}
         >

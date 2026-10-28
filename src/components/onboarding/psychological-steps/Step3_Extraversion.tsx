@@ -205,24 +205,24 @@ const Step3_Extraversion: React.FC<StepProps> = ({
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center space-x-3">
           <div className="bg-blue-500/20 p-3 rounded-xl">
-            <Users className="w-8 h-8 text-blue-400" />
+            <Users className="w-8 h-8 text-blue-600" />
           </div>
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-gray-900">
             Extroversão
           </h2>
         </div>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           Explore como você interage com o mundo social e de onde vem sua energia.
         </p>
 
         {/* Progress Bar */}
-        <div className="bg-slate-800 rounded-full h-3 overflow-hidden">
+        <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
           <div 
             className="bg-gradient-to-r from-blue-500 to-purple-500 h-full transition-all duration-700 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-slate-400 text-sm">
+        <p className="text-gray-600 text-sm">
           {answers.filter(answer => answer > 0).length} de {EXTRAVERSION_QUESTIONS.length} questões respondidas
         </p>
       </div>
@@ -239,7 +239,7 @@ const Step3_Extraversion: React.FC<StepProps> = ({
                 ? 'bg-blue-500 text-white scale-110'
                 : answers[index] > 0
                 ? 'bg-green-500 text-white'
-                : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }
             `}
           >
@@ -263,25 +263,25 @@ const Step3_Extraversion: React.FC<StepProps> = ({
 
       {/* Perfil social identificado (se completo) */}
       {isComplete && (
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="text-white font-medium mb-4 flex items-center">
-            <Zap className="w-5 h-5 text-blue-400 mr-2" />
+        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+            <Zap className="w-5 h-5 text-blue-600 mr-2" />
             Perfil Social Identificado
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="text-blue-400 font-medium mb-2">{interpretation.type}</h4>
-              <p className="text-slate-300 text-sm mb-4">{interpretation.description}</p>
+              <h4 className="text-blue-600 font-medium mb-2">{interpretation.type}</h4>
+              <p className="text-gray-700 text-sm mb-4">{interpretation.description}</p>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-400 mb-1">{score}/100</div>
-                <div className="text-slate-400 text-sm">Score de Extroversão</div>
+                <div className="text-3xl font-bold text-blue-600 mb-1">{score}/100</div>
+                <div className="text-gray-600 text-sm">Score de Extroversão</div>
               </div>
             </div>
             <div>
-              <h5 className="text-white font-medium mb-3">Características Identificadas:</h5>
+              <h5 className="text-gray-900 font-medium mb-3">Características Identificadas:</h5>
               <div className="grid grid-cols-2 gap-2">
                 {interpretation.characteristics.map((char, idx) => (
-                  <div key={idx} className="flex items-center text-green-400">
+                  <div key={idx} className="flex items-center text-green-600">
                     <MessageCircle className="w-4 h-4 mr-2" />
                     <span className="text-sm">{char}</span>
                   </div>
@@ -296,7 +296,7 @@ const Step3_Extraversion: React.FC<StepProps> = ({
       <div className="flex justify-between pt-8">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors"
+          className="flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl transition-colors"
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           Anterior
@@ -309,7 +309,7 @@ const Step3_Extraversion: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${canProceed
               ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
-              : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-600 cursor-not-allowed'
             }
           `}
         >

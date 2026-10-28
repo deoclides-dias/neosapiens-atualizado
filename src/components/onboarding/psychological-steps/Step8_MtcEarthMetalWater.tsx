@@ -393,11 +393,11 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
           <div className={`bg-${getElementColor(currentElement)}-500/20 p-3 rounded-xl`}>
             {getElementIcon(currentElement)}
           </div>
-          <h2 className="text-3xl font-bold text-white">
+          <h2 className="text-3xl font-bold text-gray-900">
             Elemento {getElementName(currentElement)}
           </h2>
         </div>
-        <p className="text-slate-300 text-lg max-w-2xl mx-auto">
+        <p className="text-gray-700 text-lg max-w-2xl mx-auto">
           {currentElement === 'EARTH' 
             ? 'Explore sua conexão com estabilidade, nutrição, mediação e acolhimento.'
             : currentElement === 'METAL'
@@ -407,7 +407,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
         </p>
 
         {/* Progress Bar */}
-        <div className="bg-slate-800 rounded-full h-3 overflow-hidden">
+        <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
           <div 
             className={`bg-gradient-to-r ${
               currentElement === 'EARTH' 
@@ -419,7 +419,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
             style={{ width: `${progress}%` }}
           />
         </div>
-        <p className="text-slate-400 text-sm">
+        <p className="text-gray-600 text-sm">
           {answers.filter(answer => answer > 0).length} de {MTC_EARTH_METAL_WATER_QUESTIONS.length} questões respondidas
         </p>
       </div>
@@ -435,7 +435,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
             flex items-center px-4 py-3 rounded-xl transition-all font-medium text-sm
             ${currentElement === 'EARTH'
               ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -451,7 +451,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
             flex items-center px-4 py-3 rounded-xl transition-all font-medium text-sm
             ${currentElement === 'METAL'
               ? 'bg-gradient-to-r from-slate-500 to-gray-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -467,7 +467,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
             flex items-center px-4 py-3 rounded-xl transition-all font-medium text-sm
             ${currentElement === 'WATER'
               ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }
           `}
         >
@@ -505,7 +505,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
                   ? `bg-${getElementColor(currentElement)}-500 text-white scale-110`
                   : answers[index] > 0
                   ? 'bg-green-500 text-white'
-                  : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }
               `}
             >
@@ -530,9 +530,9 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
 
       {/* Perfil dos elementos identificado (se completo) */}
       {isComplete && (
-        <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700/50">
-          <h3 className="text-white font-medium mb-4 flex items-center">
-            <Globe className="w-5 h-5 text-purple-400 mr-2" />
+        <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+          <h3 className="text-gray-900 font-medium mb-4 flex items-center">
+            <Globe className="w-5 h-5 text-purple-600 mr-2" />
             Perfil Elemental Final Identificado
           </h3>
           
@@ -547,40 +547,40 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
               }-400 font-medium mb-2`}>
                 {interpretation.type}
               </h4>
-              <p className="text-slate-300 text-sm mb-4">{interpretation.description}</p>
+              <p className="text-gray-700 text-sm mb-4">{interpretation.description}</p>
               
               {/* Scores dos elementos */}
               <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className="text-center">
-                  <div className="text-amber-400 text-xl font-bold flex items-center justify-center">
+                  <div className="text-amber-600 text-xl font-bold flex items-center justify-center">
                     <Mountain className="w-5 h-5 mr-1" />
                     {scores.EARTH}%
                   </div>
-                  <div className="text-slate-400 text-xs">Terra</div>
+                  <div className="text-gray-600 text-xs">Terra</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-slate-400 text-xl font-bold flex items-center justify-center">
+                  <div className="text-gray-600 text-xl font-bold flex items-center justify-center">
                     <Coins className="w-5 h-5 mr-1" />
                     {scores.METAL}%
                   </div>
-                  <div className="text-slate-400 text-xs">Metal</div>
+                  <div className="text-gray-600 text-xs">Metal</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-blue-400 text-xl font-bold flex items-center justify-center">
+                  <div className="text-blue-600 text-xl font-bold flex items-center justify-center">
                     <Waves className="w-5 h-5 mr-1" />
                     {scores.WATER}%
                   </div>
-                  <div className="text-slate-400 text-xs">Água</div>
+                  <div className="text-gray-600 text-xs">Água</div>
                 </div>
               </div>
             </div>
 
             {/* Características */}
             <div>
-              <h5 className="text-white font-medium mb-3">Características Identificadas:</h5>
+              <h5 className="text-gray-900 font-medium mb-3">Características Identificadas:</h5>
               <div className="space-y-2 mb-4">
                 {interpretation.characteristics.map((char, idx) => (
-                  <div key={idx} className="flex items-center text-green-400">
+                  <div key={idx} className="flex items-center text-green-600">
                     <Star className="w-4 h-4 mr-2" />
                     <span className="text-sm">{char}</span>
                   </div>
@@ -588,9 +588,9 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
               </div>
 
               {/* Dica de desenvolvimento */}
-              <div className="p-3 bg-slate-700/30 rounded-lg">
-                <h6 className="text-yellow-400 font-medium text-sm mb-2">💡 Dica de Desenvolvimento:</h6>
-                <p className="text-slate-300 text-xs">
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <h6 className="text-amber-600 font-medium text-sm mb-2">💡 Dica de Desenvolvimento:</h6>
+                <p className="text-gray-700 text-xs">
                   {interpretation.advice}
                 </p>
               </div>
@@ -598,12 +598,12 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
           </div>
 
           {/* Resumo completo dos 5 elementos */}
-          <div className="mt-6 p-4 bg-gradient-to-r from-purple-900/20 to-indigo-900/20 rounded-lg border border-purple-500/20">
-            <h4 className="text-purple-400 font-medium mb-3 flex items-center">
+          <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-500/20">
+            <h4 className="text-purple-600 font-medium mb-3 flex items-center">
               <Shield className="w-5 h-5 mr-2" />
               🎉 Parabéns! Avaliação Psicológica Completa
             </h4>
-            <p className="text-slate-300 text-sm">
+            <p className="text-gray-700 text-sm">
               Você concluiu todos os 8 steps da avaliação psicológica mais avançada disponível! 
               Seu perfil inclui Big Five, DISC, VARK e os 5 Elementos da MTC. 
               Agora você possui um mapeamento completo de sua personalidade, comportamento, 
@@ -617,7 +617,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
       <div className="flex justify-between pt-8">
         <button
           onClick={onPrevious}
-          className="flex items-center px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors"
+          className="flex items-center px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-xl transition-colors"
         >
           <ChevronLeft className="w-5 h-5 mr-2" />
           Anterior
@@ -630,7 +630,7 @@ const Step8_MtcEarthMetalWater: React.FC<StepProps> = ({
             flex items-center px-6 py-3 rounded-xl transition-all font-medium
             ${canProceed
               ? 'bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white'
-              : 'bg-slate-700 text-slate-400 cursor-not-allowed'
+              : 'bg-gray-100 text-gray-600 cursor-not-allowed'
             }
           `}
         >
