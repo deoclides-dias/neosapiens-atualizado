@@ -43,19 +43,28 @@ const ResultsHub = () => {
       
       const { data, error } = await supabase
         .from('onboarding_progress')
-        .select('birth_data_complete, biohacking_data_complete, personal_data_complete, cognitive_data_complete, step')
+        .select('birth_data_complete, biohacking_data_complete, psychological_data_complete, cognitive_data_complete')
         .eq('user_id', user?.id)
-        .single();
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
 
       if (error) throw error;
+
+      const completedCount = [
+        data?.birth_data_complete,
+        data?.biohacking_data_complete,
+        data?.psychological_data_complete,
+        data?.cognitive_data_complete
+      ].filter(Boolean).length;
       
       // Mapear dados para estrutura esperada
       const progressData = {
         birth_complete: data?.birth_data_complete || false,
         biohacking_complete: data?.biohacking_data_complete || false,
-        psychological_complete: data?.personal_data_complete || false, // Considerando personal_data como psychological
+        psychological_complete: data?.psychological_data_complete || false,
         cognitive_complete: data?.cognitive_data_complete || false,
-        overall_progress: data?.step ? (data.step / 5) * 100 : 0
+        overall_progress: Math.round((completedCount / 4) * 100)
       };
       
       setProgress(progressData);

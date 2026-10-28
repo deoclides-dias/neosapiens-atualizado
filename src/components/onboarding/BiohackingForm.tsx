@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { BiohackingData, BiohackingFormProps, BiohackingStep } from '../../types/biohacking';
 type Medication = { name: string; dosage: string; frequency: string; purpose: string };
-type Supplement = { name: string; dosage: string; frequency: string; purpose: string };
+type Supplement = { name: string; dosage: string; frequency: string; purpose: string; duration?: string };
 
 // 🔧 SOBRESCREVER interface BiohackingData localmente
 interface LocalBiohackingData extends Omit<BiohackingData, 'healthStatus'> {

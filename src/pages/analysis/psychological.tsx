@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Brain } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 import { useAuth } from '../../hooks/useAuth';
 import PsychologicalForm from '../../components/onboarding/PsychologicalForm';
 
 const PsychologicalAnalysisPage = () => {
   const router = useRouter();
   const { user } = useAuth();
+  const { markAnalysisComplete } = useAnalysisProgress();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleComplete = async (data: any) => {
@@ -18,73 +19,17 @@ const PsychologicalAnalysisPage = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
-      console.log('🧠 Salvando dados psicológicos:', data);
-      
-      // 1. SALVAR OS DADOS NO SUPABASE
-      const { data: existingData, error: fetchError } = await supabase
-        .from('onboarding_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
+      console.log('💾 Salvando dados psicológicos:', data);
 
-      if (fetchError) {
-        console.error('❌ Erro ao buscar dados existentes:', fetchError);
-        throw fetchError;
+      // Gravação centralizada em useAnalysisProgress (atualiza ou cria a linha)
+      const success = await markAnalysisComplete('psychological', data);
+      if (!success) {
+        throw new Error('Falha ao salvar no Supabase');
       }
 
-      // Preparar dados para salvar
-      const currentData = existingData?.[0]?.data || {};
-      const updatedData = {
-        ...currentData,
-        psychological: data // ← SALVAR COMO PARTE DO OBJETO DATA
-      };
-
-      const updateData = {
-        data: updatedData,
-        step: Math.max(existingData?.[0]?.step || 0, 3), // ← ATUALIZAR STEP
-        updated_at: new Date().toISOString()
-      };
-
-      let saveResult;
-      
-      if (existingData && existingData.length > 0) {
-        // Atualizar registro existente
-        const { error: updateError } = await supabase
-          .from('onboarding_progress')
-          .update(updateData)
-          .eq('user_id', user.id);
-          
-        if (updateError) {
-          console.error('❌ Erro ao atualizar:', updateError);
-          throw updateError;
-        }
-        console.log('✅ Dados psicológicos atualizados com sucesso');
-      } else {
-        // Criar novo registro
-        const { error: insertError } = await supabase
-          .from('onboarding_progress')
-          .insert({
-            user_id: user.id,
-            step: 3,
-            ...updateData,
-            created_at: new Date().toISOString()
-          });
-          
-        if (insertError) {
-          console.error('❌ Erro ao inserir:', insertError);
-          throw insertError;
-        }
-        console.log('✅ Novo registro psicológico criado com sucesso');
-      }
-
-      console.log('🎉 Avaliação psicológica salva com sucesso!');
-      
-      // 2. REDIRECIONAR DE VOLTA PARA O HUB
       router.push('/analysis');
-      
     } catch (error) {
       console.error('❌ Erro ao salvar dados psicológicos:', error);
       alert('Erro ao salvar dados. Tente novamente.');

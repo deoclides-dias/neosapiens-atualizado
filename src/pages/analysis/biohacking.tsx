@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { ArrowLeft, Activity } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 import { useAuth } from '../../hooks/useAuth';
 import BiohackingForm from '../../components/onboarding/BiohackingForm';
 
@@ -26,6 +26,7 @@ interface BiohackingPageData {
 const BiohackingAnalysisPage = () => {
   const router = useRouter();
   const { user } = useAuth();
+  const { markAnalysisComplete } = useAnalysisProgress();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleComplete = async (data: any) => {
@@ -35,66 +36,17 @@ const BiohackingAnalysisPage = () => {
     }
 
     setIsLoading(true);
-    
+
     try {
-      console.log('📊 Salvando dados do Biohacking:', data);
-      
-      // 1. SALVAR OS DADOS NO SUPABASE
-      const { data: existingData, error: fetchError } = await supabase
-        .from('onboarding_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('updated_at', { ascending: false })
-        .limit(1);
+      console.log('💾 Salvando dados de biohacking:', data);
 
-      if (fetchError) {
-        console.error('❌ Erro ao buscar dados existentes:', fetchError);
-        throw fetchError;
+      // Gravação centralizada em useAnalysisProgress (atualiza ou cria a linha)
+      const success = await markAnalysisComplete('biohacking', data);
+      if (!success) {
+        throw new Error('Falha ao salvar no Supabase');
       }
 
-      const updateData = {
-        biohacking_data: data,
-        biohacking_data_complete: true,
-        updated_at: new Date().toISOString()
-      };
-
-      let saveResult;
-      
-      if (existingData && existingData.length > 0) {
-        // Atualizar registro existente
-        const { error: updateError } = await supabase
-          .from('onboarding_progress')
-          .update(updateData)
-          .eq('user_id', user.id);
-          
-        if (updateError) {
-          console.error('❌ Erro ao atualizar:', updateError);
-          throw updateError;
-        }
-        console.log('✅ Dados atualizados com sucesso');
-      } else {
-        // Criar novo registro
-        const { error: insertError } = await supabase
-          .from('onboarding_progress')
-          .insert({
-            user_id: user.id,
-            step: 2,
-            ...updateData,
-            created_at: new Date().toISOString()
-          });
-          
-        if (insertError) {
-          console.error('❌ Erro ao inserir:', insertError);
-          throw insertError;
-        }
-        console.log('✅ Novo registro criado com sucesso');
-      }
-
-      console.log('🎉 Biohacking salvo com sucesso!');
-      
-      // 2. REDIRECIONAR DE VOLTA PARA O HUB
       router.push('/analysis');
-      
     } catch (error) {
       console.error('❌ Erro ao salvar dados de biohacking:', error);
       alert('Erro ao salvar dados. Tente novamente.');

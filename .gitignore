@@ -1,3 +1,8 @@
 node_modules/
 .next/
 .vercel/
+
+# Variáveis de ambiente locais (nunca versionar)
+.env*.local
+.env
+tsconfig.tsbuildinfo
