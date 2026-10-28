@@ -27,6 +27,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Destino após autenticar: ?next= (definido pelo RequireAuth) ou o hub
+  const nextParam = typeof router.query.next === 'string' ? router.query.next : '';
+  const redirectTo =
+    nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/analysis';
+
   // ============================================================================
   // HANDLER: LOGIN/SIGNUP COM EMAIL
   // ============================================================================
@@ -54,13 +59,18 @@ export default function AuthForm({ mode }: AuthFormProps) {
         }
 
         // ✅ USAR A FUNÇÃO DO HOOK
-        await signUpWithEmail(email, password);
-        
+        const { session } = await signUpWithEmail(email, password);
+
+        if (!session) {
+          // Confirmação de email ativa no Supabase: ainda não há sessão
+          setSuccess('Conta criada! Enviamos um link de confirmação para o seu email. Confirme e depois faça login.');
+          return;
+        }
+
         setSuccess('Conta criada com sucesso! Redirecionando...');
-        
-        // Aguardar um pouco antes de redirecionar
+
         setTimeout(() => {
-          router.push('/onboarding');
+          router.push(redirectTo);
         }, 1500);
         
       } else {
@@ -70,9 +80,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
         
         setSuccess('Login realizado! Redirecionando...');
         
-        // Aguardar um pouco antes de redirecionar
         setTimeout(() => {
-          router.push('/onboarding');
+          router.push(redirectTo);
         }, 1500);
       }
 

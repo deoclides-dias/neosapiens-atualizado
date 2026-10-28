@@ -79,15 +79,18 @@ export function useAuth() {
 
   const signUpWithEmail = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           emailRedirectTo: `${window.location.origin}/analysis`
         }
       });
-      
+
       if (error) throw error;
+
+      // session é null quando o Supabase exige confirmação de email
+      return { user: data.user, session: data.session };
     } catch (error) {
       console.error('Erro no cadastro:', error);
       throw error;
