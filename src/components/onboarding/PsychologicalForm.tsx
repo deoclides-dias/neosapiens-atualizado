@@ -274,8 +274,17 @@ const PsychologicalFormDebug: React.FC<PsychologicalFormProps> = ({
 
     return (
       <StepComponent
-        onComplete={handleStepComplete}
-        responses={responses[`step${currentStep}`] || {}}
+        // Contrato das etapas (psychological-steps/StepN_*.tsx):
+        // data, onDataChange, onNext, onPrevious
+        data={responses[`step${currentStep}`]}
+        onDataChange={async (stepData: number[]) => {
+          setResponses(prev => ({
+            ...prev,
+            [`step${currentStep}`]: stepData
+          }));
+        }}
+        onNext={async () => goToNextStep()}
+        onPrevious={goToPreviousStep}
       />
     );
   };

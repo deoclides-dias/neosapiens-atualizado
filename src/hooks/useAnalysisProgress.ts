@@ -238,15 +238,32 @@ function useAnalysisProgress() {
           break;
       }
 
-      const { error } = await supabase
+      // Buscar a linha do usuário (não há UNIQUE em user_id, então pegamos a mais recente)
+      const { data: existing, error: fetchError } = await supabase
         .from('onboarding_progress')
-        .update(updateData)
+        .select('id')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false })
         .limit(1);
 
+      if (fetchError) {
+        console.warn('⚠️ Erro ao buscar progresso:', fetchError);
+        throw fetchError;
+      }
+
+      // UPDATE sozinho não cria linha: para usuário novo ele afeta 0 linhas
+      // e não retorna erro. Por isso atualizamos pelo id ou inserimos.
+      const { error } = existing && existing.length > 0
+        ? await supabase
+            .from('onboarding_progress')
+            .update(updateData)
+            .eq('id', existing[0].id)
+        : await supabase
+            .from('onboarding_progress')
+            .insert({ user_id: user.id, ...updateData });
+
       if (error) {
-        console.warn('⚠️ Erro ao atualizar:', error);
+        console.warn('⚠️ Erro ao salvar progresso:', error);
         throw error;
       }
 
@@ -336,7 +353,6 @@ function useAnalysisProgress() {
           biohacking_data: null,
           psychological_data: null,
           cognitive_data: null,
-          data: null,
           updated_at: new Date().toISOString()
         })
         .eq('user_id', user.id);
