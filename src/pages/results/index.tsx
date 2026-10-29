@@ -101,7 +101,7 @@ const ResultsHub = () => {
     {
       id: 'psychological',
       title: 'Perfil Psicológico',
-      subtitle: 'Big Five & Padrões',
+      subtitle: 'Cinco Grandes Fatores',
       icon: Brain,
       color: 'purple',
       href: '/results/psychological',
