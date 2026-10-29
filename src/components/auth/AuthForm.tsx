@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../hooks/useAuth'; // ✅ USAR O HOOK
 import { Mail, Lock, AlertCircle, Loader } from 'lucide-react';
+import InAppBrowserNotice from './InAppBrowserNotice';
+import { detectInAppBrowser, InAppInfo } from '../../utils/inAppBrowser';
 
 interface AuthFormProps {
   mode: 'login' | 'signup';
@@ -31,6 +33,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const nextParam = typeof router.query.next === 'string' ? router.query.next : '';
   const redirectTo =
     nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/analysis';
+
+  // Navegador interno (WhatsApp, Instagram…): o Google bloqueia o login ali
+  const [inApp, setInApp] = useState<InAppInfo | null>(null);
+  useEffect(() => {
+    const info = detectInAppBrowser();
+    if (info.inApp) setInApp(info);
+  }, []);
 
   // Já autenticado (inclusive voltando do Google): segue para o destino
   useEffect(() => {
@@ -129,6 +138,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   
   const handleGoogleSignIn = async () => {
     setError('');
+    if (inApp) {
+      setError('O Google não permite entrar pelo navegador deste aplicativo. Use o aviso acima para abrir no navegador.');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     setGoogleLoading(true);
 
     try {
@@ -153,6 +167,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
     <div className="w-full max-w-md mx-auto p-6">
       <div className="bg-white rounded-2xl shadow-xl p-8">
         
+        {inApp && <InAppBrowserNotice info={inApp} />}
+
         {/* Header */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-2">

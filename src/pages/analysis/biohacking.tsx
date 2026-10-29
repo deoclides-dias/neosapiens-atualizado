@@ -5,6 +5,7 @@ import { Activity } from 'lucide-react';
 import AnalysisLayout from '../../components/ui/AnalysisLayout';
 import FormCard from '../../components/ui/FormCard';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
+import SensitiveDataConsent, { ConsentRecord } from '../../components/consent/SensitiveDataConsent';
 import { useAuth } from '../../hooks/useAuth';
 import BiohackingForm from '../../components/onboarding/BiohackingForm';
 
@@ -31,7 +32,7 @@ const BiohackingAnalysisPage = () => {
   const { markAnalysisComplete } = useAnalysisProgress();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleComplete = async (data: any) => {
+  const handleComplete = async (data: any, consent: ConsentRecord) => {
     if (!user?.id) {
       alert('Usuário não autenticado. Faça login novamente.');
       return;
@@ -43,7 +44,8 @@ const BiohackingAnalysisPage = () => {
       console.log('💾 Salvando dados de biohacking:', data);
 
       // Gravação centralizada em useAnalysisProgress (atualiza ou cria a linha)
-      const success = await markAnalysisComplete('biohacking', data);
+      // O registro do consentimento (LGPD) é salvo junto com os dados
+      const success = await markAnalysisComplete('biohacking', { ...data, _consentimento: consent });
       if (!success) {
         throw new Error('Falha ao salvar no Supabase');
       }
@@ -101,10 +103,22 @@ const BiohackingAnalysisPage = () => {
             </div>
           </div>
         ) : (
-          <BiohackingForm
-            onComplete={handleComplete}
-            onBack={handleBack}
-          />
+          <SensitiveDataConsent
+            dataLabel="informações de saúde"
+            scope="biohacking"
+            items={[
+              'medidas corporais, sono, alimentação e atividade física',
+              'condições de saúde, histórico familiar, medicamentos, suplementos e alergias',
+              'sintomas, níveis de estresse e de ansiedade',
+            ]}
+          >
+            {(consent) => (
+              <BiohackingForm
+                onComplete={(data: any) => handleComplete(data, consent)}
+                onBack={handleBack}
+              />
+            )}
+          </SensitiveDataConsent>
         )}
       </FormCard>
     </AnalysisLayout>
