@@ -6,7 +6,7 @@ import type { TraditionsResult } from '../../lib/astro';
 import { ELEMENT_HAN, SIGN_GLYPHS } from '../../lib/astro';
 import { integrationThemes, ThemeEvidence } from '../../lib/astro/interpretation';
 import { ELEMENT_COLORS } from './WuXingPentagram';
-import { Bars, Card, CardTitle, DarkPanel, Eyebrow, DISPLAY_FONT, HAN_FONT, SYMBOL_FONT } from './ui';
+import { Bars, Card, CardTitle, DarkPanel, DISPLAY_FONT, HAN_FONT, SYMBOL_FONT } from './ui';
 
 function Evidence({ e }: { e: ThemeEvidence }) {
   return (
@@ -89,8 +89,8 @@ export default function IntegrationTab({ result }: { result: TraditionsResult })
         </div>
       </Card>
 
-      <div className="flex flex-wrap gap-6 items-stretch">
-        <DarkPanel className="flex-[1_1_440px] min-w-0">
+      <div className="flex flex-col gap-6">
+        <DarkPanel>
           <h2 className="m-0 text-[26px] font-bold text-white" style={{ fontFamily: DISPLAY_FONT }}>Os elementos lado a lado</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2.5">
@@ -105,26 +105,9 @@ export default function IntegrationTab({ result }: { result: TraditionsResult })
           <p className="m-0 text-[13px] leading-relaxed text-purple-100">Os dois sistemas não se traduzem um no outro, mas podem apontar o mesmo padrão. É a tabela acima que diz onde concordam.</p>
         </DarkPanel>
 
-        <Card className="flex-[1_1_440px] min-w-0">
-          <Eyebrow>Próximo passo</Eyebrow>
-          <CardTitle>Ponte com a dimensão psicológica</CardTitle>
-          <p className="m-0 text-sm leading-relaxed text-gray-700">Hipóteses que as suas respostas da avaliação psicológica vão confirmar ou contestar:</p>
-          <div className="flex flex-col gap-2.5">
-            {themes.map((t) => (
-              <div key={t.id} className="flex justify-between gap-3 px-3.5 py-3 border border-gray-200 rounded-xl text-sm">
-                <span><strong>{t.title}</strong> ↔ {t.bridge}</span>
-                <span className="text-gray-600 whitespace-nowrap">a calcular</span>
-              </div>
-            ))}
-            <div className="flex justify-between gap-3 px-3.5 py-3 border border-gray-200 rounded-xl text-sm">
-              <span><strong>Pentagrama chinês</strong> ↔ 5 Elementos da MTC (etapas 7 e 8)</span>
-              <span className="text-gray-600 whitespace-nowrap">a calcular</span>
-            </div>
-          </div>
-        </Card>
       </div>
 
-      <p className="m-0 text-xs text-purple-200">Leituras simbólicas das tradições, para autoconhecimento. As correlações com a psicologia serão apresentadas como hipóteses, não como diagnóstico.</p>
+      <p className="m-0 text-xs text-purple-200">Leituras simbólicas das tradições, para autoconhecimento. A integração com corpo, mente e propósito virá quando todas as dimensões estiverem prontas.</p>
     </div>
   );
 }
