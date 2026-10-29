@@ -47,13 +47,14 @@ export function useAuth() {
     };
   }, []);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (next: string = '/analysis') => {
     try {
+      // Volta para /auth/login, que conclui a sessão e segue para `next`
+      // (ou mostra o erro devolvido pelo Google/Supabase, em vez de engoli-lo)
+      const redirectTo = `${window.location.origin}/auth/login?next=${encodeURIComponent(next)}`;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/analysis`
-        }
+        options: { redirectTo }
       });
       
       if (error) throw error;
