@@ -11,6 +11,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 import { birthInputFromSaved, computeTraditions } from '../../lib/astro';
 import { formatDateBR } from '../../utils/dates';
+import { formatPersonName } from '../../utils/names';
 import WesternTab from '../../components/traditions/WesternTab';
 import ChineseTab from '../../components/traditions/ChineseTab';
 import NumerologyTab from '../../components/traditions/NumerologyTab';
@@ -99,7 +100,7 @@ export default function TraditionsResults() {
             <h1 className="m-0 text-4xl sm:text-5xl leading-tight font-semibold text-white" style={{ fontFamily: DISPLAY_FONT }}>Seu Mapa das Tradições</h1>
             {input && (
               <p className="m-0 text-[15px] text-purple-100">
-                {input.fullName} · {formatDateBR(input.date)} às {input.time} ({formatOffset(input.utcOffsetMinutes)}) · {input.placeName} · {input.latitude.toFixed(4).replace('.', ',')}°, {input.longitude.toFixed(4).replace('.', ',')}°
+                {formatPersonName(input.fullName)} · {formatDateBR(input.date)} às {input.time} ({formatOffset(input.utcOffsetMinutes)}) · {input.placeName} · {input.latitude.toFixed(4).replace('.', ',')}°, {input.longitude.toFixed(4).replace('.', ',')}°
               </p>
             )}
           </header>
