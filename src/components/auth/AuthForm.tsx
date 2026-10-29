@@ -3,7 +3,7 @@
 // 🔧 CORREÇÃO: Usar useAuth hook ao invés de imports diretos que não existem
 // ============================================================================
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../hooks/useAuth'; // ✅ USAR O HOOK
 import { Mail, Lock, AlertCircle, Loader } from 'lucide-react';
@@ -16,7 +16,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   
   // ✅ USAR O HOOK useAuth QUE JÁ TEM TODAS AS FUNÇÕES
-  const { signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
+  const { user, loading: authLoading, signInWithEmail, signUpWithEmail, signInWithGoogle } = useAuth();
   
   // Estados locais do formulário
   const [email, setEmail] = useState('');
@@ -31,6 +31,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const nextParam = typeof router.query.next === 'string' ? router.query.next : '';
   const redirectTo =
     nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/analysis';
+
+  // Já autenticado (inclusive voltando do Google): segue para o destino
+  useEffect(() => {
+    if (!authLoading && user && router.isReady) {
+      router.replace(redirectTo);
+    }
+  }, [authLoading, user, router, redirectTo]);
+
+  // Erro devolvido no retorno do OAuth (?error_description= ou #error_description=)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search + '&' + window.location.hash.replace(/^#/, ''));
+    const desc = params.get('error_description');
+    if (desc) {
+      console.error('Erro no retorno do login com Google:', desc);
+      setError(`Não foi possível entrar com o Google: ${desc.replace(/\+/g, ' ')}`);
+    }
+  }, []);
 
   // ============================================================================
   // HANDLER: LOGIN/SIGNUP COM EMAIL
@@ -115,7 +133,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
     try {
       // ✅ USAR A FUNÇÃO DO HOOK
-      await signInWithGoogle();
+      await signInWithGoogle(redirectTo);
       
       // O redirect é automático via OAuth
       // Não precisa fazer nada aqui

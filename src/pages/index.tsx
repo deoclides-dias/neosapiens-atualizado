@@ -1,9 +1,11 @@
 // src/pages/index.tsx - BÁSICO PARA TESTAR
 import React from 'react';
 import { useRouter } from 'next/router';
+import { useAuth } from '../hooks/useAuth';
 
 const HomePage = () => {
   const router = useRouter();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center p-6">
@@ -26,7 +28,7 @@ const HomePage = () => {
         {/* Action Buttons */}
         <div className="space-y-4 mb-12">
           <button
-            onClick={() => router.push('/auth/login')}
+            onClick={() => router.push(user ? '/analysis' : '/auth/login')}
             className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-8 py-4 rounded-lg text-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-xl block w-full max-w-md mx-auto"
           >
             🚀 Iniciar Jornada
