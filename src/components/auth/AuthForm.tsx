@@ -307,6 +307,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
               </>
             )}
           </p>
+
+          <p className="mt-4 text-center text-xs text-gray-500">
+            Ao continuar, você concorda com a{' '}
+            <a href="/privacidade" className="text-purple-600 underline hover:text-purple-700">Política de Privacidade</a>.
+          </p>
         </div>
       </div>
     </div>
