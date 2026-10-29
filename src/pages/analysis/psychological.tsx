@@ -5,6 +5,7 @@ import { Brain } from 'lucide-react';
 import AnalysisLayout from '../../components/ui/AnalysisLayout';
 import FormCard from '../../components/ui/FormCard';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
+import SensitiveDataConsent, { ConsentRecord } from '../../components/consent/SensitiveDataConsent';
 import { useAuth } from '../../hooks/useAuth';
 import PsychologicalForm from '../../components/onboarding/PsychologicalForm';
 
@@ -14,7 +15,7 @@ const PsychologicalAnalysisPage = () => {
   const { markAnalysisComplete } = useAnalysisProgress();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleComplete = async (data: any) => {
+  const handleComplete = async (data: any, consent: ConsentRecord) => {
     if (!user?.id) {
       alert('Usuário não autenticado. Faça login novamente.');
       return;
@@ -26,7 +27,8 @@ const PsychologicalAnalysisPage = () => {
       console.log('💾 Salvando dados psicológicos:', data);
 
       // Gravação centralizada em useAnalysisProgress (atualiza ou cria a linha)
-      const success = await markAnalysisComplete('psychological', data);
+      // O registro do consentimento (LGPD) é salvo junto com os dados
+      const success = await markAnalysisComplete('psychological', { ...data, _consentimento: consent });
       if (!success) {
         throw new Error('Falha ao salvar no Supabase');
       }
@@ -84,9 +86,21 @@ const PsychologicalAnalysisPage = () => {
             </div>
           </div>
         ) : (
-          <PsychologicalForm
-            onComplete={handleComplete}
-          />
+          <SensitiveDataConsent
+            dataLabel="respostas psicológicas"
+            scope="psychological"
+            items={[
+              'traços de personalidade (Big Five)',
+              'estilos de comportamento e de aprendizagem (DISC e VARK)',
+              'padrões emocionais pela Medicina Tradicional Chinesa',
+            ]}
+          >
+            {(consent) => (
+              <PsychologicalForm
+                onComplete={(data: any) => handleComplete(data, consent)}
+              />
+            )}
+          </SensitiveDataConsent>
         )}
       </FormCard>
     </AnalysisLayout>
