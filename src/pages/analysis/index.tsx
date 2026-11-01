@@ -52,11 +52,11 @@ const AnalysisHub = () => {
     {
       id: 'psychological',
       title: 'Perfil Psicológico',
-      subtitle: 'Big Five & Padrões Mentais',
-      description: 'Explore sua personalidade profunda com avaliações científicas validadas que revelam seus padrões comportamentais e preferências únicas.',
+      subtitle: 'Cinco Grandes Fatores',
+      description: 'Vinte frases curtas de um questionário científico de personalidade (Mini-IPIP), com verificação da qualidade das respostas.',
       icon: Brain,
       color: 'purple',
-      estimatedTime: '15-20 min',
+      estimatedTime: '4-5 min',
       href: '/analysis/psychological',
       status: progress.psychological.completed ? 'completed' : 
               isAnalysisAvailable('psychological') ? 'available' : 'locked',
