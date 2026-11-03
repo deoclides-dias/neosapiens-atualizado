@@ -16,6 +16,8 @@ export interface Option {
   value: number | string;
   label: string;
   hint?: string;
+  /** Desenho ao lado da opção */
+  visual?: { kind: 'bristol' | 'urina'; value: number };
 }
 
 interface Base {
@@ -483,7 +485,7 @@ export const BLOCKS: Block[] = [
   },
   {
     id: 'digestao',
-    title: 'Digestão e intestino',
+    title: 'Digestão, intestino e urina',
     subtitle: 'Digestão',
     minutes: 2,
     questions: [
@@ -505,13 +507,13 @@ export const BLOCKS: Block[] = [
         text: 'Qual destes formatos é o mais comum nas suas fezes?',
         help: 'Escala de Bristol, usada no mundo todo por médicos e nutricionistas.',
         options: [
-          { value: 1, label: 'Tipo 1', hint: 'Caroços duros e separados, como bolinhas' },
-          { value: 2, label: 'Tipo 2', hint: 'Formato de salsicha, mas encaroçada' },
-          { value: 3, label: 'Tipo 3', hint: 'Formato de salsicha, com rachaduras na superfície' },
-          { value: 4, label: 'Tipo 4', hint: 'Formato de salsicha ou cobra, lisa e macia' },
-          { value: 5, label: 'Tipo 5', hint: 'Pedaços macios, com bordas bem definidas' },
-          { value: 6, label: 'Tipo 6', hint: 'Pedaços moles e pastosos, de bordas irregulares' },
-          { value: 7, label: 'Tipo 7', hint: 'Totalmente líquidas, sem pedaços sólidos' }
+          { value: 1, label: 'Tipo 1', visual: { kind: 'bristol', value: 1 }, hint: 'Caroços duros e separados, como bolinhas' },
+          { value: 2, label: 'Tipo 2', visual: { kind: 'bristol', value: 2 }, hint: 'Formato de salsicha, mas encaroçada' },
+          { value: 3, label: 'Tipo 3', visual: { kind: 'bristol', value: 3 }, hint: 'Formato de salsicha, com rachaduras na superfície' },
+          { value: 4, label: 'Tipo 4', visual: { kind: 'bristol', value: 4 }, hint: 'Formato de salsicha ou cobra, lisa e macia' },
+          { value: 5, label: 'Tipo 5', visual: { kind: 'bristol', value: 5 }, hint: 'Pedaços macios, com bordas bem definidas' },
+          { value: 6, label: 'Tipo 6', visual: { kind: 'bristol', value: 6 }, hint: 'Pedaços moles e pastosos, de bordas irregulares' },
+          { value: 7, label: 'Tipo 7', visual: { kind: 'bristol', value: 7 }, hint: 'Totalmente líquidas, sem pedaços sólidos' }
         ]
       },
       { id: 'esforco', kind: 'choice', layout: 'row', options: EFFORT, text: 'Com que frequência você precisa fazer muito esforço para evacuar?' },
@@ -519,6 +521,20 @@ export const BLOCKS: Block[] = [
       { id: 'inchaco', kind: 'choice', options: SYMPTOM, layout: 'row', text: 'Nas últimas 2 semanas, com que frequência teve inchaço na barriga?' },
       { id: 'azia', kind: 'choice', options: SYMPTOM, layout: 'row', text: 'E azia ou refluxo?' },
       { id: 'gases', kind: 'choice', options: SYMPTOM, layout: 'row', text: 'E gases que incomodam?' },
+      {
+        id: 'urina',
+        kind: 'choice',
+        text: 'Durante o dia, qual a cor mais comum da sua urina?',
+        help: 'Pense na urina do meio do dia, não na primeira da manhã, que costuma ser mais escura.',
+        options: [
+          { value: 1, label: 'Quase transparente', visual: { kind: 'urina', value: 1 } },
+          { value: 2, label: 'Amarelo bem claro, cor de palha', visual: { kind: 'urina', value: 2 } },
+          { value: 3, label: 'Amarelo', visual: { kind: 'urina', value: 3 } },
+          { value: 4, label: 'Amarelo-escuro', visual: { kind: 'urina', value: 4 } },
+          { value: 5, label: 'Âmbar, cor de mel', visual: { kind: 'urina', value: 5 } },
+          { value: 6, label: 'Marrom ou alaranjado-escuro', visual: { kind: 'urina', value: 6 } }
+        ]
+      },
       {
         id: 'agua',
         kind: 'choice',
@@ -662,6 +678,11 @@ export const SOURCES = [
     label: 'Teste de Sentar-Levantar e equilíbrio em um pé',
     text: 'Brito, L. B. B. et al. (2012), European Journal of Preventive Cardiology, doi 10.1177/2047487312471759; Araújo, C. G. et al. (2022), British Journal of Sports Medicine.',
     url: 'https://doi.org/10.1136/bjsports-2021-105360'
+  },
+  {
+    label: 'Cor da urina',
+    text: 'Armstrong, L. E. et al. (1994). Urinary indices of hydration status. International Journal of Sport Nutrition, 4(3), 265–279. As amostras de cor do NeoSapiens são aproximadas.',
+    url: 'https://doi.org/10.1123/ijsn.4.3.265'
   },
   {
     label: 'Cafeína e sono',

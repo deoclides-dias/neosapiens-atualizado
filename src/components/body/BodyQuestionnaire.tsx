@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, ArrowLeft, Check, ChevronRight, RotateCcw } from 'lucide-react';
 import { Answer, BLOCKS, Block, BodyAnswers, Question, isAnswered, visibleQuestions } from '../../lib/body/questions';
+import { BristolIcon, Swatch, URINE_COLORS } from './Visuals';
 import { BODY_VERSION, BodyData, BodyQuality, checkBodyQuality } from '../../lib/body/scoring';
 
 interface Props {
@@ -64,7 +65,17 @@ function Field({
             onClick={() => onChange(o.value)}
             className={`${pill(value === o.value)} ${q.layout === 'row' ? '!px-1.5 !text-center leading-tight sm:!text-[13px] break-words min-w-0' : ''}`}
           >
-            {o.hint ? (
+            {o.visual ? (
+              <span className="flex items-center gap-3 py-1.5">
+                <span className={`shrink-0 grid place-items-center rounded-lg ${o.visual.kind === 'bristol' ? 'w-[104px] h-11 bg-amber-50/80' : 'w-10 h-12'}`}>
+                  {o.visual.kind === 'bristol' ? <BristolIcon type={o.visual.value} /> : <Swatch color={URINE_COLORS[o.visual.value]} />}
+                </span>
+                <span className="flex flex-col">
+                  <span className="font-semibold">{o.label}</span>
+                  {o.hint && <span className={value === o.value ? 'text-purple-100' : 'text-gray-600'}>{o.hint}</span>}
+                </span>
+              </span>
+            ) : o.hint ? (
               <span className="flex flex-col py-1.5">
                 <span className="font-semibold">{o.label}</span>
                 <span className={value === o.value ? 'text-purple-100' : 'text-gray-600'}>{o.hint}</span>

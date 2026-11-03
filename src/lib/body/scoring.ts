@@ -432,6 +432,21 @@ export function buildReport(a: BodyAnswers): BodyReport {
   if (n(a, 'luz_manha') < 3) flags.push({ id: 'luz', level: 'medio', label: 'Pouca luz do dia pela manhã', detail: 'Menos de 3 dias por semana.' });
   if (act.sittingAvg >= 480) flags.push({ id: 'sentado', level: 'atencao', label: 'Muito tempo sentado(a)', detail: `${hours(act.sittingAvg)} por dia, em média.` });
   if (n(a, 'agua') <= 3) flags.push({ id: 'agua', level: 'medio', label: 'Pouca água', detail: 'Menos de 4 copos por dia.' });
+  const urine = n(a, 'urina');
+  if (urine === 6)
+    flags.push({
+      id: 'urina',
+      level: 'atencao',
+      label: 'Urina marrom ou alaranjado-escura',
+      detail: 'Se for frequente e não melhorar ao beber mais água, procure um profissional de saúde: pode ter outras causas além de pouca água.'
+    });
+  else if (urine >= 4)
+    flags.push({
+      id: 'urina',
+      level: 'medio',
+      label: 'Urina escura',
+      detail: 'Costuma indicar pouca água. Vitaminas do complexo B, alguns alimentos e remédios também mudam a cor.'
+    });
   if (n(a, 'f_ultra') >= 5) flags.push({ id: 'ultra', level: 'atencao', label: 'Ultraprocessados frequentes', detail: '5 dias ou mais na semana.' });
   if (auditPositive) flags.push({ id: 'alcool', level: 'atencao', label: 'Consumo de álcool de risco', detail: `AUDIT-C ${audit} (limite ${female ? 3 : 4}).` });
   if (['cigarro', 'vape', 'outro'].includes(String(a.tabaco))) flags.push({ id: 'tabaco', level: 'atencao', label: 'Uso de tabaco ou nicotina', detail: 'Parar é a mudança de maior impacto na saúde.' });
@@ -454,6 +469,16 @@ export function buildReport(a: BodyAnswers): BodyReport {
       strength: 'moderada',
       seen: `Fezes mais duras ou pouco frequentes, apesar de fontes de fibra em ${fiber.score} de 100.`,
       science: 'Quando fibra e água já estão boas, vale investigar com um profissional: movimento, medicamentos e outras causas também influenciam.'
+    });
+  }
+  if (urine >= 4 && urine <= 5 && n(a, 'agua') <= 5) {
+    relations.push({
+      id: 'agua-urina',
+      title: 'Água e cor da urina',
+      strength: 'moderada',
+      seen: `Urina ${urine === 4 ? 'amarelo-escura' : 'cor de mel'} durante o dia, com ${n(a, 'agua') <= 3 ? 'menos de 4' : '4 a 6'} copos de água por dia.`,
+      science:
+        'Em pessoas saudáveis, a cor da urina acompanha razoavelmente bem a hidratação: amarelo-claro costuma indicar boa hidratação, e tons mais escuros, falta de água. A necessidade varia com calor, suor e atividade física.'
     });
   }
   if (n(a, 'bristol') >= 6 && n(a, 'f_ultra') >= 3.5) {
