@@ -5,12 +5,38 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, AlertTriangle, RotateCcw } from 'lucide-react';
-import { ITEMS, SCALE, Answers, Timings, buildResult, checkQuality, PsychologicalResult, QualityReport } from '../../lib/psych/miniIpip';
+import { ITEMS, SCALE, SCALE_IDEAL, Answers, Timings, Mode, checkQuality, QualityReport } from '../../lib/psych/miniIpip';
 
 interface Props {
   draftKey: string;
-  onComplete: (result: PsychologicalResult) => void;
+  /** 'real' = como você é hoje; 'ideal' = como gostaria de ser */
+  mode?: Mode;
+  onComplete: (answers: Answers, timings: Timings) => void;
 }
+
+const COPY = {
+  real: {
+    eyebrow: 'Como você é hoje',
+    title: 'Como você é hoje',
+    intro: (
+      <>
+        São <strong>20 frases curtas</strong> (e 2 de atenção), cerca de <strong>4 minutos</strong>. Para cada uma, diga o quanto ela tem a ver com você{' '}
+        <strong>como você é hoje, na maioria das situações</strong>, e não como gostaria de ser. Não há respostas certas. A primeira impressão costuma ser a mais
+        fiel.
+      </>
+    )
+  },
+  ideal: {
+    eyebrow: 'Como você gostaria de ser',
+    title: 'Agora, como você gostaria de ser',
+    intro: (
+      <>
+        As <strong>mesmas frases</strong>, cerca de <strong>3 minutos</strong>. Desta vez, responda pensando na <strong>pessoa que você gostaria de ser</strong>,
+        não no que os outros esperam de você. Seja sincero(a): querer mudar pouco, ou nada, também é uma resposta.
+      </>
+    )
+  }
+} as const;
 
 interface Draft {
   answers: Answers;
@@ -35,7 +61,8 @@ const writeDraft = (key: string, d: Draft | null) => {
   }
 };
 
-export default function MiniIpipQuestionnaire({ draftKey, onComplete }: Props) {
+export default function MiniIpipQuestionnaire({ draftKey, mode = 'real', onComplete }: Props) {
+  const copy = COPY[mode];
   const [started, setStarted] = useState(false);
   const [answers, setAnswers] = useState<Answers>({});
   const [timings, setTimings] = useState<Timings>({});
@@ -66,10 +93,10 @@ export default function MiniIpipQuestionnaire({ draftKey, onComplete }: Props) {
   };
 
   const finish = (a: Answers, t: Timings) => {
-    const quality = checkQuality(a, t);
+    const quality = checkQuality(a, t, mode);
     if (quality.status === 'ok') {
       writeDraft(draftKey, null);
-      onComplete(buildResult(a, t));
+      onComplete(a, t);
     } else {
       setReview(quality);
     }
@@ -98,12 +125,8 @@ export default function MiniIpipQuestionnaire({ draftKey, onComplete }: Props) {
   if (!started) {
     return (
       <div className="flex flex-col gap-5 max-w-2xl mx-auto">
-        <h2 className="m-0 text-2xl font-bold text-gray-900">Como você é hoje</h2>
-        <p className="m-0 text-[15px] leading-relaxed text-gray-700">
-          São <strong>20 frases curtas</strong> (e 2 de atenção), cerca de <strong>4 minutos</strong>.
-          Para cada uma, diga o quanto ela tem a ver com você <strong>como você é hoje, na maioria das situações</strong>,
-          e não como gostaria de ser. Não há respostas certas. A primeira impressão costuma ser a mais fiel.
-        </p>
+        <h2 className="m-0 text-2xl font-bold text-gray-900">{copy.title}</h2>
+        <p className="m-0 text-[15px] leading-relaxed text-gray-700">{copy.intro}</p>
         <p className="m-0 text-sm text-gray-600">
           Se precisar parar, suas respostas ficam guardadas neste navegador e você continua de onde parou.
         </p>
@@ -160,7 +183,7 @@ export default function MiniIpipQuestionnaire({ draftKey, onComplete }: Props) {
             type="button"
             onClick={() => {
               writeDraft(draftKey, null);
-              onComplete(buildResult(answers, timings));
+              onComplete(answers, timings);
             }}
             className="min-h-[48px] px-6 rounded-lg border border-gray-300 text-gray-800 font-semibold hover:bg-gray-50"
           >
@@ -188,13 +211,13 @@ export default function MiniIpipQuestionnaire({ draftKey, onComplete }: Props) {
         </div>
       </div>
 
-      <p className="m-0 text-xs uppercase tracking-wider font-semibold text-purple-700">Como você é hoje</p>
+      <p className="m-0 text-xs uppercase tracking-wider font-semibold text-purple-700">{copy.eyebrow}</p>
       <h2 key={item.id} className="m-0 text-2xl sm:text-[28px] leading-snug font-semibold text-gray-900 min-h-[72px]">
         {item.text}
       </h2>
 
       <div className="flex flex-col gap-2.5" role="radiogroup" aria-label="Quanto esta frase tem a ver com você">
-        {SCALE.map((s) => {
+        {(mode === 'ideal' ? SCALE_IDEAL : SCALE).map((s) => {
           const selected = current === s.value;
           return (
             <button
