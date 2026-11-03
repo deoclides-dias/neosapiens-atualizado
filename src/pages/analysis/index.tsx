@@ -64,12 +64,12 @@ const AnalysisHub = () => {
     },
     {
       id: 'cognitive',
-      title: 'Perfil Cognitivo',
-      subtitle: 'Aprendizado & Processamento',
-      description: 'Entenda como sua mente processa informações e otimize suas estratégias de aprendizado, criatividade e resolução de problemas.',
+      title: 'Perfil da Mente',
+      subtitle: 'Atenção, Memória, Criatividade',
+      description: 'Como você se vê e cinco testes curtos de verdade no navegador: atenção, memória, foco, flexibilidade e criatividade.',
       icon: Zap,
       color: 'yellow',
-      estimatedTime: '12-18 min',
+      estimatedTime: '13 min, em partes',
       href: '/analysis/cognitive',
       status: progress.cognitive.completed ? 'completed' : 
               isAnalysisAvailable('cognitive') ? 'available' : 'locked',
