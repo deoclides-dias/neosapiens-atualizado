@@ -459,7 +459,7 @@ export const BLOCKS: Block[] = [
     id: 'alimentacao',
     title: 'Alimentação',
     subtitle: 'Hábitos alimentares',
-    minutes: 4,
+    minutes: 5,
     intro: 'Pense nos seus hábitos dos últimos meses. Responda com que frequência cada frase acontece com você.',
     questions: [
       ...guiaQuestions,
@@ -480,7 +480,11 @@ export const BLOCKS: Block[] = [
         options: DAYS,
         layout: 'row',
         text: 'Em quantos dias comeu biscoito recheado, salgadinho de pacote, macarrão instantâneo, salsicha, presunto ou refeição pronta congelada?'
-      }
+      },
+      { id: 'f_proteina', kind: 'choice', options: DAYS, layout: 'row', text: 'Em quantos dias comeu carne, frango, peixe ou ovos?' },
+      { id: 'f_laticinios', kind: 'choice', options: DAYS, layout: 'row', text: 'Em quantos dias tomou leite ou comeu queijo?' },
+      { id: 'f_castanhas', kind: 'choice', options: DAYS, layout: 'row', text: 'Em quantos dias comeu castanhas, amendoim, sementes ou abacate?' },
+      { id: 'f_frituras', kind: 'choice', options: DAYS, layout: 'row', text: 'Em quantos dias comeu frituras (pastel, batata frita, salgado frito)?' }
     ]
   },
   {

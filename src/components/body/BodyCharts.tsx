@@ -5,7 +5,7 @@
 // Cada marca tem <title> (dica ao passar o mouse) e os valores ficam escritos.
 
 import { BodyAnswers, WAKE_WINDOWS } from '../../lib/body/questions';
-import { ActivityCalc, Priority, SleepCalc, fiberCalc, guiaCalc, hhmm, hours, toMin } from '../../lib/body/scoring';
+import { ActivityCalc, Priority, SleepCalc, foodProfile, guiaCalc, hhmm, hours, toMin } from '../../lib/body/scoring';
 import { BristolIcon, Swatch, URINE_COLORS } from './Visuals';
 
 const INK = '#111827';
@@ -41,7 +41,7 @@ const block = (c: string) => <span className="w-3.5 h-3 rounded-sm inline-block"
 
 // ---------- Radar: medido × como você se vê ----------
 
-export function AreaRadar({ axes }: { axes: { label: string; measured: number; self?: number }[] }) {
+export function AreaRadar({ axes, label = 'Radar das cinco áreas: medido e como você se vê', single = false }: { axes: { label: string; measured: number; self?: number }[]; label?: string; single?: boolean }) {
   const size = 300;
   const c = size / 2;
   const R = 100;
@@ -55,7 +55,7 @@ export function AreaRadar({ axes }: { axes: { label: string; measured: number; s
 
   return (
     <figure className="m-0 flex flex-col items-center gap-2">
-      <svg viewBox={`-74 -14 ${size + 148} ${size + 28}`} className="w-full max-w-[400px]" role="img" aria-label="Radar das cinco áreas: medido e como você se vê">
+      <svg viewBox={`-100 -14 ${size + 200} ${size + 28}`} className="w-full max-w-[440px]" role="img" aria-label={label}>
         {[25, 50, 75, 100].map((r) => (
           <polygon key={r} points={poly(axes.map(() => r))} fill="none" stroke={GRID} strokeWidth="1" />
         ))}
@@ -98,12 +98,12 @@ export function AreaRadar({ axes }: { axes: { label: string; measured: number; s
           );
         })}
       </svg>
-      <Legend
+      {!single && <Legend
         items={[
           { label: 'Medido pelas respostas', swatch: block(PURPLE) },
           ...(hasSelf ? [{ label: 'Como você se vê (satisfação × 10)', swatch: dash(AMBER) }] : [])
         ]}
-      />
+      />}
     </figure>
   );
 }
@@ -397,11 +397,17 @@ export function MovementBar({ c }: { c: ActivityCalc }) {
 
 export function FoodCharts({ a }: { a: BodyAnswers }) {
   const g = guiaCalc(a);
-  const f = fiberCalc(a);
+  const profile = foodProfile(a);
   const pct = (g.total / 72) * 100;
   const ref = (44.1 / 72) * 100;
   return (
     <div className="flex flex-col gap-4">
+      {profile.length >= 5 && (
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-gray-600">Seu prato em 10 dimensões (0 a 100, quanto mais para fora, melhor)</span>
+          <AreaRadar single label="Radar da alimentação" axes={profile.map((p) => ({ label: p.label, measured: p.value }))} />
+        </div>
+      )}
       <div className="flex flex-col gap-1">
         <div className="flex justify-between text-xs text-gray-600">
           <span>Práticas do Guia Alimentar</span>
@@ -416,22 +422,6 @@ export function FoodCharts({ a }: { a: BodyAnswers }) {
             média no Brasil: 44
           </span>
         </div>
-      </div>
-      <div className="flex flex-col gap-1.5">
-        <span className="text-xs text-gray-600">Dias na semana com fontes de fibra</span>
-        {f.parts.map((p) => {
-          const filled = Math.round(p.days);
-          return (
-            <div key={p.id} className="grid grid-cols-[130px_1fr] items-center gap-2 text-xs">
-              <span className="text-gray-800">{p.label}</span>
-              <span className="flex gap-1" title={`${p.label}: cerca de ${filled} dias`}>
-                {Array.from({ length: 7 }, (_, i) => (
-                  <span key={i} className="w-3.5 h-3.5 rounded-full" style={{ background: i < filled ? GOOD : '#e5e7eb' }} />
-                ))}
-              </span>
-            </div>
-          );
-        })}
       </div>
     </div>
   );
