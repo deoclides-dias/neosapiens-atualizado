@@ -342,9 +342,9 @@ export function foodProfile(a: BodyAnswers): FoodAxis[] {
     { id: 'fermentados', label: 'Fermentados', v: d('f_fermentados'), rule: 'Dias com iogurte natural, kefir, coalhada ou outros fermentados, ÷ 7.' },
     {
       id: 'lanches',
-      label: 'Lanches',
-      v: avg([g('g01'), g('g14', true)]),
-      rule: 'Frases do Guia: lanches com frutas ou castanhas e não beliscar entre as refeições (0 a 3 cada), ÷ 3.'
+      label: 'Poucos lanches',
+      v: g('g14', true),
+      rule: 'Frase do Guia sobre beliscar entre as refeições: quanto menos, mais para fora (“nunca” vale 3), ÷ 3.'
     },
     {
       id: 'acucar',
