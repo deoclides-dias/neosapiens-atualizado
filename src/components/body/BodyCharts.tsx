@@ -196,6 +196,119 @@ export function SleepTimeline({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
   );
 }
 
+// ---------- Onda do sono (esquema) ----------
+// Desenho ilustrativo de uma noite em dia de trabalho, montado a partir das
+// respostas: demora para dormir, ciclos de ~90 min (mais profundos no começo
+// da noite, mais leves no fim), despertares e hora de acordar.
+// Não é medição: estágios reais só com polissonografia ou sensores.
+
+export function SleepWave({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
+  const off = toMin(a.dorme_trab);
+  const wake = toMin(a.acorda_trab);
+  if (off === null || wake === null) return null;
+  const lat = typeof a.latencia === 'number' ? a.latencia : 0;
+  const waso = a.despertar === 'nao' ? 0 : typeof a.acordado_noite === 'number' ? a.acordado_noite : 0;
+  const inBed = ((wake - off + 1440) % 1440) || 1440;
+  const pad = 30;
+  const total = inBed + 2 * pad;
+  const W = 340;
+  const H = 136;
+  const top = 24;
+  const base = H - 26;
+  const xOf = (m: number) => (m / total) * W; // m = minutos desde (luz apagada − 30)
+  const onset = pad + lat;
+  const end = pad + inBed;
+
+  // Momentos dos despertares (minutos desde o início do eixo)
+  const wakes: { t: number; w: number }[] = [];
+  if (a.despertar === 'mesmo' && typeof a.despertar_horario === 'number') {
+    const center = ((a.despertar_horario as number) * 60 + 60 - (off - pad) + 1440) % 1440;
+    if (center > onset + 30 && center < end - 20) wakes.push({ t: center, w: Math.max(6, waso / 2) });
+  } else if (a.despertar === 'variado') {
+    const sleepLen = end - onset;
+    [0.4, 0.72].forEach((f) => wakes.push({ t: onset + sleepLen * f, w: Math.max(5, waso / 4) }));
+  }
+
+  const AMP = [1, 0.85, 0.62, 0.45, 0.36, 0.3, 0.28];
+  const depth = (m: number) => {
+    if (m <= onset || m >= end) return 0;
+    const t = m - onset;
+    const k = Math.min(AMP.length - 1, Math.floor(t / 90));
+    const ph = (t % 90) / 90;
+    let d = 0.14 + (AMP[k] - 0.14) * Math.pow(Math.sin(Math.PI * ph), 2);
+    d *= Math.min(1, t / 20) * Math.min(1, (end - m) / 15);
+    for (const w of wakes) d *= 1 - Math.exp(-Math.pow((m - w.t) / w.w, 2));
+    return Math.max(0, d);
+  };
+  const yOf = (d: number) => base - d * (base - top);
+  const pts: string[] = [];
+  for (let m = 0; m <= total; m += 3) pts.push(`${xOf(m).toFixed(1)},${yOf(depth(m)).toFixed(1)}`);
+  const line = `M${pts.join(' L')}`;
+  const area = `${line} L${W},${base} L0,${base} Z`;
+
+  // Marcas de hora cheia
+  const startClock = off - pad;
+  const ticks: { x: number; h: number }[] = [];
+  const firstHour = Math.ceil(startClock / 60) * 60;
+  for (let t = firstHour; t <= startClock + total; t += 120) {
+    ticks.push({ x: xOf(t - startClock), h: ((t / 60) % 24 + 24) % 24 });
+  }
+
+  return (
+    <figure className="m-0 flex flex-col gap-1.5">
+      <figcaption className="text-xs text-gray-600">Como seria uma noite em dia de trabalho (esquema)</figcaption>
+      <svg viewBox={`-92 0 ${W + 100} ${H}`} className="w-full" role="img" aria-label="Esquema da profundidade do sono ao longo da noite">
+        <defs>
+          <linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={PURPLE} stopOpacity="0.45" />
+            <stop offset="100%" stopColor={PURPLE} stopOpacity="0.06" />
+          </linearGradient>
+        </defs>
+        {[
+          { d: 0, l: 'acordado(a)' },
+          { d: 0.5, l: 'sono leve' },
+          { d: 1, l: 'sono profundo' }
+        ].map((g) => (
+          <g key={g.l}>
+            <line x1="0" y1={yOf(g.d)} x2={W} y2={yOf(g.d)} stroke={GRID} strokeWidth="1" />
+            <text x="-6" y={yOf(g.d) + 4} textAnchor="end" fontSize="10.5" fill={MUTED}>
+              {g.l}
+            </text>
+          </g>
+        ))}
+        <path d={area} fill="url(#sleepFill)" />
+        <path d={line} fill="none" stroke={PURPLE} strokeWidth="2" strokeLinejoin="round" />
+        {wakes.map((w) => (
+          <g key={w.t}>
+            <circle cx={xOf(w.t)} cy={base} r="4.5" fill={AMBER} stroke="#fff" strokeWidth="2">
+              <title>{`Despertar por volta de ${hhmm(startClock + w.t)}`}</title>
+            </circle>
+          </g>
+        ))}
+        <g>
+          <line x1={xOf(pad)} y1={top} x2={xOf(pad)} y2={base} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
+          <text x={xOf(pad)} y={top - 8} textAnchor="middle" fontSize="10" fill={INK2}>
+            luz apagada
+          </text>
+          <line x1={xOf(end)} y1={top} x2={xOf(end)} y2={base} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
+          <text x={xOf(end)} y={top - 8} textAnchor="middle" fontSize="10" fill={INK2}>
+            acorda
+          </text>
+        </g>
+        {ticks.map((t) => (
+          <text key={t.x} x={t.x} y={H - 8} textAnchor="middle" fontSize="11" fill={MUTED}>
+            {t.h}h
+          </text>
+        ))}
+      </svg>
+      <p className="m-0 text-xs leading-relaxed text-gray-500">
+        Cada “montanha” é um ciclo de cerca de 90 minutos: os primeiros são mais profundos e os do fim da noite, mais leves.
+        {wakes.length > 0 && ' Os pontos laranja marcam os despertares que você relatou.'} É uma ilustração feita com as suas respostas, não uma medição.
+      </p>
+    </figure>
+  );
+}
+
 // ---------- Movimento ----------
 
 const WALK = '#a78bfa';

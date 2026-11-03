@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { AlertTriangle, ArrowRight, HeartHandshake, Pencil } from 'lucide-react';
 import { BodyAnswers, SIGNALS, SOURCES } from '../../lib/body/questions';
 import { AreaScore, BodyQuality, activityCalc, buildReport, sleepCalc } from '../../lib/body/scoring';
-import { AreaRadar, DigestionCharts, FoodCharts, MovementBar, PriorityMatrix, SleepTimeline, WellbeingGauge } from './BodyCharts';
+import { AreaRadar, DigestionCharts, FoodCharts, MovementBar, PriorityMatrix, SleepTimeline, SleepWave, WellbeingGauge } from './BodyCharts';
 import { Card, CardTitle, Eyebrow } from '../traditions/ui';
 
 const LEVEL = {
@@ -295,7 +295,12 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
 
       {/* Áreas */}
       <div className="grid gap-5 md:grid-cols-2 items-start">
-        {area('sono') && <AreaCard area={area('sono')!} chart={sleep && <SleepTimeline a={answers} c={sleep} />} />}
+        {area('sono') && <AreaCard area={area('sono')!} chart={sleep && (
+              <div className="flex flex-col gap-5">
+                <SleepWave a={answers} c={sleep} />
+                <SleepTimeline a={answers} c={sleep} />
+              </div>
+            )} />}
         <AreaCard
           area={area('movimento')!}
           chart={<MovementBar c={activity} />}
