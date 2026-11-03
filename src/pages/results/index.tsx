@@ -1,7 +1,7 @@
 // src/pages/results/index.tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { ArrowLeft, Star, Activity, Brain, Zap, Target, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Star, Activity, Brain, Zap, Target, ChevronRight, Compass } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 
@@ -10,6 +10,7 @@ interface AnalysisProgress {
   biohacking_complete: boolean;
   psychological_complete: boolean;
   cognitive_complete: boolean;
+  purpose_complete: boolean;
   overall_progress: number;
 }
 
@@ -43,7 +44,7 @@ const ResultsHub = () => {
       
       const { data, error } = await supabase
         .from('onboarding_progress')
-        .select('birth_data_complete, biohacking_data_complete, psychological_data_complete, cognitive_data_complete')
+        .select('birth_data_complete, biohacking_data_complete, psychological_data_complete, cognitive_data_complete, purpose_data_complete')
         .eq('user_id', user?.id)
         .order('updated_at', { ascending: false })
         .limit(1)
@@ -55,7 +56,8 @@ const ResultsHub = () => {
         data?.birth_data_complete,
         data?.biohacking_data_complete,
         data?.psychological_data_complete,
-        data?.cognitive_data_complete
+        data?.cognitive_data_complete,
+        data?.purpose_data_complete
       ].filter(Boolean).length;
       
       // Mapear dados para estrutura esperada
@@ -64,7 +66,8 @@ const ResultsHub = () => {
         biohacking_complete: data?.biohacking_data_complete || false,
         psychological_complete: data?.psychological_data_complete || false,
         cognitive_complete: data?.cognitive_data_complete || false,
-        overall_progress: Math.round((completedCount / 4) * 100)
+        purpose_complete: data?.purpose_data_complete || false,
+        overall_progress: Math.round((completedCount / 5) * 100)
       };
       
       setProgress(progressData);
@@ -119,6 +122,17 @@ const ResultsHub = () => {
       status: progress?.cognitive_complete ? 'available' : 'locked',
       description: 'Seis habilidades de 0 a 100 e onde a sua impressão e os testes não batem.',
       requiredAnalysis: ['cognitive']
+    },
+    {
+      id: 'purpose',
+      title: 'Seu Propósito Hoje',
+      subtitle: 'Valores, Sentido, Visão',
+      icon: Compass,
+      color: 'purple',
+      href: '/results/purpose',
+      status: progress?.purpose_complete ? 'available' : 'locked',
+      description: 'Seus valores, o sentido de vida e onde o que você valoriza e o que você vive não batem.',
+      requiredAnalysis: ['purpose']
     }
   ];
 

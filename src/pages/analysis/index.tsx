@@ -1,7 +1,7 @@
 // src/pages/analysis/index.tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { ArrowRight, Calendar, Activity, Brain, Zap, Clock, CheckCircle, Lock, TrendingUp } from 'lucide-react';
+import { ArrowRight, Calendar, Activity, Brain, Zap, Clock, CheckCircle, Lock, TrendingUp, Compass } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import useAnalysisProgress from '../../hooks/useAnalysisProgress';
 
@@ -74,6 +74,18 @@ const AnalysisHub = () => {
       status: progress.cognitive.completed ? 'completed' : 
               isAnalysisAvailable('cognitive') ? 'available' : 'locked',
       requiredFor: ['Otimização Cognitiva']
+    },
+    {
+      id: 'purpose',
+      title: 'Perfil do Propósito',
+      subtitle: 'Valores, Sentido, Visão',
+      description: 'O que move você, o sentido que você enxerga na vida, o quanto você vive de acordo com o que valoriza e para onde quer ir.',
+      icon: Compass,
+      color: 'purple',
+      estimatedTime: '13 min, em partes',
+      href: '/analysis/purpose',
+      status: progress.purpose.completed ? 'completed' : 'available',
+      requiredFor: ['Plano de Voo']
     }
   ];
 
