@@ -8,7 +8,7 @@ import { ArrowRight, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
 import { Card, CardTitle, DarkPanel, Eyebrow } from '../traditions/ui';
 import { ELEMENT_HAN } from '../../lib/astro';
 import { ELEMENT_COLORS } from '../traditions/WuXingPentagram';
-import { PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementEchoes, elementMentions, radarAxes, resonances } from '../../lib/integration/integration';
+import { PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementEchoes, elementMentions, radarAxes, resonances, traditionThemes } from '../../lib/integration/integration';
 
 const GRID = '#e5e7eb';
 const INK = '#111827';
@@ -110,6 +110,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const reson = useMemo(() => resonances(sources, c), [sources, c]);
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
   const echoes = useMemo(() => elementEchoes(mentions), [mentions]);
+  const themes = useMemo(() => traditionThemes(sources), [sources]);
   const filled = axes.filter((a) => a.value !== null);
   const pillarAvg = (p: Pillar) => {
     const v = axes.filter((a) => a.pillar === p && a.value !== null).map((a) => a.value as number);
@@ -256,15 +257,18 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
           </div>
         </div>
         <p className="m-0 text-[15px] leading-relaxed text-purple-50">
-          Na leitura tradicional, o que importa é a repetição: quando o mesmo elemento aparece em fontes diferentes (o mapa chinês, os Cinco Espíritos, o relógio dos
-          órgãos, a digestão), ele merece atenção.
+          Na leitura tradicional, o que importa é a repetição: quando o mesmo elemento aparece em fontes diferentes (o mapa natal, o mapa chinês, a numerologia, os Cinco
+          Espíritos, o relógio dos órgãos, a digestão), ele merece atenção.
         </p>
         {echoes.length ? (
           <div className="grid gap-4 md:grid-cols-2">
             {echoes.map((e) => (
               <div key={e.element} className="rounded-2xl bg-white/[0.06] border border-white/10 p-4 flex gap-4">
-                <div className="w-16 h-16 rounded-full grid place-items-center text-3xl text-white shrink-0" style={{ background: ELEMENT_COLORS[e.element], fontFamily: "'Noto Serif SC', serif" }}>
-                  {ELEMENT_HAN[e.element]}
+                <div
+                  className="w-16 h-16 rounded-full grid place-items-center text-3xl text-white shrink-0"
+                  style={{ background: e.element === 'Ar' ? '#94a3b8' : ELEMENT_COLORS[e.element], fontFamily: "'Noto Serif SC', serif" }}
+                >
+                  {e.element === 'Ar' ? '🜁' : ELEMENT_HAN[e.element]}
                 </div>
                 <div className="flex flex-col gap-1.5 min-w-0">
                   <span className="text-lg font-semibold text-white">
@@ -287,21 +291,63 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
         ) : (
           <p className="m-0 text-sm text-purple-100">Nenhum elemento apareceu em duas fontes diferentes com os dados de agora.</p>
         )}
-        {mentions.length > 0 && (
-          <details className="group text-sm text-purple-100">
-            <summary className="cursor-pointer list-none font-semibold text-amber-100 min-h-[40px] flex items-center gap-2">
-              Todas as menções <span className="group-open:rotate-180 transition-transform">▾</span>
-            </summary>
-            <ul className="m-0 pl-5 list-disc flex flex-col gap-1">
-              {mentions.map((m, i) => (
-                <li key={i}>
-                  {m.element} · {m.source}: {m.note}
-                </li>
+        {themes.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-sm font-semibold text-amber-100">Os três temas: o que cada tradição confirma</p>
+            <div className="grid gap-3 md:grid-cols-3">
+              {themes.map((t) => (
+                <div key={t.id} className="rounded-xl bg-white/[0.06] border border-white/10 p-3.5 flex flex-col gap-2">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-semibold text-white">{t.title}</span>
+                    <span className="text-xs text-amber-100 whitespace-nowrap">{t.strength} de 3</span>
+                  </div>
+                  {[
+                    { l: 'Mapa natal', e: t.western },
+                    { l: 'Mapa chinês', e: t.chinese },
+                    { l: 'Numerologia', e: t.numerology }
+                  ].map((x) => (
+                    <div key={x.l} className="flex gap-2 text-xs text-purple-100">
+                      <span className={`w-4 shrink-0 font-bold ${x.e.supports ? 'text-emerald-300' : 'text-purple-300/60'}`} aria-label={x.e.supports ? 'confirma' : 'não confirma'}>
+                        {x.e.supports ? '✓' : '·'}
+                      </span>
+                      <span>
+                        <strong className="text-purple-50">{x.l}:</strong> {x.e.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               ))}
-            </ul>
-          </details>
+            </div>
+          </div>
         )}
-        <p className="m-0 text-xs text-purple-200">Leitura da Medicina Tradicional Chinesa, separada das medidas científicas das camadas anteriores.</p>
+        {mentions.length > 0 && (
+          <div className="flex flex-col gap-2">
+            <p className="m-0 text-sm font-semibold text-amber-100">O que cada fonte diz</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {Array.from(new Set(mentions.map((m) => m.source))).map((src) => (
+                <div key={src} className="rounded-xl bg-white/[0.04] border border-white/10 px-3.5 py-2.5 text-sm text-purple-100">
+                  <strong className="text-amber-100">{src}</strong>
+                  <ul className="m-0 mt-1 pl-0 list-none flex flex-col gap-0.5">
+                    {mentions
+                      .filter((m) => m.source === src)
+                      .map((m, k) => (
+                        <li key={k} className="flex gap-2">
+                          <span className={m.sign === 'forte' ? 'text-emerald-300' : 'text-amber-300'} aria-hidden="true">
+                            {m.sign === 'forte' ? '▲' : '▼'}
+                          </span>
+                          <span>
+                            <strong className="text-purple-50">{m.element}</strong>: {m.note}
+                          </span>
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+            <p className="m-0 text-xs text-purple-200">▲ aparece com força · ▼ pede atenção</p>
+          </div>
+        )}
+        <p className="m-0 text-xs text-purple-200">Leitura das tradições (astrologia ocidental, astrologia chinesa, numerologia e Medicina Tradicional Chinesa), separada das medidas científicas das camadas anteriores.</p>
       </DarkPanel>
 
       <Card>

@@ -11,6 +11,7 @@ import { MindData, AxisScore, mindAxes } from '../mind/mind';
 import { PsychologicalResult, TRAITS, scoreTraits, traitGaps } from '../psych/miniIpip';
 import { PurposeData, flourishScore, lifeAreas, mlqScore, shenProfile, valueProfile } from '../purpose/purpose';
 import type { ChineseElement, TraditionsResult } from '../astro';
+import { integrationThemes, IntegrationTheme } from '../astro/interpretation';
 
 export interface Sources {
   body: BodyData | null;
@@ -305,8 +306,10 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
 // Camada 4: O que as tradições repetem (Cinco Elementos)
 // ---------------------------------------------------------------------------
 
+export type AnyElement = ChineseElement | 'Ar';
+
 export interface ElementMention {
-  element: ChineseElement;
+  element: AnyElement;
   source: string;
   note: string;
   sign: 'forte' | 'atencao';
@@ -334,6 +337,26 @@ export function elementMentions(s: Sources, c: Computed): ElementMention[] {
       sorted.filter((x) => x.value === max).forEach((x) => out.push({ element: x.element as ChineseElement, source: 'Cinco Espíritos', note: `${x.spirit} mais forte (${x.aspect})`, sign: 'forte' }));
     }
   }
+  // Astrologia ocidental: elemento dominante e elementos com pouca presença
+  const w = s.traditions?.western;
+  if (w && w.elementPoints > 0) {
+    const entries = Object.entries(w.elements) as ['Fogo' | 'Terra' | 'Ar' | 'Água', number][];
+    const max = Math.max(...entries.map(([, v]) => v));
+    entries
+      .filter(([, v]) => v === max)
+      .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `elemento mais forte (${v} de ${w.elementPoints} pontos)`, sign: 'forte' }));
+    entries
+      .filter(([, v]) => v / w.elementPoints <= 0.125)
+      .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `pouco presente (${v} de ${w.elementPoints} pontos)`, sign: 'atencao' }));
+  }
+  // Numerologia: os três temas que ela confirma ou não
+  if (s.traditions) {
+    for (const t of integrationThemes(s.traditions)) {
+      const el: ChineseElement = t.id === 'raiz' ? 'Terra' : t.id === 'intuicao' ? 'Água' : 'Fogo';
+      if (t.numerology.supports) out.push({ element: el, source: 'Numerologia', note: `confirma “${t.title.toLowerCase()}” (${t.numerology.text})`, sign: 'forte' });
+      else if (t.id === 'raiz') out.push({ element: 'Terra', source: 'Numerologia', note: `não confirma “enraizamento e estrutura” (${t.numerology.text})`, sign: 'atencao' });
+    }
+  }
   const b = s.body?.respostas;
   if (b?.despertar === 'mesmo' && typeof b.despertar_horario === 'number') {
     const w = WAKE_WINDOWS.find((x) => x.start === b.despertar_horario);
@@ -346,7 +369,7 @@ export function elementMentions(s: Sources, c: Computed): ElementMention[] {
 }
 
 export interface ElementEcho {
-  element: ChineseElement;
+  element: AnyElement;
   mentions: ElementMention[];
   attention: number;
   strength: number;
@@ -354,7 +377,7 @@ export interface ElementEcho {
 
 /** Elementos citados por duas ou mais fontes diferentes */
 export function elementEchoes(mentions: ElementMention[]): ElementEcho[] {
-  const els: ChineseElement[] = ['Madeira', 'Fogo', 'Terra', 'Metal', 'Água'];
+  const els: AnyElement[] = ['Madeira', 'Fogo', 'Terra', 'Metal', 'Água', 'Ar'];
   return els
     .map((e) => {
       const m = mentions.filter((x) => x.element === e);
@@ -362,4 +385,9 @@ export function elementEchoes(mentions: ElementMention[]): ElementEcho[] {
     })
     .filter((x) => new Set(x.mentions.map((m) => m.source)).size >= 2)
     .sort((a, b) => b.mentions.length - a.mentions.length);
+}
+
+/** Os três temas das tradições (ocidental, chinesa e numerologia), com os votos de cada uma */
+export function traditionThemes(s: Sources): IntegrationTheme[] {
+  return s.traditions ? integrationThemes(s.traditions) : [];
 }
