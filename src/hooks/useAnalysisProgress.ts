@@ -205,7 +205,9 @@ function useAnalysisProgress() {
   
   const markAnalysisComplete = async (
     analysisType: 'birth' | 'biohacking' | 'psychological' | 'cognitive',
-    data: any
+    data: any,
+    /** false = salva o andamento sem marcar a análise como concluída */
+    complete: boolean = true
   ): Promise<boolean> => {
     if (!user) {
       console.warn('⚠️ Usuário não logado');
@@ -221,19 +223,19 @@ function useAnalysisProgress() {
 
       switch (analysisType) {
         case 'birth':
-          updateData.birth_data_complete = true;
+          if (complete) updateData.birth_data_complete = true;
           updateData.birth_data = data;
           break;
         case 'biohacking':
-          updateData.biohacking_data_complete = true;
+          if (complete) updateData.biohacking_data_complete = true;
           updateData.biohacking_data = data;
           break;
         case 'psychological':
-          updateData.psychological_data_complete = true;
+          if (complete) updateData.psychological_data_complete = true;
           updateData.psychological_data = data;
           break;
         case 'cognitive':
-          updateData.cognitive_data_complete = true;
+          if (complete) updateData.cognitive_data_complete = true;
           updateData.cognitive_data = data;
           break;
       }

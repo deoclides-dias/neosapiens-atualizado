@@ -89,13 +89,13 @@ const ResultsHub = () => {
     },
     {
       id: 'biohacking',
-      title: 'Relatório Biológico',
-      subtitle: 'Otimização Corporal',
+      title: 'Seu Corpo Hoje',
+      subtitle: 'Sono, Movimento, Alimentação',
       icon: Activity,
       color: 'green',
       href: '/results/biohacking',
       status: progress?.biohacking_complete ? 'available' : 'locked',
-      description: 'Recomendações personalizadas para sono, nutrição, exercícios e energia.',
+      description: 'Cinco áreas de 0 a 100, relações entre elas e por onde começar.',
       requiredAnalysis: ['biohacking']
     },
     {
