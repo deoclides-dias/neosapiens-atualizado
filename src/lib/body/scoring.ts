@@ -37,6 +37,8 @@ export interface Relation {
   seen: string;
   science: string;
   strength: 'forte' | 'moderada' | 'possível';
+  /** Leitura da Medicina Tradicional Chinesa, mostrada separada da ciência */
+  tradition?: string;
 }
 
 export interface Priority {
@@ -520,7 +522,10 @@ export function buildReport(a: BodyAnswers): BodyReport {
         (lateNight
           ? 'O cortisol, hormônio ligado ao despertar, começa a subir na segunda metade da noite e chega ao pico logo depois de acordar; estresse pode antecipar essa subida. '
           : '') +
-        'Despertares regulares também são comuns com álcool à noite, vontade de urinar, refluxo, apneia ou ambiente (calor, barulho, luz). Anotar por 2 semanas o horário e o que aconteceu no dia ajuda a achar o gatilho. Na Medicina Tradicional Chinesa, cada faixa de 2 horas tem leitura própria, que entra na análise das tradições.'
+        'Despertares regulares também são comuns com álcool à noite, vontade de urinar, refluxo, apneia ou ambiente (calor, barulho, luz). Anotar por 2 semanas o horário e o que aconteceu no dia ajuda a achar o gatilho.',
+      tradition: w
+        ? `No relógio dos órgãos da Medicina Tradicional Chinesa, o período ${w.label.toLowerCase()} é o de maior atividade ${w.of} (elemento ${w.element}), que se relaciona com ${w.reading}. Para a MTC, acordar sempre nesse horário sugere que essa função pode estar pedindo atenção.`
+        : undefined
     });
   }
   if (act.whoMinutes < 150 && wellbeing.score <= 50) {

@@ -51,11 +51,46 @@ const num = (a: BodyAnswers, id: string) => (typeof a[id] === 'number' ? (a[id] 
 // Faixas de 2 horas, como no relógio dos órgãos da Medicina Tradicional
 // Chinesa; ficam guardadas para a análise das tradições.
 export const WAKE_WINDOWS = [
-  { start: 21, label: 'Entre 21h e 23h' },
-  { start: 23, label: 'Entre 23h e 1h' },
-  { start: 1, label: 'Entre 1h e 3h' },
-  { start: 3, label: 'Entre 3h e 5h' },
-  { start: 5, label: 'Entre 5h e 7h' }
+  {
+    start: 21,
+    label: 'Entre 21h e 23h',
+    organ: 'Triplo Aquecedor',
+    of: 'do Triplo Aquecedor',
+    element: 'Fogo',
+    reading: 'a integração entre as funções do corpo e a circulação dos líquidos'
+  },
+  {
+    start: 23,
+    label: 'Entre 23h e 1h',
+    organ: 'Vesícula Biliar',
+    of: 'da Vesícula Biliar',
+    element: 'Madeira',
+    reading: 'a capacidade de decidir e a coragem para agir'
+  },
+  {
+    start: 1,
+    label: 'Entre 1h e 3h',
+    organ: 'Fígado',
+    of: 'do Fígado',
+    element: 'Madeira',
+    reading: 'o livre fluxo da energia e das emoções, em especial a irritação e a frustração'
+  },
+  {
+    start: 3,
+    label: 'Entre 3h e 5h',
+    organ: 'Pulmão',
+    of: 'do Pulmão',
+    element: 'Metal',
+    reading: 'a respiração e a defesa do corpo, e também a tristeza e o luto'
+  },
+  {
+    start: 5,
+    label: 'Entre 5h e 7h',
+    organ: 'Intestino Grosso',
+    of: 'do Intestino Grosso',
+    element: 'Metal',
+    reading: 'a eliminação e a capacidade de soltar o que não serve mais'
+  }
 ];
 
 // ---------- Escalas reutilizadas ----------

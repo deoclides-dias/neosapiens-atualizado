@@ -259,6 +259,11 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
                 <p className="m-0 text-sm text-gray-800">
                   <span className="text-gray-500">O que a ciência diz:</span> {x.science}
                 </p>
+                {x.tradition && (
+                  <p className="m-0 text-sm text-gray-800 rounded-lg bg-amber-50/70 border border-amber-100 px-3 py-2">
+                    <span className="text-amber-800 font-semibold">Leitura da Medicina Tradicional Chinesa:</span> {x.tradition}
+                  </p>
+                )}
               </li>
             ))}
           </ul>
