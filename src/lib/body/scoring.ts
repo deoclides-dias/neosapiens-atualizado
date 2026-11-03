@@ -307,9 +307,65 @@ function scoreFood(a: BodyAnswers): AreaScore {
       `Guia Alimentar: 24 frases de 0 a 3 pontos (nas 11 frases contrárias ao Guia, “nunca” vale 3). Total ${g.total} de 72 → ${guiaScore} de 100.`,
       'Referência: a média de 1.309 adultos brasileiros no estudo de validação foi 44,1 pontos.',
       `Fontes de fibra: dias na semana com ${f.parts.map((p) => `${p.label} (${fmt1(p.days)})`).join(', ')}. Soma ÷ 28 × 100 = ${f.score}.`,
-      `Escore da área: 70% Guia + 30% fibra = 0,7 × ${guiaScore} + 0,3 × ${f.score} = ${score}.`
+      `Escore da área: 70% Guia + 30% fibra = 0,7 × ${guiaScore} + 0,3 × ${f.score} = ${score}.`,
+      ...foodProfile(a).map((x) => `Radar, ${x.label.toLowerCase()} (${x.value}): ${x.rule}`)
     ]
   };
+}
+
+// ---------- Perfil da alimentação (radar) ----------
+
+export interface FoodAxis {
+  id: string;
+  label: string;
+  value: number; // 0–100, maior = mais alinhado às recomendações
+  rule: string;
+}
+
+/** Eixos do radar da alimentação. Eixos sem resposta (versões antigas) ficam de fora. */
+export function foodProfile(a: BodyAnswers): FoodAxis[] {
+  const d = (id: string) => (has(a, id) ? n(a, id) / 7 : null);
+  const g = (id: string, reversed = false) => (has(a, id) ? (reversed ? 3 - n(a, id) : n(a, id)) / 3 : null);
+  const avg = (xs: (number | null)[]) => (xs.some((x) => x === null) ? null : (xs as number[]).reduce((s, x) => s + x, 0) / xs.length);
+  const inv = (x: number | null) => (x === null ? null : 1 - x);
+  const axes: { id: string; label: string; v: number | null; rule: string }[] = [
+    { id: 'frutas', label: 'Frutas e verduras', v: avg([d('f_frutas'), d('f_verduras')]), rule: 'Média dos dias na semana com frutas e com verduras ou legumes, ÷ 7.' },
+    { id: 'integrais', label: 'Integrais', v: d('f_integrais'), rule: 'Dias com arroz, pão ou massa integral, aveia ou outros grãos integrais, ÷ 7.' },
+    { id: 'leguminosas', label: 'Leguminosas', v: d('f_feijao'), rule: 'Dias com feijão, lentilha, grão-de-bico ou ervilha, ÷ 7.' },
+    { id: 'proteinas', label: 'Proteínas', v: avg([d('f_proteina'), d('f_laticinios')]), rule: 'Média dos dias com carne, frango, peixe ou ovos e com leite ou queijo, ÷ 7.' },
+    {
+      id: 'gorduras',
+      label: 'Gorduras boas',
+      v: avg([d('f_castanhas'), inv(d('f_frituras'))]),
+      rule: 'Média entre os dias com castanhas, sementes ou abacate e os dias SEM frituras, ÷ 7.'
+    },
+    { id: 'fermentados', label: 'Fermentados', v: d('f_fermentados'), rule: 'Dias com iogurte natural, kefir, coalhada ou outros fermentados, ÷ 7.' },
+    {
+      id: 'lanches',
+      label: 'Poucos lanches',
+      v: g('g14', true),
+      rule: 'Frase do Guia sobre beliscar entre as refeições: quanto menos, mais para fora (“nunca” vale 3), ÷ 3.'
+    },
+    {
+      id: 'acucar',
+      label: 'Pouco açúcar',
+      v: avg([g('g15', true), g('g21', true), g('g22', true), g('g23', true)]),
+      rule: 'Frases do Guia sobre açúcar no café, guloseimas, sucos industrializados e refrigerante, com “nunca” valendo mais.'
+    },
+    {
+      id: 'processados',
+      label: 'Pouco processado',
+      v: avg([inv(d('f_ultra')), g('g16', true), g('g18', true)]),
+      rule: 'Dias SEM ultraprocessados, e as frases sobre trocar refeição por lanche e frequentar fast-food, com “nunca” valendo mais.'
+    },
+    {
+      id: 'jeito',
+      label: 'Jeito de comer',
+      v: avg([g('g04'), g('g11'), g('g17', true), g('g19', true), g('g20', true), g('g24', true)]),
+      rule: 'Frases do Guia sobre comer com calma, à mesa, sem pular refeições, longe do sofá, da cama e da mesa de trabalho.'
+    }
+  ];
+  return axes.filter((x) => x.v !== null).map((x) => ({ id: x.id, label: x.label, value: Math.round((x.v as number) * 100), rule: x.rule }));
 }
 
 // ---------- Digestão ----------
@@ -634,7 +690,7 @@ export function checkBodyQuality(a: BodyAnswers, blockTimes: Record<string, numb
   const same = Math.max(...[0, 1, 2, 3].map((v) => guiaRaw.filter((x) => x === v).length));
   if (same >= 20) issues.push(`Na alimentação, a mesma resposta aparece em ${same} de 24 frases, inclusive em frases opostas.`);
   const foodSecs = (blockTimes.alimentacao ?? 0) / 1000;
-  if (foodSecs > 0 && foodSecs < 50) issues.push(`O bloco de alimentação, com 31 perguntas, foi respondido em ${Math.round(foodSecs)} segundos.`);
+  if (foodSecs > 0 && foodSecs < 50) issues.push(`O bloco de alimentação, com 35 perguntas, foi respondido em ${Math.round(foodSecs)} segundos.`);
   return { ok: issues.length === 0, issues };
 }
 
