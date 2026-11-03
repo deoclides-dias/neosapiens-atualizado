@@ -7,7 +7,8 @@ import { ReactNode, useMemo } from 'react';
 import Link from 'next/link';
 import { AlertTriangle, ArrowRight, HeartHandshake, Pencil } from 'lucide-react';
 import { BodyAnswers, SIGNALS, SOURCES } from '../../lib/body/questions';
-import { AreaScore, BodyQuality, buildReport } from '../../lib/body/scoring';
+import { AreaScore, BodyQuality, activityCalc, buildReport, sleepCalc } from '../../lib/body/scoring';
+import { AreaRadar, DigestionCharts, FoodCharts, MovementBar, PriorityMatrix, SleepTimeline, WellbeingGauge } from './BodyCharts';
 import { Card, CardTitle, Eyebrow } from '../traditions/ui';
 
 const LEVEL = {
@@ -44,7 +45,7 @@ function Details({ title, children }: { title: string; children: ReactNode }) {
   );
 }
 
-function AreaCard({ area, extra }: { area: AreaScore; extra?: ReactNode }) {
+function AreaCard({ area, extra, chart }: { area: AreaScore; extra?: ReactNode; chart?: ReactNode }) {
   const lv = LEVEL[area.level];
   return (
     <Card>
@@ -59,6 +60,7 @@ function AreaCard({ area, extra }: { area: AreaScore; extra?: ReactNode }) {
       </div>
       <Meter score={area.score} color={lv.color} />
       <p className="m-0 text-[15px] leading-relaxed text-gray-800">{area.summary}</p>
+      {chart}
       {area.dimensions && (
         <ul className="m-0 p-0 list-none flex flex-col gap-2">
           {area.dimensions.map((d) => {
@@ -97,6 +99,13 @@ function AreaCard({ area, extra }: { area: AreaScore; extra?: ReactNode }) {
 
 export default function BodyReportView({ answers, quality }: { answers: BodyAnswers; quality?: BodyQuality }) {
   const r = useMemo(() => buildReport(answers), [answers]);
+  const sleep = useMemo(() => sleepCalc(answers), [answers]);
+  const activity = useMemo(() => activityCalc(answers), [answers]);
+  const selfOf = (id: string) => {
+    const p = r.priorities.find((x) => x.id === id);
+    return p ? p.satisfaction * 10 : undefined;
+  };
+  const radarAxes = r.areas.map((a) => ({ label: a.label, measured: a.score, self: selfOf(a.id === 'bemestar' ? 'energia' : a.id) }));
   const area = (id: AreaScore['id']) => r.areas.find((a) => a.id === id);
   const top = r.priorities.filter((p) => p.importance >= 5 && p.weight > 0).slice(0, 3);
   const mismatches = r.priorities.filter((p) => p.mismatch);
@@ -139,8 +148,8 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
         <div role="note" className="rounded-2xl border border-purple-200 bg-white p-5 flex gap-3 text-gray-800">
           <HeartHandshake className="w-6 h-6 shrink-0 mt-0.5 text-purple-600" aria-hidden="true" />
           <p className="m-0 text-sm leading-relaxed">
-            Suas respostas de bem-estar indicam que as últimas duas semanas foram bem difíceis. Isso merece cuidado: vale conversar com um profissional de saúde ou com
-            alguém de confiança. Se precisar falar agora, o CVV atende de graça, 24 horas, pelo telefone <strong>188</strong> ou em cvv.org.br.
+            Suas respostas de bem-estar indicam que as últimas duas semanas foram bem difíceis. Isso merece cuidado: vale conversar com um profissional de saúde
+            ou com alguém de confiança. Se precisar falar agora, o CVV atende de graça, 24 horas, pelo telefone <strong>188</strong> ou em cvv.org.br.
           </p>
         </div>
       )}
@@ -149,37 +158,40 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
       <Card>
         <Eyebrow>Visão geral</Eyebrow>
         <CardTitle>Cinco áreas, de 0 a 100</CardTitle>
-        <div className="grid gap-x-6 gap-y-4 sm:grid-cols-2">
-          {r.areas.map((a) => {
-            const lv = LEVEL[a.level];
-            return (
-              <div key={a.id} className="flex flex-col gap-1.5">
-                <div className="flex items-baseline justify-between">
-                  <span className="font-semibold text-gray-900">{a.label}</span>
-                  <span className="text-sm">
-                    <strong className="text-lg" style={{ color: lv.color }}>
-                      {a.score}
-                    </strong>{' '}
-                    <span className="text-gray-500">· {lv.label.toLowerCase()}</span>
-                  </span>
+        <div className="grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] items-center">
+          <AreaRadar axes={radarAxes} />
+          <div className="grid gap-x-6 gap-y-4">
+            {r.areas.map((a) => {
+              const lv = LEVEL[a.level];
+              return (
+                <div key={a.id} className="flex flex-col gap-1.5">
+                  <div className="flex items-baseline justify-between">
+                    <span className="font-semibold text-gray-900">{a.label}</span>
+                    <span className="text-sm">
+                      <strong className="text-lg" style={{ color: lv.color }}>
+                        {a.score}
+                      </strong>{' '}
+                      <span className="text-gray-500">· {lv.label.toLowerCase()}</span>
+                    </span>
+                  </div>
+                  <Meter score={a.score} color={lv.color} />
                 </div>
-                <Meter score={a.score} color={lv.color} />
-              </div>
-            );
-          })}
-          {r.composition && (
-            <div className="flex flex-col gap-0.5 text-sm text-gray-700">
-              <span className="font-semibold text-gray-900">Medidas</span>
-              <span>
-                IMC {r.composition.bmi.toFixed(1).replace('.', ',')} ({r.composition.bmiLabel})
-              </span>
-              {r.composition.whtr !== undefined && (
+              );
+            })}
+            {r.composition && (
+              <div className="flex flex-col gap-0.5 text-sm text-gray-700">
+                <span className="font-semibold text-gray-900">Medidas</span>
                 <span>
-                  Cintura/altura {r.composition.whtr.toFixed(2).replace('.', ',')} ({r.composition.whtrLabel})
+                  IMC {r.composition.bmi.toFixed(1).replace('.', ',')} ({r.composition.bmiLabel})
                 </span>
-              )}
-            </div>
-          )}
+                {r.composition.whtr !== undefined && (
+                  <span>
+                    Cintura/altura {r.composition.whtr.toFixed(2).replace('.', ',')} ({r.composition.whtrLabel})
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
         <p className="m-0 text-xs text-gray-500">
           Bom: 70 ou mais · Médio: 45 a 69 · Atenção: abaixo de 45. No bem-estar, o limite de atenção é 50, como no índice da OMS.
@@ -192,21 +204,29 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
         <CardTitle>Por onde começar</CardTitle>
         {top.length ? (
           <>
-            <p className="m-0 text-[15px] leading-relaxed text-gray-800">Áreas importantes para você e com mais espaço para melhorar, pela sua própria avaliação:</p>
-            <ol className="m-0 pl-0 list-none flex flex-col gap-3">
-              {top.map((p, i) => (
-                <li key={p.id} className="flex items-start gap-3">
-                  <span className="w-7 h-7 rounded-full bg-purple-600 text-white grid place-items-center text-sm font-bold shrink-0">{i + 1}</span>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-gray-900 first-letter:uppercase">{p.label}</span>
-                    <span className="text-sm text-gray-600">
-                      Importância {p.importance}/10 · satisfação {p.satisfaction}/10
-                      {p.measured !== undefined && ` · medido ${p.measured}/100`}
-                    </span>
-                  </div>
-                </li>
-              ))}
+            <p className="m-0 text-[15px] leading-relaxed text-gray-800">
+              Áreas importantes para você e com mais espaço para melhorar, pela sua própria avaliação:
+            </p>
+            <div className="grid gap-5 md:grid-cols-2 items-center">
+              <PriorityMatrix items={r.priorities} />
+              <ol className="m-0 pl-0 list-none flex flex-col gap-3">
+              {r.priorities.map((p, i) => {
+                const isTop = top.some((t) => t.id === p.id);
+                return (
+                  <li key={p.id} className={`flex items-start gap-3 ${isTop ? '' : 'opacity-60'}`}>
+                    <span className="w-7 h-7 rounded-full bg-purple-600 text-white grid place-items-center text-sm font-bold shrink-0">{i + 1}</span>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-gray-900 first-letter:uppercase">{p.label}</span>
+                      <span className="text-sm text-gray-600">
+                        Importância {p.importance}/10 · satisfação {p.satisfaction}/10
+                        {p.measured !== undefined && ` · medido ${p.measured}/100`}
+                      </span>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
+            </div>
           </>
         ) : (
           <p className="m-0 text-[15px] text-gray-800">Você está satisfeito(a) com as áreas que considera importantes.</p>
@@ -217,7 +237,8 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
             <ul className="m-0 pl-5 list-disc text-sm text-gray-800 flex flex-col gap-1">
               {mismatches.map((p) => (
                 <li key={p.id}>
-                  <strong className="first-letter:uppercase inline-block">{p.label}</strong>: você se dá {p.satisfaction} de 10, e as respostas indicam {p.measured} de 100.{' '}
+                  <strong className="first-letter:uppercase inline-block">{p.label}</strong>: você se dá {p.satisfaction} de 10, e as respostas indicam{' '}
+                  {p.measured} de 100.{' '}
                   {p.mismatch === 'se_ve_melhor'
                     ? 'Pode valer olhar essa área com mais atenção do que você imagina.'
                     : 'Talvez você esteja sendo mais exigente consigo do que os números mostram.'}
@@ -249,7 +270,9 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
               <li key={x.id} className="rounded-xl border border-gray-200 p-4 flex flex-col gap-1.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-semibold text-gray-900">{x.title}</span>
-                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${x.strength === 'forte' ? 'bg-emerald-50 text-emerald-800' : x.strength === 'moderada' ? 'bg-amber-50 text-amber-800' : 'bg-gray-100 text-gray-700'}`}>
+                  <span
+                    className={`text-xs font-semibold px-2 py-0.5 rounded-full ${x.strength === 'forte' ? 'bg-emerald-50 text-emerald-800' : x.strength === 'moderada' ? 'bg-amber-50 text-amber-800' : 'bg-gray-100 text-gray-700'}`}
+                  >
                     {STRENGTH[x.strength]}
                   </span>
                 </div>
@@ -272,9 +295,10 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
 
       {/* Áreas */}
       <div className="grid gap-5 md:grid-cols-2 items-start">
-        {area('sono') && <AreaCard area={area('sono')!} />}
+        {area('sono') && <AreaCard area={area('sono')!} chart={sleep && <SleepTimeline a={answers} c={sleep} />} />}
         <AreaCard
           area={area('movimento')!}
+          chart={<MovementBar c={activity} />}
           extra={
             (r.fitness.sitRise !== undefined || r.fitness.oneLeg !== undefined) && (
               <div className="flex flex-col gap-1 text-sm text-gray-700 rounded-xl bg-gray-50 p-3">
@@ -288,9 +312,9 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
             )
           }
         />
-        <AreaCard area={area('alimentacao')!} />
-        <AreaCard area={area('digestao')!} />
-        <AreaCard area={area('bemestar')!} />
+        <AreaCard area={area('alimentacao')!} chart={<FoodCharts a={answers} />} />
+        <AreaCard area={area('digestao')!} chart={<DigestionCharts a={answers} />} />
+        <AreaCard area={area('bemestar')!} chart={<WellbeingGauge score={r.who5} />} />
         {r.composition && (
           <Card>
             <Eyebrow>Medidas</Eyebrow>
@@ -301,7 +325,8 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
               </li>
               {r.composition.whtr !== undefined && (
                 <li>
-                  Cintura ÷ altura <strong>{r.composition.whtr.toFixed(2).replace('.', ',')}</strong>: {r.composition.whtrLabel}; cintura {r.composition.waistLabel}.
+                  Cintura ÷ altura <strong>{r.composition.whtr.toFixed(2).replace('.', ',')}</strong>: {r.composition.whtrLabel}; cintura{' '}
+                  {r.composition.waistLabel}.
                 </li>
               )}
             </ul>
@@ -356,8 +381,8 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
                 ))}
               </ul>
               <p className="m-0 text-sm leading-relaxed text-gray-600">
-                Cada um desses sinais tem muitas causas possíveis: alimentação, hormônios, pele, medicamentos, estresse. Sozinhos, eles não indicam uma deficiência
-                específica. Um profissional pode avaliar com exames, se for o caso.
+                Cada um desses sinais tem muitas causas possíveis: alimentação, hormônios, pele, medicamentos, estresse. Sozinhos, eles não indicam uma
+                deficiência específica. Um profissional pode avaliar com exames, se for o caso.
               </p>
             </>
           ) : (
@@ -380,8 +405,8 @@ export default function BodyReportView({ answers, quality }: { answers: BodyAnsw
           ))}
         </ul>
         <p className="m-0 text-sm text-gray-700">
-          Os escores de 0 a 100 e as regras de cada área são do NeoSapiens e servem para você se acompanhar ao longo do tempo. Não são diagnóstico e não substituem
-          consulta com profissional de saúde.
+          Os escores de 0 a 100 e as regras de cada área são do NeoSapiens e servem para você se acompanhar ao longo do tempo. Não são diagnóstico e não
+          substituem consulta com profissional de saúde.
         </p>
         <Link
           href="/analysis/biohacking"

@@ -6,8 +6,8 @@ const DARK = '#6b3f1d';
 const MID = '#8a5a2b';
 const LIGHT = '#b07d48';
 
-export function BristolIcon({ type }: { type: number }) {
-  const common = { width: 96, height: 40, viewBox: '0 0 96 40', 'aria-hidden': true } as const;
+export function BristolIcon({ type, width = 96 }: { type: number; width?: number }) {
+  const common = { width, height: (width * 40) / 96, viewBox: '0 0 96 40', 'aria-hidden': true } as const;
   switch (type) {
     case 1: // caroços duros e separados
       return (
