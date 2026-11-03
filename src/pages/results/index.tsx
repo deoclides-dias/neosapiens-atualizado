@@ -111,13 +111,13 @@ const ResultsHub = () => {
     },
     {
       id: 'cognitive',
-      title: 'Análise Cognitiva',
-      subtitle: 'Aprendizado & Criatividade',
+      title: 'Sua Mente Hoje',
+      subtitle: 'Atenção, Memória, Criatividade',
       icon: Zap,
       color: 'yellow',
       href: '/results/cognitive',
       status: progress?.cognitive_complete ? 'available' : 'locked',
-      description: 'Como sua mente processa informações e estratégias de otimização cognitiva.',
+      description: 'Seis habilidades de 0 a 100 e onde a sua impressão e os testes não batem.',
       requiredAnalysis: ['cognitive']
     }
   ];

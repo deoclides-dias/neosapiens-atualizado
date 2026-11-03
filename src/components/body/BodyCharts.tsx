@@ -41,7 +41,19 @@ const block = (c: string) => <span className="w-3.5 h-3 rounded-sm inline-block"
 
 // ---------- Radar: medido × como você se vê ----------
 
-export function AreaRadar({ axes, label = 'Radar das cinco áreas: medido e como você se vê', single = false }: { axes: { label: string; measured: number; self?: number }[]; label?: string; single?: boolean }) {
+export function AreaRadar({
+  axes,
+  label = 'Radar das cinco áreas: medido e como você se vê',
+  single = false,
+  measuredLabel = 'Medido pelas respostas',
+  selfLabel = 'Como você se vê (satisfação × 10)'
+}: {
+  axes: { label: string; measured: number; self?: number }[];
+  label?: string;
+  single?: boolean;
+  measuredLabel?: string;
+  selfLabel?: string;
+}) {
   const size = 300;
   const c = size / 2;
   const R = 100;
@@ -100,8 +112,8 @@ export function AreaRadar({ axes, label = 'Radar das cinco áreas: medido e como
       </svg>
       {!single && <Legend
         items={[
-          { label: 'Medido pelas respostas', swatch: block(PURPLE) },
-          ...(hasSelf ? [{ label: 'Como você se vê (satisfação × 10)', swatch: dash(AMBER) }] : [])
+          { label: measuredLabel, swatch: block(PURPLE) },
+          ...(hasSelf ? [{ label: selfLabel, swatch: dash(AMBER) }] : [])
         ]}
       />}
     </figure>
