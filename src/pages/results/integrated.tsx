@@ -1,348 +1,120 @@
-// src/pages/results/integrated.tsx - PARTE 1/2
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { ArrowLeft, Target, Star, Activity, Brain, Zap, TrendingUp, AlertCircle, CheckCircle, Lightbulb } from 'lucide-react';
+// src/pages/results/integrated.tsx
+// O Mapa NeoSapiens: integração dos cinco módulos (Tradições, Corpo,
+// Personalidade, Mente e Propósito), calculada a partir dos dados salvos.
+
+import { useEffect, useMemo, useState } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { ArrowLeft, Check } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import useAnalysisProgress from '../../hooks/useAnalysisProgress';
+import { supabase } from '../../lib/supabase';
+import { DISPLAY_FONT } from '../../components/traditions/ui';
+import IntegrationReport from '../../components/integration/IntegrationReport';
+import { bodyFromSaved } from '../../lib/body/scoring';
+import { mindFromSaved } from '../../lib/mind/mind';
+import { resultFromSaved } from '../../lib/psych/miniIpip';
+import { purposeFromSaved } from '../../lib/purpose/purpose';
+import { birthInputFromSaved, computeTraditions } from '../../lib/astro';
+import type { Sources } from '../../lib/integration/integration';
 
+const HAN_TEXT = encodeURIComponent('木火土金水');
 
-interface IntegratedInsight {
-  type: 'strength' | 'challenge' | 'opportunity' | 'pattern';
-  title: string;
-  description: string;
-  sources: string[];
-  actionable: string;
-}
-
-interface DimensionScore {
-  name: string;
-  score: number;
-  description: string;
-  color: string;
-}
-
-const IntegratedAnalysis = () => {
-  const router = useRouter();
+export default function IntegratedResults() {
   const { user } = useAuth();
-  const { progress, loading } = useAnalysisProgress();
-  const [insights, setInsights] = useState<IntegratedInsight[]>([]);
-  const [dimensionScores, setDimensionScores] = useState<DimensionScore[]>([]);
+  const [row, setRow] = useState<any>(undefined);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (progress && !loading) {
-      generateIntegratedAnalysis();
-    }
-  }, [progress, loading]);
-
-  const generateIntegratedAnalysis = () => {
-    // Simular análise integrada baseada no progresso atual
-    const completedAnalyses = [
-      progress.birth.completed && 'birth',
-      progress.biohacking.completed && 'biohacking', 
-      progress.psychological.completed && 'psychological',
-      progress.cognitive.completed && 'cognitive'
-    ].filter(Boolean);
-
-    // Gerar insights baseados nas análises completas
-    const generatedInsights: IntegratedInsight[] = [];
-
-    if (progress.birth.completed) {
-      generatedInsights.push({
-        type: 'strength',
-        title: 'Essência Astrológica Definida',
-        description: 'Seu mapa astral revela uma personalidade com características marcantes que se alinham com seu potencial natural.',
-        sources: ['Astrologia Ocidental', 'Numerologia'],
-        actionable: 'Use essas características como base para tomadas de decisão importantes.'
-      });
-    }
-
-    if (progress.biohacking.completed) {
-      generatedInsights.push({
-        type: 'opportunity',
-        title: 'Otimização Biológica',
-        description: 'Seus padrões de sono e energia podem ser otimizados para aumentar significativamente sua performance.',
-        sources: ['Análise Biológica'],
-        actionable: 'Implemente as recomendações de sono e nutrição nos próximos 30 dias.'
-      });
-    }
-
-    if (progress.psychological.completed && progress.birth.completed) {
-      generatedInsights.push({
-        type: 'pattern',
-        title: 'Alinhamento Astro-Psicológico',
-        description: 'Existe uma forte correlação entre seu perfil astrológico e traços psicológicos identificados.',
-        sources: ['Astrologia', 'Big Five'],
-        actionable: 'Explore práticas que integrem sua natureza astrológica com desenvolvimento psicológico.'
-      });
-    }
-
-    if (completedAnalyses.length >= 3) {
-      generatedInsights.push({
-        type: 'challenge',
-        title: 'Área de Integração',
-        description: 'Identificamos uma oportunidade de melhor alinhamento entre suas dimensões Corpo, Mente e Propósito.',
-        sources: completedAnalyses,
-        actionable: 'Foque em práticas que envolvam simultaneamente múltiplas dimensões.'
-      });
-    }
-
-    setInsights(generatedInsights);
-
-    // Gerar scores dimensionais
-    const scores: DimensionScore[] = [
-      {
-        name: 'Propósito',
-        score: progress.birth.completed ? 85 : 0,
-        description: 'Clareza sobre valores e direção de vida',
-        color: 'indigo'
-      },
-      {
-        name: 'Corpo',
-        score: progress.biohacking.completed ? 72 : 0,
-        description: 'Otimização e consciência corporal',
-        color: 'green'
-      },
-      {
-        name: 'Mente',
-        score: (progress.psychological.completed ? 40 : 0) + (progress.cognitive.completed ? 40 : 0),
-        description: 'Desenvolvimento psicológico e cognitivo',
-        color: 'purple'
+    if (!user) return;
+    (async () => {
+      try {
+        const { data, error: dbError } = await supabase
+          .from('onboarding_progress')
+          .select('birth_data, biohacking_data, psychological_data, cognitive_data, purpose_data')
+          .eq('user_id', user.id)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+        if (dbError) throw dbError;
+        setRow(data?.[0] ?? null);
+      } catch (err) {
+        console.error('Erro ao carregar dados:', err);
+        setError('Não foi possível carregar seus dados.');
+        setRow(null);
       }
-    ];
+    })();
+  }, [user]);
 
-    setDimensionScores(scores);
-  };
-
-  const getInsightIcon = (type: string) => {
-    switch (type) {
-      case 'strength': return CheckCircle;
-      case 'challenge': return AlertCircle;
-      case 'opportunity': return TrendingUp;
-      case 'pattern': return Lightbulb;
-      default: return Target;
+  const sources: Sources | null = useMemo(() => {
+    if (!row) return null;
+    const input = birthInputFromSaved(row.birth_data);
+    let traditions = null;
+    try {
+      traditions = input ? computeTraditions(input) : null;
+    } catch {
+      traditions = null;
     }
-  };
+    return {
+      body: bodyFromSaved(row.biohacking_data),
+      mind: mindFromSaved(row.cognitive_data),
+      psych: resultFromSaved(row.psychological_data),
+      purpose: purposeFromSaved(row.purpose_data),
+      traditions
+    };
+  }, [row]);
 
-  const getInsightColor = (type: string) => {
-    switch (type) {
-      case 'strength': return 'green';
-      case 'challenge': return 'orange';
-      case 'opportunity': return 'blue';
-      case 'pattern': return 'purple';
-      default: return 'gray';
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Processando sua análise integrada...</p>
-        </div>
-      </div>
-    );
-  };
-
-  const completedCount = [progress.birth.completed, progress.biohacking.completed, progress.psychological.completed, progress.cognitive.completed].filter(Boolean).length;
-
-  if (completedCount === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
-        <div className="max-w-2xl mx-auto">
-          <button 
-            onClick={() => router.push('/results')} 
-            className="flex items-center text-indigo-600 hover:text-indigo-800 mb-6"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Voltar aos Resultados
-          </button>
-          
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <Target className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Análise Integrada Indisponível</h2>
-            <p className="text-gray-600 mb-6">
-              Complete pelo menos uma análise para acessar insights integrados personalizados.
-            </p>
-            <button 
-              onClick={() => router.push('/analysis')} 
-              className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              Iniciar Análises
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const modules = sources
+    ? [
+        { label: 'Tradições', done: Boolean(sources.traditions), href: '/analysis/birth' },
+        { label: 'Corpo', done: Boolean(sources.body?.concluidoEm), href: '/analysis/biohacking' },
+        { label: 'Personalidade', done: Boolean(sources.psych), href: '/analysis/psychological' },
+        { label: 'Mente', done: Boolean(sources.mind?.concluidoEm), href: '/analysis/cognitive' },
+        { label: 'Propósito', done: Boolean(sources.purpose?.concluidoEm), href: '/analysis/purpose' }
+      ]
+    : [];
+  const doneCount = modules.filter((m) => m.done).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Header */}
-        <div className="flex items-center mb-8">
-          <button 
-            onClick={() => router.push('/results')} 
-            className="flex items-center text-indigo-600 hover:text-indigo-800 mr-6"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Hub de Resultados
-          </button>
-          
-          <div>
-            <h1 className="text-4xl font-bold text-gray-900">🎯 Análise Integrada</h1>
-            <p className="text-xl text-gray-600">Sua jornada completa de autodescoberta sintetizada</p>
-          </div>
-        </div>
-
-        {/* Progresso das Dimensões */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {dimensionScores.map((dimension, index) => (
-            <div key={index} className="bg-white rounded-2xl shadow-lg p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-900">{dimension.name}</h3>
-                <span className={`text-2xl font-bold text-${dimension.color}-600`}>
-                  {dimension.score}%
-                </span>
+    <>
+      <Head>
+        <title>Seu Mapa NeoSapiens</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
+        <link rel="stylesheet" href={`https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600&text=${HAN_TEXT}&display=swap`} />
+      </Head>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 text-gray-900" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+        <div className="max-w-[1000px] mx-auto px-4 sm:px-6 pt-8 pb-14 flex flex-col gap-7">
+          <Link href="/results" className="inline-flex items-center gap-2 text-sm text-purple-100 hover:text-white w-fit min-h-[44px]">
+            <ArrowLeft className="w-4 h-4" /> Voltar aos resultados
+          </Link>
+          <header className="flex flex-col gap-3">
+            <p className="m-0 text-[13px] tracking-[0.12em] uppercase text-purple-200 font-semibold">NeoSapiens · Integração</p>
+            <h1 className="m-0 text-4xl sm:text-5xl leading-tight font-semibold text-white" style={{ fontFamily: DISPLAY_FONT }}>
+              Seu Mapa NeoSapiens
+            </h1>
+            {sources && (
+              <div className="flex flex-wrap gap-2">
+                {modules.map((m) =>
+                  m.done ? (
+                    <span key={m.label} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-purple-50 text-sm">
+                      <Check className="w-3.5 h-3.5" /> {m.label}
+                    </span>
+                  ) : (
+                    <Link key={m.label} href={m.href} className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-dashed border-white/30 text-purple-200 text-sm hover:text-white">
+                      {m.label} · responder
+                    </Link>
+                  )
+                )}
               </div>
-              
-              <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
-                <div 
-                  className={`bg-${dimension.color}-500 h-3 rounded-full transition-all duration-500`}
-                  style={{ width: `${dimension.score}%` }}
-                ></div>
-              </div>
-              
-              <p className="text-gray-600 text-sm">{dimension.description}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Insights Principais */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">💡 Insights Integrados</h2>
-          
-          <div className="space-y-6">
-            {insights.map((insight, index) => {
-              const IconComponent = getInsightIcon(insight.type);
-              const color = getInsightColor(insight.type);
-              
-              return (
-                <div key={index} className={`border-l-4 border-${color}-500 pl-6 py-4`}>
-                  <div className="flex items-start space-x-3">
-                    <IconComponent className={`w-6 h-6 text-${color}-600 flex-shrink-0 mt-1`} />
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                        {insight.title}
-                      </h3>
-                      <p className="text-gray-700 mb-3">{insight.description}</p>
-                      
-                      <div className="mb-3">
-                        <span className="text-sm font-medium text-gray-600">Baseado em: </span>
-                        <span className="text-sm text-gray-500">
-                          {insight.sources.join(', ')}
-                        </span>
-                      </div>
-                      
-                      <div className={`bg-${color}-50 p-3 rounded-lg`}>
-                        <span className="text-sm font-medium text-gray-700">💡 Ação recomendada: </span>
-                        <span className="text-sm text-gray-600">{insight.actionable}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Status das Análises */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">📊 Status das Análises</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className={`p-4 rounded-lg border-2 ${progress.birth.completed ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
-              <Star className={`w-8 h-8 mb-2 ${progress.birth.completed ? 'text-green-600' : 'text-gray-400'}`} />
-              <h3 className="font-semibold text-gray-900">Nascimento</h3>
-              <p className="text-sm text-gray-600">
-                {progress.birth.completed ? '✅ Completo' : '⏳ Pendente'}
-              </p>
-            </div>
-            
-            <div className={`p-4 rounded-lg border-2 ${progress.biohacking.completed ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
-              <Activity className={`w-8 h-8 mb-2 ${progress.biohacking.completed ? 'text-green-600' : 'text-gray-400'}`} />
-              <h3 className="font-semibold text-gray-900">Biohacking</h3>
-              <p className="text-sm text-gray-600">
-                {progress.biohacking.completed ? '✅ Completo' : '⏳ Pendente'}
-              </p>
-            </div>
-            
-            <div className={`p-4 rounded-lg border-2 ${progress.psychological.completed ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
-              <Brain className={`w-8 h-8 mb-2 ${progress.psychological.completed ? 'text-green-600' : 'text-gray-400'}`} />
-              <h3 className="font-semibold text-gray-900">Psicológico</h3>
-              <p className="text-sm text-gray-600">
-                {progress.psychological.completed ? '✅ Completo' : '⏳ Pendente'}
-              </p>
-            </div>
-            
-            <div className={`p-4 rounded-lg border-2 ${progress.cognitive.completed ? 'border-green-200 bg-green-50' : 'border-gray-200 bg-gray-50'}`}>
-              <Zap className={`w-8 h-8 mb-2 ${progress.cognitive.completed ? 'text-green-600' : 'text-gray-400'}`} />
-              <h3 className="font-semibold text-gray-900">Cognitivo</h3>
-              <p className="text-sm text-gray-600">
-                {progress.cognitive.completed ? '✅ Completo' : '⏳ Pendente'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Próximos Passos */}
-        <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl shadow-xl p-8 text-white">
-          <h2 className="text-2xl font-bold mb-6">🚀 Próximos Passos</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Para Aprofundar:</h3>
-              <ul className="space-y-2 text-indigo-100">
-                {!progress.birth.completed && <li>• Complete a análise de nascimento</li>}
-                {!progress.biohacking.completed && <li>• Faça a avaliação biológica</li>}
-                {!progress.psychological.completed && <li>• Responda ao questionário psicológico</li>}
-                {!progress.cognitive.completed && <li>• Realize a análise cognitiva</li>}
-                {completedCount === 4 && <li>• Explore módulos avançados de desenvolvimento</li>}
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Ações Imediatas:</h3>
-              <ul className="space-y-2 text-indigo-100">
-                <li>• Implemente uma recomendação por semana</li>
-                <li>• Acompanhe seu progresso diariamente</li>
-                <li>• Conecte-se com outros Neo-Navegantes</li>
-                <li>• Agende uma revisão em 30 dias</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="mt-8 flex justify-center space-x-4">
-          <button 
-            onClick={() => router.push('/results')} 
-            className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
-          >
-            ← Ver Resultados Individuais
-          </button>
-          
-          <button 
-            onClick={() => router.push('/analysis')} 
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-          >
-            Continuar Análises →
-          </button>
+            )}
+            {sources && doneCount < 5 && (
+              <p className="m-0 text-sm text-purple-200">O mapa usa o que já foi respondido; os módulos que faltam aparecem vazios.</p>
+            )}
+          </header>
+          {row === undefined && <p className="text-purple-100">Carregando...</p>}
+          {row !== undefined && error && <div className="bg-white rounded-2xl p-6 text-gray-800">{error}</div>}
+          {sources && <IntegrationReport sources={sources} />}
         </div>
       </div>
-    </div>
+    </>
   );
-};
-
-export default IntegratedAnalysis;
+}
