@@ -212,9 +212,11 @@ export function SleepWave({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
   const pad = 30;
   const total = inBed + 2 * pad;
   const W = 340;
-  const H = 136;
-  const top = 24;
-  const base = H - 26;
+  const H = 168;
+  const top = 26;
+  const bottom = H - 30;
+  const UP = 0.4; // altura da vigília acima do eixo
+  const yZero = top + ((bottom - top) * UP) / (1 + UP);
   const xOf = (m: number) => (m / total) * W; // m = minutos desde (luz apagada − 30)
   const onset = pad + lat;
   const end = pad + inBed;
@@ -229,6 +231,7 @@ export function SleepWave({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
     [0.4, 0.72].forEach((f) => wakes.push({ t: onset + sleepLen * f, w: Math.max(5, waso / 4) }));
   }
 
+  // Profundidade do sono (0 a 1) em ciclos de ~90 min
   const AMP = [1, 0.85, 0.62, 0.45, 0.36, 0.3, 0.28];
   const depth = (m: number) => {
     if (m <= onset || m >= end) return 0;
@@ -240,11 +243,18 @@ export function SleepWave({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
     for (const w of wakes) d *= 1 - Math.exp(-Math.pow((m - w.t) / w.w, 2));
     return Math.max(0, d);
   };
-  const yOf = (d: number) => base - d * (base - top);
+  // Vigília (0 a 1): acordado antes de dormir, depois de acordar e nos despertares
+  const awake = (m: number) => {
+    let v = m < onset ? 1 : m > end ? 1 : Math.max(Math.exp(-(m - onset) / 5), Math.exp(-(end - m) / 5));
+    for (const w of wakes) v = Math.max(v, Math.exp(-Math.pow((m - w.t) / (w.w * 0.7), 2)));
+    return v;
+  };
+  const value = (m: number) => UP * awake(m) - depth(m); // acima de 0 = acordado(a); abaixo = dormindo
+  const yOf = (v: number) => yZero - v * ((yZero - top) / UP);
   const pts: string[] = [];
-  for (let m = 0; m <= total; m += 3) pts.push(`${xOf(m).toFixed(1)},${yOf(depth(m)).toFixed(1)}`);
+  for (let m = 0; m <= total; m += 2) pts.push(`${xOf(m).toFixed(1)},${yOf(value(m)).toFixed(1)}`);
   const line = `M${pts.join(' L')}`;
-  const area = `${line} L${W},${base} L0,${base} Z`;
+  const area = `${line} L${W},${yZero} L0,${yZero} Z`;
 
   // Marcas de hora cheia
   const startClock = off - pad;
@@ -257,52 +267,62 @@ export function SleepWave({ a, c }: { a: BodyAnswers; c: SleepCalc }) {
   return (
     <figure className="m-0 flex flex-col gap-1.5">
       <figcaption className="text-xs text-gray-600">Como seria uma noite em dia de trabalho (esquema)</figcaption>
-      <svg viewBox={`-92 0 ${W + 100} ${H}`} className="w-full" role="img" aria-label="Esquema da profundidade do sono ao longo da noite">
+      <svg viewBox={`-92 0 ${W + 100} ${H}`} className="w-full" role="img" aria-label="Esquema da noite: vigília acima do eixo e sono abaixo">
         <defs>
           <linearGradient id="sleepFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={PURPLE} stopOpacity="0.45" />
-            <stop offset="100%" stopColor={PURPLE} stopOpacity="0.06" />
+            <stop offset="0%" stopColor={PURPLE} stopOpacity="0.08" />
+            <stop offset="100%" stopColor={PURPLE} stopOpacity="0.5" />
           </linearGradient>
+          <clipPath id="aboveZero">
+            <rect x="0" y="0" width={W} height={yZero} />
+          </clipPath>
+          <clipPath id="belowZero">
+            <rect x="0" y={yZero} width={W} height={H} />
+          </clipPath>
         </defs>
         {[
-          { d: 0, l: 'acordado(a)' },
-          { d: 0.5, l: 'sono leve' },
-          { d: 1, l: 'sono profundo' }
+          { v: UP, l: 'acordado(a)' },
+          { v: -0.5, l: 'sono leve' },
+          { v: -1, l: 'sono profundo' }
         ].map((g) => (
           <g key={g.l}>
-            <line x1="0" y1={yOf(g.d)} x2={W} y2={yOf(g.d)} stroke={GRID} strokeWidth="1" />
-            <text x="-6" y={yOf(g.d) + 4} textAnchor="end" fontSize="10.5" fill={MUTED}>
+            <line x1="0" y1={yOf(g.v)} x2={W} y2={yOf(g.v)} stroke={GRID} strokeWidth="1" />
+            <text x="-6" y={yOf(g.v) + 4} textAnchor="end" fontSize="10.5" fill={MUTED}>
               {g.l}
             </text>
           </g>
         ))}
-        <path d={area} fill="url(#sleepFill)" />
+        <path d={area} fill={AMBER} opacity="0.28" clipPath="url(#aboveZero)" />
+        <path d={area} fill="url(#sleepFill)" clipPath="url(#belowZero)" />
+        <line x1="0" y1={yZero} x2={W} y2={yZero} stroke={INK2} strokeWidth="1" />
+        <text x="-6" y={yZero + 4} textAnchor="end" fontSize="10.5" fill={INK2}>
+          adormecer
+        </text>
         <path d={line} fill="none" stroke={PURPLE} strokeWidth="2" strokeLinejoin="round" />
         {wakes.map((w) => (
-          <g key={w.t}>
-            <circle cx={xOf(w.t)} cy={base} r="4.5" fill={AMBER} stroke="#fff" strokeWidth="2">
-              <title>{`Despertar por volta de ${hhmm(startClock + w.t)}`}</title>
-            </circle>
-          </g>
+          <circle key={w.t} cx={xOf(w.t)} cy={yOf(value(w.t))} r="4.5" fill={AMBER} stroke="#fff" strokeWidth="2">
+            <title>{`Despertar por volta de ${hhmm(startClock + w.t)}`}</title>
+          </circle>
         ))}
         <g>
-          <line x1={xOf(pad)} y1={top} x2={xOf(pad)} y2={base} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
-          <text x={xOf(pad)} y={top - 8} textAnchor="middle" fontSize="10" fill={INK2}>
+          <line x1={xOf(pad)} y1={top} x2={xOf(pad)} y2={bottom} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
+          <text x={xOf(pad)} y={top - 10} textAnchor="middle" fontSize="10" fill={INK2}>
             luz apagada
           </text>
-          <line x1={xOf(end)} y1={top} x2={xOf(end)} y2={base} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
-          <text x={xOf(end)} y={top - 8} textAnchor="middle" fontSize="10" fill={INK2}>
+          <line x1={xOf(end)} y1={top} x2={xOf(end)} y2={bottom} stroke={INK2} strokeWidth="1" strokeDasharray="3 3" />
+          <text x={xOf(end)} y={top - 10} textAnchor="middle" fontSize="10" fill={INK2}>
             acorda
           </text>
         </g>
         {ticks.map((t) => (
-          <text key={t.x} x={t.x} y={H - 8} textAnchor="middle" fontSize="11" fill={MUTED}>
+          <text key={t.x} x={t.x} y={H - 10} textAnchor="middle" fontSize="11" fill={MUTED}>
             {t.h}h
           </text>
         ))}
       </svg>
       <p className="m-0 text-xs leading-relaxed text-gray-500">
-        Cada “montanha” é um ciclo de cerca de 90 minutos: os primeiros são mais profundos e os do fim da noite, mais leves.
+        Acima da linha, acordado(a); abaixo, dormindo. Cada vale é um ciclo de cerca de 90 minutos: os primeiros vão mais fundo e os do fim da noite ficam mais
+        rasos.
         {wakes.length > 0 && ' Os pontos laranja marcam os despertares que você relatou.'} É uma ilustração feita com as suas respostas, não uma medição.
       </p>
     </figure>
