@@ -34,6 +34,7 @@ interface AnalysisProgress {
     completedAt?: Date; 
     data?: any 
   };
+  purpose: { completed: boolean };
   overallProgress: number;
   canAccessResults: boolean;
 }
@@ -49,6 +50,7 @@ function useAnalysisProgress() {
     biohacking: { completed: false },
     psychological: { completed: false },
     cognitive: { completed: false },
+    purpose: { completed: false },
     overallProgress: 0,
     canAccessResults: false
   });
@@ -89,6 +91,7 @@ function useAnalysisProgress() {
           biohacking: { completed: false },
           psychological: { completed: false },
           cognitive: { completed: false },
+        purpose: { completed: false },
           overallProgress: 0,
           canAccessResults: false
         });
@@ -176,6 +179,7 @@ function useAnalysisProgress() {
           completedAt: cognitiveCompleted ? new Date(onboardingData.updated_at) : undefined,
           data: cognitiveCompleted ? dataJson.cognitive || { completed: true } : undefined
         },
+        purpose: { completed: Boolean(onboardingData.purpose_data_complete) },
         overallProgress,
         canAccessResults
       });
@@ -191,6 +195,7 @@ function useAnalysisProgress() {
         biohacking: { completed: false },
         psychological: { completed: false },
         cognitive: { completed: false },
+        purpose: { completed: false },
         overallProgress: 0,
         canAccessResults: false
       });
@@ -204,7 +209,7 @@ function useAnalysisProgress() {
   // ===========================================================================
   
   const markAnalysisComplete = async (
-    analysisType: 'birth' | 'biohacking' | 'psychological' | 'cognitive',
+    analysisType: 'birth' | 'biohacking' | 'psychological' | 'cognitive' | 'purpose',
     data: any,
     /** false = salva o andamento sem marcar a análise como concluída */
     complete: boolean = true
@@ -237,6 +242,10 @@ function useAnalysisProgress() {
         case 'cognitive':
           if (complete) updateData.cognitive_data_complete = true;
           updateData.cognitive_data = data;
+          break;
+        case 'purpose':
+          if (complete) updateData.purpose_data_complete = true;
+          updateData.purpose_data = data;
           break;
       }
 
@@ -384,6 +393,7 @@ function useAnalysisProgress() {
         biohacking: { completed: false },
         psychological: { completed: false },
         cognitive: { completed: false },
+        purpose: { completed: false },
         overallProgress: 0,
         canAccessResults: false
       });
