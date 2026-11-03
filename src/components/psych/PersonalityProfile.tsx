@@ -1,17 +1,42 @@
 // src/components/psych/PersonalityProfile.tsx
 // Corpo da página de resultados do Mini-IPIP: aviso de qualidade, visão geral,
-// um cartão por traço (com a conta à mostra) e notas sobre o instrumento.
+// hoje × desejado (quando a segunda passada existe), um cartão por traço
+// (com a conta à mostra) e notas sobre o instrumento.
 
 import { useMemo } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RotateCcw } from 'lucide-react';
-import { INSTRUMENT, MARGIN, SCALE, TRAITS, TraitScore, PsychologicalResult, scoreTraits } from '../../lib/psych/miniIpip';
+import { AlertTriangle, ArrowRight, Compass, RotateCcw } from 'lucide-react';
+import { GAP_THRESHOLD, INSTRUMENT, MARGIN, SCALE, TRAITS, TraitScore, PsychologicalResult, QualityReport, scoreTraits, traitGaps } from '../../lib/psych/miniIpip';
 import { Card, CardTitle, Eyebrow } from '../traditions/ui';
 
 const BAND_LABEL = { baixo: 'Mais baixo', intermediario: 'Intermediário', alto: 'Mais alto' } as const;
 const fmt = (n: number) => n.toFixed(1).replace('.', ',');
+const signed = (n: number) => (n > 0 ? `+${n}` : n < 0 ? `−${Math.abs(n)}` : '0');
 
-function TraitBar({ s, color }: { s: TraitScore; color: string }) {
+function QualityNote({ quality, title, href }: { quality: QualityReport; title: string; href: string }) {
+  return (
+    <div role="note" className="rounded-2xl border border-amber-300 bg-amber-50 p-5 flex gap-3 text-amber-900">
+      <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" aria-hidden="true" />
+      <div className="flex flex-col gap-1.5 text-sm">
+        <p className="m-0 font-semibold">{title}</p>
+        <ul className="m-0 pl-5 list-disc">
+          {quality.checks
+            .filter((c) => !c.ok)
+            .map((c) => (
+              <li key={c.id}>
+                <strong>{c.label}:</strong> {c.detail}
+              </li>
+            ))}
+        </ul>
+        <Link href={href} className="font-semibold underline w-fit">
+          Refazer com calma
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function TraitBar({ s, color, ideal }: { s: TraitScore; color: string; ideal?: number }) {
   return (
     <div className="relative h-8" aria-hidden="true">
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-2 rounded-full bg-gray-100" />
@@ -22,6 +47,18 @@ function TraitBar({ s, color }: { s: TraitScore; color: string }) {
         className="absolute top-1/2 -translate-y-1/2 h-4 rounded-full opacity-25"
         style={{ left: `${s.low}%`, width: `${s.high - s.low}%`, background: color }}
       />
+      {ideal !== undefined && (
+        <>
+          <div
+            className="absolute top-1/2 -translate-y-1/2 border-t-2 border-dashed"
+            style={{ left: `${Math.min(s.score, ideal)}%`, width: `${Math.abs(ideal - s.score)}%`, borderColor: color }}
+          />
+          <div
+            className="absolute top-1/2 w-5 h-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] bg-white"
+            style={{ left: `${ideal}%`, borderColor: color }}
+          />
+        </>
+      )}
       <div
         className="absolute top-1/2 w-5 h-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-[3px] border-white shadow"
         style={{ left: `${s.score}%`, background: color }}
@@ -30,7 +67,16 @@ function TraitBar({ s, color }: { s: TraitScore; color: string }) {
   );
 }
 
-function Calculation({ s, inverted }: { s: TraitScore; inverted?: boolean }) {
+const Used = ({ reversed, answer, used }: { reversed: boolean; answer: number; used: number }) =>
+  reversed ? (
+    <span title="Frase invertida: 6 − resposta">
+      6 − {answer} = {used}
+    </span>
+  ) : (
+    <>{used}</>
+  );
+
+function Calculation({ s, ideal, inverted }: { s: TraitScore; ideal?: TraitScore; inverted?: boolean }) {
   return (
     <details className="group rounded-xl border border-gray-200 text-sm">
       <summary className="cursor-pointer list-none px-4 min-h-[44px] flex items-center justify-between font-semibold text-purple-800">
@@ -44,24 +90,40 @@ function Calculation({ s, inverted }: { s: TraitScore; inverted?: boolean }) {
           <thead>
             <tr className="text-left text-xs text-gray-500">
               <th className="py-1.5 pr-2 font-semibold">Frase</th>
-              <th className="py-1.5 px-2 font-semibold text-center">Resposta</th>
-              <th className="py-1.5 pl-2 font-semibold text-center">Na conta</th>
+              {ideal ? (
+                <>
+                  <th className="py-1.5 px-2 font-semibold text-center">Hoje</th>
+                  <th className="py-1.5 pl-2 font-semibold text-center">Desejado</th>
+                </>
+              ) : (
+                <>
+                  <th className="py-1.5 px-2 font-semibold text-center">Resposta</th>
+                  <th className="py-1.5 pl-2 font-semibold text-center">Na conta</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
             {s.items.map((i) => (
               <tr key={i.id} className="border-t border-gray-100 align-top">
                 <td className="py-2 pr-2">{i.text}</td>
-                <td className="py-2 px-2 text-center font-semibold">{i.answer}</td>
-                <td className="py-2 pl-2 text-center font-semibold whitespace-nowrap">
-                  {i.reversed ? (
-                    <span title="Frase invertida: 6 − resposta">
-                      6 − {i.answer} = {i.used}
-                    </span>
-                  ) : (
-                    i.used
-                  )}
-                </td>
+                {ideal ? (
+                  <>
+                    <td className="py-2 px-2 text-center font-semibold whitespace-nowrap">
+                      <Used {...i} />
+                    </td>
+                    <td className="py-2 pl-2 text-center font-semibold whitespace-nowrap">
+                      <Used {...ideal.items.find((x) => x.id === i.id)!} />
+                    </td>
+                  </>
+                ) : (
+                  <>
+                    <td className="py-2 px-2 text-center font-semibold">{i.answer}</td>
+                    <td className="py-2 pl-2 text-center font-semibold whitespace-nowrap">
+                      <Used {...i} />
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
@@ -74,6 +136,12 @@ function Calculation({ s, inverted }: { s: TraitScore; inverted?: boolean }) {
           Média: ({s.items.map((i) => i.used).join(' + ')}) ÷ 4 = <strong>{fmt(s.mean)}</strong> na escala de 1 a 5. Na escala de 0 a 100: ({fmt(s.mean)} − 1) ÷
           4 × 100 = <strong>{s.score}</strong>.
         </p>
+        {ideal && (
+          <p className="m-0">
+            Desejado: ({ideal.items.map((i) => i.used).join(' + ')}) ÷ 4 = <strong>{fmt(ideal.mean)}</strong> → ({fmt(ideal.mean)} − 1) ÷ 4 × 100 ={' '}
+            <strong>{ideal.score}</strong>. Distância: {ideal.score} − {s.score} = <strong>{signed(ideal.score - s.score)}</strong>.
+          </p>
+        )}
       </div>
     </details>
   );
@@ -81,30 +149,28 @@ function Calculation({ s, inverted }: { s: TraitScore; inverted?: boolean }) {
 
 export default function PersonalityProfile({ result }: { result: PsychologicalResult }) {
   const scores = useMemo(() => scoreTraits(result.respostas), [result]);
+  const idealScores = useMemo(() => (result.ideal ? scoreTraits(result.ideal.respostas) : null), [result]);
+  const gaps = useMemo(() => traitGaps(result), [result]);
   const quality = result.qualidade;
+  const idealQuality = result.ideal?.qualidade;
+  const idealOf = (id: string) => idealScores?.find((x) => x.id === id);
+  const main = gaps.filter((g) => g.meaningful).slice(0, 2);
+
   return (
     <>
       {quality && quality.status !== 'ok' && (
-        <div role="note" className="rounded-2xl border border-amber-300 bg-amber-50 p-5 flex gap-3 text-amber-900">
-          <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" aria-hidden="true" />
-          <div className="flex flex-col gap-1.5 text-sm">
-            <p className="m-0 font-semibold">
-              {quality.status === 'invalido' ? 'Leia com cautela: as respostas parecem apressadas.' : 'Uma das verificações de qualidade chamou atenção.'}
-            </p>
-            <ul className="m-0 pl-5 list-disc">
-              {quality.checks
-                .filter((c) => !c.ok)
-                .map((c) => (
-                  <li key={c.id}>
-                    <strong>{c.label}:</strong> {c.detail}
-                  </li>
-                ))}
-            </ul>
-            <Link href="/analysis/psychological" className="font-semibold underline w-fit">
-              Refazer com calma
-            </Link>
-          </div>
-        </div>
+        <QualityNote
+          quality={quality}
+          href="/analysis/psychological"
+          title={quality.status === 'invalido' ? 'Leia com cautela: as respostas parecem apressadas.' : 'Uma das verificações de qualidade chamou atenção.'}
+        />
+      )}
+      {idealQuality && idealQuality.status !== 'ok' && (
+        <QualityNote
+          quality={idealQuality}
+          href="/analysis/psychological?etapa=desejado"
+          title="Nas respostas sobre como gostaria de ser, uma verificação chamou atenção."
+        />
       )}
 
       <Card>
@@ -122,7 +188,7 @@ export default function PersonalityProfile({ result }: { result: PsychologicalRe
                 <span className="font-semibold text-gray-900 sm:col-span-1 col-span-1">{t.name}</span>
                 <span className="sm:hidden text-right font-bold text-gray-900">{s.score}</span>
                 <div className="col-span-2 sm:col-span-1">
-                  <TraitBar s={s} color={t.color} />
+                  <TraitBar s={s} color={t.color} ideal={idealOf(t.id)?.score} />
                 </div>
                 <span className="hidden sm:block text-right font-bold text-gray-900">{s.score}</span>
               </div>
@@ -136,8 +202,77 @@ export default function PersonalityProfile({ result }: { result: PsychologicalRe
               <span>mais alto · 100</span>
             </div>
           </div>
+          {idealScores && (
+            <div className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-gray-600">
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-3.5 h-3.5 rounded-full bg-purple-600" aria-hidden="true" /> hoje (o número à direita)
+              </span>
+              <span className="inline-flex items-center gap-1.5">
+                <span className="w-3.5 h-3.5 rounded-full border-[3px] border-purple-600 bg-white" aria-hidden="true" /> como gostaria de ser
+              </span>
+            </div>
+          )}
         </div>
       </Card>
+
+      {idealScores ? (
+        <Card>
+          <Eyebrow>Hoje × como gostaria de ser</Eyebrow>
+          <CardTitle>Para onde você quer ir</CardTitle>
+          <p className="m-0 text-[15px] leading-relaxed text-gray-800">
+            {main.length === 0
+              ? `Em nenhum traço a distância passou de ${GAP_THRESHOLD} pontos: hoje você se descreve perto da pessoa que gostaria de ser.`
+              : `${main.length === 1 ? 'A maior distância está' : 'As maiores distâncias estão'} em ${main
+                  .map((g) => TRAITS.find((t) => t.id === g.id)!.name.toLowerCase())
+                  .join(' e ')}. É daí que nasce o seu Plano de Voo.`}
+          </p>
+          <ul className="m-0 p-0 list-none flex flex-col divide-y divide-gray-100">
+            {gaps.map((g) => {
+              const t = TRAITS.find((x) => x.id === g.id)!;
+              return (
+                <li key={g.id} className="py-3 grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 items-center">
+                  <span className="font-semibold text-gray-900">{t.name}</span>
+                  <span
+                    className={`text-right font-bold text-lg ${g.meaningful ? '' : 'text-gray-400'}`}
+                    style={g.meaningful ? { color: t.color } : undefined}
+                  >
+                    {signed(g.gap)}
+                  </span>
+                  <span className="text-sm text-gray-700">
+                    {g.meaningful ? `Você gostaria de ser ${g.gap > 0 ? t.wantMore : t.wantLess}.` : 'Perto de como você gostaria de ser.'}
+                  </span>
+                  <span className="text-right text-xs text-gray-500 whitespace-nowrap inline-flex items-center gap-1 justify-end">
+                    {g.real} <ArrowRight className="w-3 h-3" aria-label="para" /> {g.ideal}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="m-0 text-xs leading-relaxed text-gray-500">
+            Cada escore tem margem de ±{MARGIN}, então distâncias menores que {GAP_THRESHOLD} pontos podem ser só imprecisão do questionário. É comum querer “um
+            pouco mais de tudo”; as maiores distâncias são as que mais dizem sobre você.
+          </p>
+        </Card>
+      ) : (
+        <Card>
+          <div className="flex items-start gap-3">
+            <Compass className="w-7 h-7 text-purple-600 shrink-0 mt-1" aria-hidden="true" />
+            <div className="flex flex-col gap-2">
+              <CardTitle>E como você gostaria de ser?</CardTitle>
+              <p className="m-0 text-[15px] leading-relaxed text-gray-700">
+                Responda as mesmas 20 frases pensando na pessoa que você gostaria de ser. A distância entre os dois retratos mostra para onde você quer ir.
+                Leva uns 3 minutos.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/analysis/psychological?etapa=desejado"
+            className="inline-flex items-center justify-center min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit"
+          >
+            Responder como gostaria de ser
+          </Link>
+        </Card>
+      )}
 
       <div className="grid gap-5 md:grid-cols-2 items-start">
         {TRAITS.map((t) => {
@@ -156,11 +291,12 @@ export default function PersonalityProfile({ result }: { result: PsychologicalRe
                   <p className="m-0 text-xs text-gray-500">
                     {BAND_LABEL[s.band]} · {s.low}–{s.high}
                   </p>
+                  {idealOf(t.id) && <p className="m-0 text-xs font-semibold text-gray-700">Desejado: {idealOf(t.id)!.score}</p>}
                 </div>
               </div>
-              <TraitBar s={s} color={t.color} />
+              <TraitBar s={s} color={t.color} ideal={idealOf(t.id)?.score} />
               <p className="m-0 text-[15px] leading-relaxed text-gray-800">{t[s.band === 'baixo' ? 'low' : s.band === 'alto' ? 'high' : 'mid']}</p>
-              <Calculation s={s} inverted={t.inverted} />
+              <Calculation s={s} ideal={idealOf(t.id)} inverted={t.inverted} />
             </Card>
           );
         })}
@@ -176,6 +312,7 @@ export default function PersonalityProfile({ result }: { result: PsychologicalRe
           </li>
           <li>Com 4 frases por traço, a medida é rápida, mas aproximada. Por isso mostramos a margem, e diferenças de poucos pontos não significam nada.</li>
           <li>É um retrato de como você se descreve hoje. Personalidade muda devagar ao longo da vida; refazer daqui a alguns meses mostra o seu movimento.</li>
+          <li>O “como gostaria de ser” não é meta obrigatória nem nota: é uma bússola. Querer mudar pouco também é uma resposta legítima.</li>
           <li>Não é diagnóstico e não substitui avaliação feita por profissional de psicologia.</li>
         </ul>
         <p className="m-0 text-xs text-gray-500">

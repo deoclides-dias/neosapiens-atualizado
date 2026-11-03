@@ -23,6 +23,15 @@ export const SCALE = [
   { value: 5, label: 'Tem tudo a ver comigo' }
 ] as const;
 
+/** Rótulos da segunda passada (como gostaria de ser) */
+export const SCALE_IDEAL = [
+  { value: 1, label: 'Não quero ser assim' },
+  { value: 2, label: 'Quero pouco ser assim' },
+  { value: 3, label: 'Mais ou menos' },
+  { value: 4, label: 'Quero ser assim' },
+  { value: 5, label: 'Quero muito ser assim' }
+] as const;
+
 // Ordem original do Mini-IPIP, com os itens de atenção intercalados
 export const ITEMS: Item[] = [
   { id: 'e1', trait: 'E', text: 'Sou a alma da festa.' },
@@ -32,7 +41,7 @@ export const ITEMS: Item[] = [
   { id: 'i1', trait: 'I', text: 'Tenho uma imaginação fértil.' },
   { id: 'e2', trait: 'E', text: 'Não falo muito.', reversed: true },
   { id: 'a2', trait: 'A', text: 'Não me interesso pelos problemas dos outros.', reversed: true },
-  { id: 'at1', trait: null, expected: 5, text: 'Para mostrar que está lendo com atenção, escolha “Tem tudo a ver comigo” nesta frase.' },
+  { id: 'at1', trait: null, expected: 5, text: 'Para mostrar que está lendo com atenção, escolha a opção 5 nesta frase.' },
   { id: 'c2', trait: 'C', text: 'Muitas vezes esqueço de guardar as coisas no lugar.', reversed: true },
   { id: 'n2', trait: 'N', text: 'Fico tranquilo(a) na maior parte do tempo.', reversed: true },
   { id: 'i2', trait: 'I', text: 'Não me interesso por ideias abstratas.', reversed: true },
@@ -41,7 +50,7 @@ export const ITEMS: Item[] = [
   { id: 'c3', trait: 'C', text: 'Gosto de ordem.' },
   { id: 'n3', trait: 'N', text: 'Fico chateado(a) com facilidade.' },
   { id: 'i3', trait: 'I', text: 'Tenho dificuldade para entender ideias abstratas.', reversed: true },
-  { id: 'at2', trait: null, expected: 1, text: 'Nesta frase, escolha “Não tem nada a ver comigo”.' },
+  { id: 'at2', trait: null, expected: 1, text: 'Nesta frase, escolha a opção 1.' },
   { id: 'e4', trait: 'E', text: 'Prefiro ficar em segundo plano.', reversed: true },
   { id: 'a4', trait: 'A', text: 'Não me interesso muito pelas outras pessoas.', reversed: true },
   { id: 'c4', trait: 'C', text: 'Costumo bagunçar as coisas.', reversed: true },
@@ -62,6 +71,9 @@ export interface TraitInfo {
   low: string;
   mid: string;
   high: string;
+  /** Para a comparação hoje × desejado */
+  wantMore: string;
+  wantLess: string;
 }
 
 // Ordem de exibição
@@ -70,31 +82,41 @@ export const TRAITS: TraitInfo[] = [
     id: 'I', name: 'Abertura', technical: 'Intelecto / Imaginação', color: '#7c3aed',
     low: 'Você tende a preferir o concreto e o já conhecido às ideias abstratas. Costuma ir direto ao que funciona.',
     mid: 'Você transita entre o prático e o imaginativo: aprecia ideias novas quando elas têm alguma utilidade.',
-    high: 'Você tende a se interessar por ideias abstratas e possibilidades. A imaginação é uma ferramenta que você usa com frequência.'
+    high: 'Você tende a se interessar por ideias abstratas e possibilidades. A imaginação é uma ferramenta que você usa com frequência.',
+    wantMore: 'mais aberto(a) a ideias novas e à imaginação',
+    wantLess: 'mais prático(a) e concreto(a)'
   },
   {
     id: 'C', name: 'Organização', technical: 'Conscienciosidade', color: '#2563eb',
     low: 'Você tende a funcionar com mais flexibilidade do que rotina. Ordem e prazos pesam menos no seu dia a dia.',
     mid: 'Você mantém alguma ordem, mas sem rigidez: organiza o que importa e deixa o resto correr.',
-    high: 'Você tende a gostar de ordem e a resolver as tarefas logo. Previsibilidade costuma ajudar você a render.'
+    high: 'Você tende a gostar de ordem e a resolver as tarefas logo. Previsibilidade costuma ajudar você a render.',
+    wantMore: 'mais organizado(a) e constante',
+    wantLess: 'mais flexível, com menos cobrança de ordem'
   },
   {
     id: 'E', name: 'Extroversão', technical: 'Extroversão', color: '#ea580c',
     low: 'Você tende a ser mais reservado(a) e a preferir poucas conversas, mais próximas. Grupos grandes cansam mais do que animam.',
     mid: 'Você se adapta: aproveita a convivência, mas também precisa de momentos mais quietos.',
-    high: 'Você tende a buscar gente e conversa. Ambientes sociais costumam dar energia, em vez de tirar.'
+    high: 'Você tende a buscar gente e conversa. Ambientes sociais costumam dar energia, em vez de tirar.',
+    wantMore: 'mais expansivo(a) e sociável',
+    wantLess: 'mais reservado(a)'
   },
   {
     id: 'A', name: 'Amabilidade', technical: 'Amabilidade', color: '#059669',
     low: 'Você tende a ser mais direto(a) e a olhar primeiro para os fatos do que para os sentimentos envolvidos.',
     mid: 'Você equilibra empatia e objetividade: se importa com os outros sem deixar de lado o próprio ponto de vista.',
-    high: 'Você tende a perceber e a sentir as emoções dos outros. Cuidar das relações é algo natural para você.'
+    high: 'Você tende a perceber e a sentir as emoções dos outros. Cuidar das relações é algo natural para você.',
+    wantMore: 'mais empático(a) e atento(a) aos outros',
+    wantLess: 'mais direto(a) e firme'
   },
   {
     id: 'N', name: 'Estabilidade emocional', technical: 'Neuroticismo (invertido)', color: '#0891b2', inverted: true,
     low: 'Você tende a sentir as emoções com intensidade e a variar de humor. Isso também costuma trazer sensibilidade ao que acontece ao redor.',
     mid: 'Você tem dias de mais oscilação e dias de mais calma, sem que um dos lados predomine.',
-    high: 'Você tende a se manter calmo(a) e a se recuperar rápido dos aborrecimentos.'
+    high: 'Você tende a se manter calmo(a) e a se recuperar rápido dos aborrecimentos.',
+    wantMore: 'mais calmo(a) e estável',
+    wantLess: 'mais em contato com as próprias emoções'
   }
 ];
 
@@ -167,7 +189,13 @@ const median = (xs: number[]) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 };
 
-export function checkQuality(answers: Answers, timings: Timings): QualityReport {
+export type Mode = 'real' | 'ideal';
+
+/**
+ * No modo 'ideal' (como gostaria de ser), repetir a mesma resposta é esperado
+ * (querer "um pouco mais de tudo"), então essa verificação não conta.
+ */
+export function checkQuality(answers: Answers, timings: Timings, mode: Mode = 'real'): QualityReport {
   // 1. Itens de atenção
   const attention = ITEMS.filter((i) => i.trait === null);
   const attentionMisses = attention.filter((i) => Math.abs((answers[i.id] ?? 0) - (i.expected ?? 0)) > 1).length;
@@ -215,9 +243,10 @@ export function checkQuality(answers: Answers, timings: Timings): QualityReport 
     }
   ];
 
-  const failed = checks.filter((c) => !c.ok).length;
+  const counted = mode === 'ideal' ? checks.filter((c) => c.id !== 'repeticao') : checks;
+  const failed = counted.filter((c) => !c.ok).length;
   const status = attentionMisses > 0 || failed >= 2 ? 'invalido' : failed === 1 ? 'atencao' : 'ok';
-  return { status, checks };
+  return { status, checks: counted };
 }
 
 export const INSTRUMENT = {
@@ -228,6 +257,14 @@ export const INSTRUMENT = {
   doi: 'https://doi.org/10.1037/1040-3590.18.2.192'
 };
 
+export interface IdealResult {
+  respostas: Answers;
+  tempos: Timings;
+  qualidade: QualityReport;
+  escores: Record<TraitId, number>;
+  concluidoEm: string;
+}
+
 export interface PsychologicalResult {
   instrumento: typeof INSTRUMENT.id;
   versao: number;
@@ -236,6 +273,8 @@ export interface PsychologicalResult {
   qualidade: QualityReport;
   escores: Record<TraitId, number>;
   concluidoEm: string;
+  /** Segunda passada: as mesmas frases, "como eu gostaria de ser" */
+  ideal?: IdealResult;
 }
 
 export function buildResult(answers: Answers, timings: Timings): PsychologicalResult {
@@ -251,9 +290,50 @@ export function buildResult(answers: Answers, timings: Timings): PsychologicalRe
   };
 }
 
+export function buildIdeal(answers: Answers, timings: Timings): IdealResult {
+  const scores = scoreTraits(answers);
+  return {
+    respostas: answers,
+    tempos: timings,
+    qualidade: checkQuality(answers, timings, 'ideal'),
+    escores: Object.fromEntries(scores.map((s) => [s.id, s.score])) as Record<TraitId, number>,
+    concluidoEm: new Date().toISOString()
+  };
+}
+
+const answersComplete = (a: any) => Boolean(a) && TRAIT_ITEMS.every((i) => typeof a[i.id] === 'number');
+
+/**
+ * Diferença mínima entre "hoje" e "desejado" para levar a sério: cada escore tem
+ * margem de ±11, então a diferença entre dois deles tem margem de ~±16.
+ */
+export const GAP_THRESHOLD = 16;
+
+export interface TraitGap {
+  id: TraitId;
+  real: number;
+  ideal: number;
+  gap: number;
+  meaningful: boolean;
+}
+
+export function traitGaps(result: PsychologicalResult): TraitGap[] {
+  if (!result.ideal) return [];
+  const real = scoreTraits(result.respostas);
+  const ideal = scoreTraits(result.ideal.respostas);
+  return real
+    .map((r) => {
+      const i = ideal.find((x) => x.id === r.id)!;
+      const gap = i.score - r.score;
+      return { id: r.id, real: r.score, ideal: i.score, gap, meaningful: Math.abs(gap) >= GAP_THRESHOLD };
+    })
+    .sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap));
+}
+
 /** Lê o psychological_data salvo; devolve null se for o formato antigo (96 perguntas). */
 export function resultFromSaved(raw: any): PsychologicalResult | null {
-  if (!raw || raw.instrumento !== INSTRUMENT.id || !raw.respostas) return null;
-  const complete = TRAIT_ITEMS.every((i) => typeof raw.respostas[i.id] === 'number');
-  return complete ? (raw as PsychologicalResult) : null;
+  if (!raw || raw.instrumento !== INSTRUMENT.id || !answersComplete(raw.respostas)) return null;
+  const result = { ...raw } as PsychologicalResult;
+  if (!answersComplete(raw.ideal?.respostas)) delete result.ideal;
+  return result;
 }
