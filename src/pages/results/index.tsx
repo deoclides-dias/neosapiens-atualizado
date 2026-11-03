@@ -136,7 +136,8 @@ const ResultsHub = () => {
     }
   ];
 
-  const integrationAvailable = resultCards.every(card => card.status === 'available');
+  // O Mapa funciona com dados parciais: basta ter dois módulos respondidos
+  const integrationAvailable = resultCards.filter(card => card.status === 'available').length >= 2;
 
   if (loading) {
     return (
