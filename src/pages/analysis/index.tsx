@@ -38,12 +38,12 @@ const AnalysisHub = () => {
     },
     {
       id: 'biohacking',
-      title: 'Perfil Biológico',
-      subtitle: 'Corpo & Energia',
-      description: 'Otimize sua biologia através de dados científicos sobre sono, alimentação, exercícios e padrões energéticos para máxima performance.',
+      title: 'Perfil do Corpo',
+      subtitle: 'Sono, Movimento, Alimentação',
+      description: 'Sete blocos curtos sobre sono, movimento, alimentação, intestino, hábitos e bem-estar, com instrumentos científicos e a conta à mostra.',
       icon: Activity,
       color: 'green',
-      estimatedTime: '10-15 min',
+      estimatedTime: '15 min, em partes',
       href: '/analysis/biohacking',
       status: progress.biohacking.completed ? 'completed' : 
               isAnalysisAvailable('biohacking') ? 'available' : 'locked',
