@@ -30,6 +30,8 @@ export type Question =
   | (Base & { kind: 'choice'; options: Option[]; layout?: 'row' | 'column'; expected?: number | string })
   | (Base & { kind: 'number'; unit: string; min: number; max: number; step?: number })
   | (Base & { kind: 'time' })
+  /** Dois horários na mesma pergunta (dormir e acordar); cada um salvo no seu id */
+  | (Base & { kind: 'timepair'; ids: [string, string]; labels: [string, string] })
   | (Base & { kind: 'duration' })
   | (Base & { kind: 'multi'; options: Option[]; noneLabel: string })
   | (Base & { kind: 'slider'; low: string; high: string });
@@ -44,6 +46,17 @@ export interface Block {
 }
 
 const num = (a: BodyAnswers, id: string) => (typeof a[id] === 'number' ? (a[id] as number) : 0);
+
+// ---------- Janelas de despertar noturno ----------
+// Faixas de 2 horas, como no relógio dos órgãos da Medicina Tradicional
+// Chinesa; ficam guardadas para a análise das tradições.
+export const WAKE_WINDOWS = [
+  { start: 21, label: 'Entre 21h e 23h' },
+  { start: 23, label: 'Entre 23h e 1h' },
+  { start: 1, label: 'Entre 1h e 3h' },
+  { start: 3, label: 'Entre 3h e 5h' },
+  { start: 5, label: 'Entre 5h e 7h' }
+];
 
 // ---------- Escalas reutilizadas ----------
 
@@ -215,10 +228,20 @@ export const BLOCKS: Block[] = [
     minutes: 3,
     intro: 'Pense no último mês.',
     questions: [
-      { id: 'dorme_trab', kind: 'time', text: 'Em dias de trabalho ou estudo, a que horas você costuma apagar a luz para dormir?' },
-      { id: 'acorda_trab', kind: 'time', text: 'E a que horas costuma acordar nesses dias?' },
-      { id: 'dorme_livre', kind: 'time', text: 'Em dias livres, a que horas você costuma apagar a luz para dormir?' },
-      { id: 'acorda_livre', kind: 'time', text: 'E a que horas costuma acordar nos dias livres?' },
+      {
+        id: 'horario_trab',
+        kind: 'timepair',
+        ids: ['dorme_trab', 'acorda_trab'],
+        labels: ['Apago a luz às', 'Acordo às'],
+        text: 'Em dias de trabalho ou estudo, a que horas você costuma apagar a luz para dormir e a que horas acorda?'
+      },
+      {
+        id: 'horario_livre',
+        kind: 'timepair',
+        ids: ['dorme_livre', 'acorda_livre'],
+        labels: ['Apago a luz às', 'Acordo às'],
+        text: 'E em dias livres?'
+      },
       {
         id: 'latencia',
         kind: 'choice',
@@ -231,11 +254,29 @@ export const BLOCKS: Block[] = [
         ]
       },
       {
+        id: 'despertar',
+        kind: 'choice',
+        text: 'Você costuma acordar durante a noite?',
+        options: [
+          { value: 'nao', label: 'Não, durmo direto' },
+          { value: 'variado', label: 'Sim, em horários variados' },
+          { value: 'mesmo', label: 'Sim, quase sempre no mesmo horário' }
+        ]
+      },
+      {
+        id: 'despertar_horario',
+        kind: 'choice',
+        showIf: (a) => a.despertar === 'mesmo',
+        text: 'Em que faixa de horário você costuma acordar?',
+        options: WAKE_WINDOWS.map((w) => ({ value: w.start, label: w.label }))
+      },
+      {
         id: 'acordado_noite',
         kind: 'choice',
-        text: 'Somando as vezes que acorda durante a noite, quanto tempo costuma ficar acordado(a)?',
+        showIf: (a) => a.despertar === 'variado' || a.despertar === 'mesmo',
+        text: 'Somando as vezes que acorda, quanto tempo costuma ficar acordado(a)?',
         options: [
-          { value: 5, label: 'Quase nada' },
+          { value: 5, label: 'Quase nada, volto a dormir logo' },
           { value: 15, label: 'Uns 15 minutos' },
           { value: 30, label: 'Uns 30 minutos' },
           { value: 60, label: '1 hora ou mais' }
@@ -547,7 +588,8 @@ export const BLOCKS: Block[] = [
 
 export const visibleQuestions = (block: Block, a: BodyAnswers) => block.questions.filter((q) => !q.showIf || q.showIf(a));
 
-export const isAnswered = (q: Question, v: Answer | undefined) => {
+export const isAnswered = (q: Question, v: Answer | undefined, all: BodyAnswers = {}) => {
+  if (q.kind === 'timepair') return q.ids.every((id) => typeof all[id] === 'string' && all[id] !== '');
   if (q.optional) return v === undefined || v === null || v === '' || q.kind !== 'number' || (typeof v === 'number' && v >= q.min && v <= q.max);
   if (v === undefined || v === null || v === '') return false;
   if (q.kind === 'multi') return Array.isArray(v) && v.length > 0;

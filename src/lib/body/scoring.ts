@@ -2,7 +2,7 @@
 // Cálculos do módulo Corpo. Cada resultado guarda os passos da conta
 // (`steps`) para a página mostrar exatamente como chegou ao número.
 
-import { BodyAnswers, GUIA_ATTENTION, GUIA_ITEMS, PRIORITY_AREAS, SIGNALS } from './questions';
+import { BodyAnswers, GUIA_ATTENTION, GUIA_ITEMS, PRIORITY_AREAS, SIGNALS, WAKE_WINDOWS } from './questions';
 
 type Level = 'bom' | 'medio' | 'atencao';
 
@@ -102,6 +102,9 @@ export const hours = (min: number) => {
 
 // ---------- Sono ----------
 
+/** Minutos acordado(a) durante a noite (zero se disse que dorme direto) */
+export const nightAwake = (a: BodyAnswers) => (a.despertar === 'nao' ? 0 : n(a, 'acordado_noite'));
+
 export interface SleepCalc {
   durWork: number;
   durFree: number;
@@ -119,7 +122,7 @@ export function sleepCalc(a: BodyAnswers): SleepCalc | null {
   const af = toMin(a.acorda_livre);
   if (dw === null || aw === null || df === null || af === null) return null;
   const lat = n(a, 'latencia');
-  const waso = n(a, 'acordado_noite');
+  const waso = nightAwake(a);
   const inBedW = between(dw, aw);
   const inBedF = between(df, af);
   const durWork = Math.max(0, inBedW - lat - waso);
@@ -496,13 +499,28 @@ export function buildReport(a: BodyAnswers): BodyReport {
       science: 'A luz da manhã é o principal sinal que acerta o relógio biológico; pouca luz cedo tende a atrasar o sono.'
     });
   }
-  if (auditPositive && n(a, 'acordado_noite') >= 30) {
+  if (auditPositive && nightAwake(a) >= 30) {
     relations.push({
       id: 'alcool-sono',
       title: 'Álcool e despertares',
       strength: 'forte',
       seen: 'Consumo de álcool de risco e 30 minutos ou mais acordado(a) durante a noite.',
       science: 'O álcool ajuda a adormecer, mas fragmenta o sono na segunda metade da noite.'
+    });
+  }
+  if (a.despertar === 'mesmo' && typeof a.despertar_horario === 'number') {
+    const w = WAKE_WINDOWS.find((x) => x.start === a.despertar_horario);
+    const lateNight = [1, 3, 5].includes(a.despertar_horario as number);
+    relations.push({
+      id: 'despertar-recorrente',
+      title: 'Despertar sempre no mesmo horário',
+      strength: 'possível',
+      seen: `Você costuma acordar ${w ? w.label.toLowerCase() : 'sempre na mesma faixa de horário'}.`,
+      science:
+        (lateNight
+          ? 'O cortisol, hormônio ligado ao despertar, começa a subir na segunda metade da noite e chega ao pico logo depois de acordar; estresse pode antecipar essa subida. '
+          : '') +
+        'Despertares regulares também são comuns com álcool à noite, vontade de urinar, refluxo, apneia ou ambiente (calor, barulho, luz). Anotar por 2 semanas o horário e o que aconteceu no dia ajuda a achar o gatilho. Na Medicina Tradicional Chinesa, cada faixa de 2 horas tem leitura própria, que entra na análise das tradições.'
     });
   }
   if (act.whoMinutes < 150 && wellbeing.score <= 50) {

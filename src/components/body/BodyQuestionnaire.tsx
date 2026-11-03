@@ -24,7 +24,34 @@ const pill = (selected: boolean) =>
 
 const ROW_COLS: Record<number, string> = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-2 sm:grid-cols-4', 5: 'grid-cols-2 sm:grid-cols-5' };
 
-function Field({ q, value, onChange }: { q: Question; value: Answer | undefined; onChange: (v: Answer) => void }) {
+const timeInput = 'min-h-[44px] px-3 rounded-lg border border-gray-300 text-base focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none';
+
+function Field({
+  q,
+  value,
+  onChange,
+  all,
+  setOther
+}: {
+  q: Question;
+  value: Answer | undefined;
+  onChange: (v: Answer) => void;
+  all: BodyAnswers;
+  setOther: (id: string, v: Answer) => void;
+}) {
+  if (q.kind === 'timepair') {
+    return (
+      <div className="grid grid-cols-2 gap-3 max-w-sm">
+        {q.ids.map((id, i) => (
+          <label key={id} className="flex flex-col gap-1 text-sm text-gray-600">
+            {q.labels[i]}
+            <input type="time" value={typeof all[id] === 'string' ? (all[id] as string) : ''} onChange={(e) => setOther(id, e.target.value || null)} className={timeInput} />
+          </label>
+        ))}
+      </div>
+    );
+  }
+
   if (q.kind === 'choice') {
     return (
       <div className={q.layout === 'row' ? `grid gap-2 ${ROW_COLS[q.options.length] ?? 'grid-cols-3 sm:grid-cols-5'}` : 'flex flex-col gap-2'} role="radiogroup" aria-label={q.text}>
@@ -223,7 +250,7 @@ export default function BodyQuestionnaire({ initial, defaults, onSave, onFinishe
 
   const completeBlock = async () => {
     if (!current) return;
-    const missing = visibleQuestions(current, answers).filter((q) => !isAnswered(q, answers[q.id]));
+    const missing = visibleQuestions(current, answers).filter((q) => !isAnswered(q, answers[q.id], answers));
     if (missing.length) {
       setShowMissing(true);
       document.getElementById(`q-${missing[0].id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -324,12 +351,18 @@ export default function BodyQuestionnaire({ initial, defaults, onSave, onFinishe
 
         <ol className="m-0 p-0 list-none flex flex-col gap-6">
           {qs.map((q) => {
-            const missing = showMissing && !isAnswered(q, answers[q.id]);
+            const missing = showMissing && !isAnswered(q, answers[q.id], answers);
             return (
               <li key={q.id} id={`q-${q.id}`} className={`flex flex-col gap-2.5 scroll-mt-24 ${missing ? 'rounded-xl ring-2 ring-amber-400 ring-offset-4' : ''}`}>
                 <p className="m-0 text-[17px] leading-snug font-semibold text-gray-900">{q.text}</p>
                 {q.help && <p className="m-0 text-sm leading-relaxed text-gray-600">{q.help}</p>}
-                <Field q={q} value={answers[q.id]} onChange={(v) => setAnswers((prev) => ({ ...prev, [q.id]: v }))} />
+                <Field
+                  q={q}
+                  value={answers[q.id]}
+                  all={answers}
+                  onChange={(v) => setAnswers((prev) => ({ ...prev, [q.id]: v }))}
+                  setOther={(id, v) => setAnswers((prev) => ({ ...prev, [id]: v }))}
+                />
                 {missing && <p className="m-0 text-sm font-semibold text-amber-700">Falta responder esta.</p>}
               </li>
             );
