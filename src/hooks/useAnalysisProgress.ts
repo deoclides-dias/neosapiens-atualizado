@@ -209,7 +209,7 @@ function useAnalysisProgress() {
   // ===========================================================================
   
   const markAnalysisComplete = async (
-    analysisType: 'birth' | 'biohacking' | 'psychological' | 'cognitive' | 'purpose',
+    analysisType: 'birth' | 'biohacking' | 'psychological' | 'cognitive' | 'purpose' | 'flight',
     data: any,
     /** false = salva o andamento sem marcar a análise como concluída */
     complete: boolean = true
@@ -246,6 +246,9 @@ function useAnalysisProgress() {
         case 'purpose':
           if (complete) updateData.purpose_data_complete = true;
           updateData.purpose_data = data;
+          break;
+        case 'flight':
+          updateData.flight_data = data;
           break;
       }
 
