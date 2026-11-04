@@ -384,16 +384,22 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
         <div className="flex items-start gap-3">
           <Sparkles className="w-7 h-7 text-purple-600 shrink-0 mt-1" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <Eyebrow>Em breve</Eyebrow>
+            <Eyebrow>Próximo passo</Eyebrow>
             <CardTitle>O Plano de Voo</CardTitle>
           </div>
         </div>
         <p className="m-0 text-[15px] leading-relaxed text-gray-700">
-          A partir deste mapa e da visão que você escreveu no Propósito, o próximo módulo vai propor um plano curto para você experimentar, e depois planos mais longos.
+          A partir deste mapa, a Bússola sugere os rumos com mais força para mudar agora. Você escolhe um e faz um Voo de Experiência de 7 dias, com uma ou duas
+          práticas pequenas e um diário de bordo.
         </p>
-        <Link href="/results" className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg border border-purple-300 text-purple-800 font-semibold hover:bg-purple-50 w-fit">
-          Ver os resultados de cada módulo <ArrowRight className="w-4 h-4" />
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/voo" className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit">
+            Abrir a Bússola <ArrowRight className="w-4 h-4" />
+          </Link>
+          <Link href="/results" className="inline-flex items-center gap-2 min-h-[48px] px-4 rounded-lg border border-purple-300 text-purple-800 font-semibold hover:bg-purple-50 w-fit">
+            Resultados de cada módulo
+          </Link>
+        </div>
       </Card>
     </>
   );

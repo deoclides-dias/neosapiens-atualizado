@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import RequireAuth from '../components/auth/RequireAuth';
 
 // Rotas que só podem ser acessadas com sessão ativa
-const PROTECTED_PREFIXES = ['/analysis', '/results', '/results-hub'];
+const PROTECTED_PREFIXES = ['/analysis', '/results', '/results-hub', '/voo'];
 
 const isProtected = (pathname: string) =>
   PROTECTED_PREFIXES.some(
