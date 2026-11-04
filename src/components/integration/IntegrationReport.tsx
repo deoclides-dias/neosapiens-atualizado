@@ -8,7 +8,7 @@ import { ArrowRight, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
 import { Card, CardTitle, DarkPanel, Eyebrow } from '../traditions/ui';
 import { ELEMENT_HAN } from '../../lib/astro';
 import { ELEMENT_COLORS } from '../traditions/WuXingPentagram';
-import { PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementEchoes, elementMentions, radarAxes, resonances, traditionThemes } from '../../lib/integration/integration';
+import { PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementEchoes, elementMentions, radarAxes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
 
 const GRID = '#e5e7eb';
 const INK = '#111827';
@@ -111,6 +111,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
   const echoes = useMemo(() => elementEchoes(mentions), [mentions]);
   const themes = useMemo(() => traditionThemes(sources), [sources]);
+  const windRoot = useMemo(() => windRootPattern(mentions, c), [mentions, c]);
   const filled = axes.filter((a) => a.value !== null);
   const pillarAvg = (p: Pillar) => {
     const v = axes.filter((a) => a.pillar === p && a.value !== null).map((a) => a.value as number);
@@ -260,6 +261,29 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
           Na leitura tradicional, o que importa é a repetição: quando o mesmo elemento aparece em fontes diferentes (o mapa natal, o mapa chinês, a numerologia, os Cinco
           Espíritos, o relógio dos órgãos, a digestão), ele merece atenção.
         </p>
+        {windRoot && (
+          <div className="rounded-2xl border border-amber-200/30 bg-amber-200/[0.07] p-4 sm:p-5 flex flex-col gap-2 text-[15px] leading-relaxed text-purple-50">
+            <p className="m-0 text-xs font-semibold uppercase tracking-wider text-amber-200">Padrão das tradições</p>
+            <p className="m-0 text-xl font-semibold text-white" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+              Muito vento, pouca raiz
+            </p>
+            <p className="m-0">
+              {`Ar e Madeira aparecem em destaque (${windRoot.windSources.join(', ').toLowerCase()}), e a Terra pede atenção em ${windRoot.rootSources.length} fontes (${windRoot.rootSources.join(', ').toLowerCase()}).`}{' '}
+              A imagem é a de uma árvore de copa grande e raízes rasas: muita expansão, ideias e movimento, e pouca
+              base para sustentá-los.
+            </p>
+            <p className="m-0">
+              Na Medicina Tradicional Chinesa, a Madeira sem a Terra que a nutre e enraíza tende a gerar <strong>vento interno</strong>, que se expressa como inquietude e
+              oscilação emocional. Para a tradição, o caminho é fortalecer a Terra: rotina, refeições regulares, presença no corpo e no lugar onde se vive.
+            </p>
+            {typeof windRoot.stability === 'number' && (
+              <p className="m-0 text-purple-100">
+                Na sua avaliação de personalidade, a estabilidade emocional ficou em <strong>{windRoot.stability}</strong> de 100. Vale observar se esta imagem conversa
+                com você.
+              </p>
+            )}
+          </div>
+        )}
         {echoes.length ? (
           <div className="grid gap-4 md:grid-cols-2">
             {echoes.map((e) => (

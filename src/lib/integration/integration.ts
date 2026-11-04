@@ -344,7 +344,11 @@ export function elementMentions(s: Sources, c: Computed): ElementMention[] {
     const max = Math.max(...entries.map(([, v]) => v));
     entries
       .filter(([, v]) => v === max)
-      .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `elemento mais forte (${v} de ${w.elementPoints} pontos)`, sign: 'forte' }));
+      .forEach(([e, v]) => {
+        out.push({ element: e, source: 'Mapa natal', note: `elemento mais forte (${v} de ${w.elementPoints} pontos)`, sign: 'forte' });
+        // Ponte: o Ar ocidental conversa com o vento, que na MTC pertence à Madeira
+        if (e === 'Ar') out.push({ element: 'Madeira', source: 'Mapa natal (Ar ↔ vento)', note: `Ar em destaque (${v} de ${w.elementPoints} pontos), lido como vento da Madeira`, sign: 'forte' });
+      });
     entries
       .filter(([, v]) => v / w.elementPoints <= 0.125)
       .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `pouco presente (${v} de ${w.elementPoints} pontos)`, sign: 'atencao' }));
@@ -390,4 +394,23 @@ export function elementEchoes(mentions: ElementMention[]): ElementEcho[] {
 /** Os três temas das tradições (ocidental, chinesa e numerologia), com os votos de cada uma */
 export function traditionThemes(s: Sources): IntegrationTheme[] {
   return s.traditions ? integrationThemes(s.traditions) : [];
+}
+
+// ---------------------------------------------------------------------------
+// Padrão “muito vento, pouca raiz” (Ar/Madeira em destaque e Terra fraca)
+// ---------------------------------------------------------------------------
+
+export interface WindRootPattern {
+  windSources: string[];
+  rootSources: string[];
+  stability?: number;
+}
+
+export function windRootPattern(mentions: ElementMention[], c: Computed): WindRootPattern | null {
+  const wind = mentions.filter((m) => m.sign === 'forte' && (m.element === 'Ar' || m.element === 'Madeira'));
+  const root = mentions.filter((m) => m.sign === 'atencao' && m.element === 'Terra');
+  const windSources = Array.from(new Set(wind.map((m) => m.source.replace(' (Ar ↔ vento)', ''))));
+  const rootSources = Array.from(new Set(root.map((m) => m.source)));
+  if (!windSources.length || rootSources.length < 2) return null;
+  return { windSources, rootSources, stability: c.traits?.find((t) => t.id === 'N')?.score };
 }
