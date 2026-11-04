@@ -109,6 +109,14 @@ export interface Contradiction {
   detail: string;
   size: number; // 0–100, para ordenar
   kind: 'quer_mudar' | 'se_ve_melhor' | 'se_ve_pior' | 'valoriza_nao_vive';
+  /** Nome curto para o eixo do radar */
+  axis: string;
+  /** O que a pessoa quer ou acredita (0–100) */
+  want: number;
+  /** O que as respostas mostram hoje (0–100) */
+  is: number;
+  wantLabel: string;
+  isLabel: string;
 }
 
 export function contradictions(c: Computed): Contradiction[] {
@@ -122,7 +130,12 @@ export function contradictions(c: Computed): Contradiction[] {
       kind: 'quer_mudar',
       title: `Quer ser ${g.gap > 0 ? t.wantMore : t.wantLess}`,
       detail: `${t.name}: hoje ${g.real}, como gostaria de ser ${g.ideal} (${g.gap > 0 ? '+' : '−'}${Math.abs(g.gap)}).`,
-      size: Math.abs(g.gap)
+      size: Math.abs(g.gap),
+      axis: t.name,
+      want: g.ideal,
+      is: g.real,
+      wantLabel: 'como gostaria de ser',
+      isLabel: 'como você é hoje'
     });
   }
 
@@ -133,7 +146,12 @@ export function contradictions(c: Computed): Contradiction[] {
       kind: p.mismatch as 'se_ve_melhor' | 'se_ve_pior',
       title: p.mismatch === 'se_ve_melhor' ? `Você vê seu(sua) ${p.label} melhor do que as respostas mostram` : `Você é mais exigente com seu(sua) ${p.label} do que os números`,
       detail: `Você se deu ${p.satisfaction} de 10; as respostas indicam ${p.measured} de 100.`,
-      size: Math.abs(p.satisfaction * 10 - (p.measured ?? 0))
+      size: Math.abs(p.satisfaction * 10 - (p.measured ?? 0)),
+      axis: p.label.charAt(0).toUpperCase() + p.label.slice(1),
+      want: p.satisfaction * 10,
+      is: p.measured ?? 0,
+      wantLabel: 'como você se vê',
+      isLabel: 'o que as respostas mostram'
     });
   }
 
@@ -145,7 +163,12 @@ export function contradictions(c: Computed): Contradiction[] {
       kind: better ? 'se_ve_melhor' : 'se_ve_pior',
       title: better ? `${a.label}: o teste ficou abaixo da sua impressão` : `${a.label}: você pode estar se subestimando`,
       detail: `Você se deu ${(a.self as number) / 10} de 10; o teste deu ${a.score} de 100.`,
-      size: Math.abs((a.self as number) - (a.score as number))
+      size: Math.abs((a.self as number) - (a.score as number)),
+      axis: a.label,
+      want: a.self as number,
+      is: a.score as number,
+      wantLabel: 'como você se vê',
+      isLabel: 'o que o teste mostrou'
     });
   }
 
@@ -156,7 +179,12 @@ export function contradictions(c: Computed): Contradiction[] {
       kind: 'valoriza_nao_vive',
       title: `${x.label}: importa mais do que tem sido vivido`,
       detail: `Importância ${x.importance} de 10; viveu de acordo ${x.coherence} de 10.`,
-      size: x.gap * 11
+      size: x.gap * 11,
+      axis: x.label,
+      want: Math.round(((x.importance - 1) / 9) * 100),
+      is: Math.round(((x.coherence - 1) / 9) * 100),
+      wantLabel: 'o quanto importa',
+      isLabel: 'o quanto tem vivido'
     });
   }
 
