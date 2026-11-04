@@ -111,7 +111,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
   const echoes = useMemo(() => elementEchoes(mentions), [mentions]);
   const themes = useMemo(() => traditionThemes(sources), [sources]);
-  const windRoot = useMemo(() => windRootPattern(mentions, c), [mentions, c]);
+  const windRoot = useMemo(() => windRootPattern(mentions, c, sources), [mentions, c, sources]);
   const filled = axes.filter((a) => a.value !== null);
   const pillarAvg = (p: Pillar) => {
     const v = axes.filter((a) => a.pillar === p && a.value !== null).map((a) => a.value as number);
@@ -276,6 +276,12 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
               Na Medicina Tradicional Chinesa, a Madeira sem a Terra que a nutre e enraíza tende a gerar <strong>vento interno</strong>, que se expressa como inquietude e
               oscilação emocional. Para a tradição, o caminho é fortalecer a Terra: rotina, refeições regulares, presença no corpo e no lugar onde se vive.
             </p>
+            {windRoot.woodWake && (
+              <p className="m-0">
+                E você costuma acordar <strong>{windRoot.woodWake}</strong>. Para a MTC, é o mesmo quadro: quando o Fígado não consegue ancorar a Madeira à noite, o vento
+                sobe e acorda a pessoa sempre na mesma hora.
+              </p>
+            )}
             {typeof windRoot.stability === 'number' && (
               <p className="m-0 text-purple-100">
                 Na sua avaliação de personalidade, a estabilidade emocional ficou em <strong>{windRoot.stability}</strong> de 100. Vale observar se esta imagem conversa

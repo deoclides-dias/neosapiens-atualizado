@@ -404,13 +404,22 @@ export interface WindRootPattern {
   windSources: string[];
   rootSources: string[];
   stability?: number;
+  /** Despertar recorrente nas horas da Madeira (23h–1h Vesícula, 1h–3h Fígado) */
+  woodWake?: string;
 }
 
-export function windRootPattern(mentions: ElementMention[], c: Computed): WindRootPattern | null {
+export function windRootPattern(mentions: ElementMention[], c: Computed, s?: Sources): WindRootPattern | null {
   const wind = mentions.filter((m) => m.sign === 'forte' && (m.element === 'Ar' || m.element === 'Madeira'));
   const root = mentions.filter((m) => m.sign === 'atencao' && m.element === 'Terra');
   const windSources = Array.from(new Set(wind.map((m) => m.source.replace(' (Ar ↔ vento)', ''))));
   const rootSources = Array.from(new Set(root.map((m) => m.source)));
   if (!windSources.length || rootSources.length < 2) return null;
-  return { windSources, rootSources, stability: c.traits?.find((t) => t.id === 'N')?.score };
+  const b = s?.body?.respostas;
+  const w = b?.despertar === 'mesmo' ? WAKE_WINDOWS.find((x) => x.start === b.despertar_horario && (x.start === 23 || x.start === 1)) : undefined;
+  return {
+    windSources,
+    rootSources,
+    stability: c.traits?.find((t) => t.id === 'N')?.score,
+    woodWake: w ? `${w.label.toLowerCase()}, o horário ${w.of}` : undefined
+  };
 }
