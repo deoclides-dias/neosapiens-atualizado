@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { ArrowRight, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
 import { Card, CardTitle, DarkPanel, Eyebrow } from '../traditions/ui';
 import ElementStar from './ElementStar';
-import { Contradiction, PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementMentions, radarAxes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
+import ResonanceWeb from './ResonanceWeb';
+import { Contradiction, PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementMentions, radarAxes, resonanceNodes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
 
 const GRID = '#e5e7eb';
 const INK = '#111827';
@@ -264,6 +265,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const axes = useMemo(() => radarAxes(sources, c), [sources, c]);
   const contra = useMemo(() => contradictions(c), [c]);
   const reson = useMemo(() => resonances(sources, c), [sources, c]);
+  const resNodes = useMemo(() => resonanceNodes(sources, c), [sources, c]);
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
   const themes = useMemo(() => traditionThemes(sources), [sources]);
   const windRoot = useMemo(() => windRootPattern(mentions, c, sources), [mentions, c, sources]);
@@ -408,24 +410,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
         </div>
         <p className="m-0 text-[15px] leading-relaxed text-gray-700">Padrões que aparecem em mais de um lugar ao mesmo tempo, com a força da evidência por trás.</p>
         {reson.length ? (
-          <ul className="m-0 p-0 list-none grid gap-3 md:grid-cols-2">
-            {reson.map((r) => (
-              <li key={r.id} className="rounded-xl border border-gray-200 p-4 flex flex-col gap-2">
-                <div className="flex flex-wrap gap-1.5">
-                  <span className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${RES_KIND[r.kind].cls}`}>{RES_KIND[r.kind].label}</span>
-                  <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700">{STRENGTH[r.strength]}</span>
-                </div>
-                <span className="font-semibold text-gray-900">{r.title}</span>
-                <p className="m-0 text-sm text-gray-800">
-                  <span className="text-gray-500">O que vimos:</span> {r.seen}
-                </p>
-                <p className="m-0 text-sm text-gray-800">
-                  <span className="text-gray-500">Por quê:</span> {r.why}
-                </p>
-                <span className="text-xs text-gray-500">{r.modules.join(' + ')}</span>
-              </li>
-            ))}
-          </ul>
+          <ResonanceWeb nodes={resNodes} items={reson} />
         ) : (
           <p className="m-0 text-[15px] text-gray-800">Nenhum padrão entre módulos chamou atenção com os dados de agora.</p>
         )}
