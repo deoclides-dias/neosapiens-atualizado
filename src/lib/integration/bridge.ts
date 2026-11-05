@@ -46,7 +46,7 @@ export interface ElementBridge {
   science: number | null;
   tradition: 'forte' | 'atencao' | 'misto' | null;
   traditionSources: string[];
-  verdict: Verdict | null;
+  verdict: Verdict | 'dividida' | null;
   explain: string;
 }
 
@@ -183,9 +183,13 @@ export function elementBridge(s: Sources, c: Computed, mentions: ElementMention[
     const tradition = sources.length < 2 ? null : forte > atencao ? 'forte' : atencao > forte ? 'atencao' : 'misto';
     const science = ms[e].length >= MIN_MEASURES ? avg(ms[e].map((x) => x.value)) : null;
     const the = `${ART[e]} ${e}`;
-    let verdict: Verdict | null = null;
+    let verdict: ElementBridge['verdict'] = null;
     let explain = '';
-    if (tradition && science !== null) {
+    if (tradition === 'misto' && science !== null) {
+      // Força e atenção empatadas: a tradição não aponta um lado, então não há o que confirmar
+      verdict = 'dividida';
+      explain = `As tradições se dividem sobre ${the}: o mesmo número de fontes mostra força e pede atenção. Como elas não apontam um lado, não contamos como acerto nem como erro; as medidas ligadas a ${ART[e] === 'a' ? 'ela' : 'ele'} ficaram em ${science} de 100.`;
+    } else if (tradition && science !== null) {
       if (tradition === 'forte') verdict = science >= 60 ? 'converge' : science < 45 ? 'diverge' : 'parcial';
       else if (tradition === 'atencao') verdict = science < 50 ? 'converge' : science >= 65 ? 'diverge' : 'parcial';
       else verdict = 'parcial';
