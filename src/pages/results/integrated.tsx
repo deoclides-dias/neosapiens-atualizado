@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
-import { ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, FileDown } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 import { DISPLAY_FONT } from '../../components/traditions/ui';
@@ -105,6 +105,11 @@ export default function IntegratedResults() {
                   )
                 )}
               </div>
+            )}
+            {sources && (
+              <Link href="/relatorio" className="inline-flex items-center gap-2 min-h-[44px] px-4 rounded-full bg-white text-indigo-950 text-sm font-semibold hover:bg-purple-50 w-fit">
+                <FileDown className="w-4 h-4" /> Gerar meu relatório em PDF
+              </Link>
             )}
             {sources && doneCount < 5 && (
               <p className="m-0 text-sm text-purple-200">O mapa usa o que já foi respondido; os módulos que faltam aparecem vazios.</p>

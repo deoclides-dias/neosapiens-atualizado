@@ -357,7 +357,7 @@ const ResultsHub = () => {
         )}
 
         {/* Footer Actions */}
-        <div className="mt-8 flex justify-center space-x-4">
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
           <button 
             onClick={() => router.push('/analysis')} 
             className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
@@ -371,6 +371,15 @@ const ResultsHub = () => {
               className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-colors font-medium"
             >
               🎯 Ver Análise Integrada
+            </button>
+          )}
+
+          {integrationAvailable && (
+            <button
+              onClick={() => router.push('/relatorio')}
+              className="bg-white text-indigo-700 border border-indigo-200 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
+            >
+              📄 Gerar relatório em PDF
             </button>
           )}
         </div>
