@@ -48,7 +48,7 @@ export default function RequireAuth({ children }: RequireAuthProps) {
 
   return (
     <>
-      <div className="bg-indigo-950 text-purple-100 text-sm">
+      <div className="bg-indigo-950 text-purple-100 text-sm print:hidden">
         <div className="max-w-6xl mx-auto px-4 h-11 flex items-center justify-between gap-3">
           <Link href="/results" className="font-semibold text-white no-underline">
             NeoSapiens
