@@ -186,42 +186,19 @@ const ResultsHub = () => {
             ></div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className={`p-3 rounded-lg ${progress?.birth_complete ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`text-sm font-medium ${progress?.birth_complete ? 'text-green-800' : 'text-gray-600'}`}>
-                🌟 Nascimento
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+            {[
+              { done: progress?.birth_complete, label: '🌟 Nascimento' },
+              { done: progress?.biohacking_complete, label: '🧬 Corpo' },
+              { done: progress?.psychological_complete, label: '🧠 Personalidade' },
+              { done: progress?.cognitive_complete, label: '📚 Mente' },
+              { done: progress?.purpose_complete, label: '🧭 Propósito' }
+            ].map((x) => (
+              <div key={x.label} className={`p-3 rounded-lg ${x.done ? 'bg-green-100' : 'bg-gray-100'}`}>
+                <div className={`text-sm font-medium ${x.done ? 'text-green-800' : 'text-gray-600'}`}>{x.label}</div>
+                <div className={`text-xs ${x.done ? 'text-green-600' : 'text-gray-500'}`}>{x.done ? 'Completo' : 'Pendente'}</div>
               </div>
-              <div className={`text-xs ${progress?.birth_complete ? 'text-green-600' : 'text-gray-500'}`}>
-                {progress?.birth_complete ? 'Completo' : 'Pendente'}
-              </div>
-            </div>
-            
-            <div className={`p-3 rounded-lg ${progress?.biohacking_complete ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`text-sm font-medium ${progress?.biohacking_complete ? 'text-green-800' : 'text-gray-600'}`}>
-                💪 Biohacking
-              </div>
-              <div className={`text-xs ${progress?.biohacking_complete ? 'text-green-600' : 'text-gray-500'}`}>
-                {progress?.biohacking_complete ? 'Completo' : 'Pendente'}
-              </div>
-            </div>
-            
-            <div className={`p-3 rounded-lg ${progress?.psychological_complete ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`text-sm font-medium ${progress?.psychological_complete ? 'text-green-800' : 'text-gray-600'}`}>
-                🧠 Psicológico
-              </div>
-              <div className={`text-xs ${progress?.psychological_complete ? 'text-green-600' : 'text-gray-500'}`}>
-                {progress?.psychological_complete ? 'Completo' : 'Pendente'}
-              </div>
-            </div>
-            
-            <div className={`p-3 rounded-lg ${progress?.cognitive_complete ? 'bg-green-100' : 'bg-gray-100'}`}>
-              <div className={`text-sm font-medium ${progress?.cognitive_complete ? 'text-green-800' : 'text-gray-600'}`}>
-                ⚡ Cognitivo
-              </div>
-              <div className={`text-xs ${progress?.cognitive_complete ? 'text-green-600' : 'text-gray-500'}`}>
-                {progress?.cognitive_complete ? 'Completo' : 'Pendente'}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
@@ -296,10 +273,11 @@ const ResultsHub = () => {
                           {card.requiredAnalysis.map(req => {
                             const names = {
                               birth: '🌟 Nascimento',
-                              biohacking: '💪 Biohacking', 
-                              psychological: '🧠 Psicológico',
-                              cognitive: '⚡ Cognitivo'
-                            };
+                              biohacking: '🧬 Corpo',
+                              psychological: '🧠 Personalidade',
+                              cognitive: '📚 Mente',
+                              purpose: '🧭 Propósito'
+                            } as Record<string, string>;
                             return names[req];
                           }).join(', ')}
                         </div>

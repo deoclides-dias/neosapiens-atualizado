@@ -40,7 +40,12 @@ export default function FlightSetup({ headings, vision, baseline, onStart }: Pro
   const choose = (h: Heading) => {
     setHeading(h);
     setChosen([]);
-    setWoop((w) => ({ ...w, desejo: w.desejo || `Nesta semana, quero ${headingTitle(h).toLowerCase()}.` }));
+    // O desejo acompanha o rumo: se o texto ainda é o sugerido (ou está vazio), troca junto
+    setWoop((w) => {
+      const auto = heading ? `Nesta semana, quero ${headingTitle(heading).toLowerCase()}.` : '';
+      const keep = w.desejo.trim() && w.desejo !== auto;
+      return { ...w, desejo: keep ? w.desejo : `Nesta semana, quero ${headingTitle(h).toLowerCase()}.` };
+    });
   };
   const toggle = (id: string) => {
     const has = chosen.find((c) => c.id === id);
@@ -129,6 +134,12 @@ export default function FlightSetup({ headings, vision, baseline, onStart }: Pro
           ) : (
             <p className="m-0 text-sm text-gray-600">Responda os módulos para a bússola sugerir rumos. Enquanto isso, você pode escolher um abaixo.</p>
           )}
+          {heading && options.suggested.length > 0 && !(options.suggested[0].rumo === heading.rumo && options.suggested[0].area === heading.area) && (
+            <p className="m-0 rounded-xl bg-amber-50 border border-amber-200 px-3.5 py-2.5 text-sm text-amber-900">
+              A bússola indicou <strong>{headingTitle(options.suggested[0]).toLowerCase()}</strong> em primeiro lugar, e você escolheu{' '}
+              <strong>{headingTitle(heading).toLowerCase()}</strong>. Tudo bem: o timoneiro é você. Só vale saber que o seu Mapa aponta outro caminho como o de mais força.
+            </p>
+          )}
           <button type="button" onClick={() => setShowAll(!showAll)} className="text-sm font-semibold text-purple-700 w-fit min-h-[40px]">
             {showAll ? 'Esconder os outros rumos' : 'Prefiro outro rumo'}
           </button>
@@ -169,7 +180,7 @@ export default function FlightSetup({ headings, vision, baseline, onStart }: Pro
             </p>
           </div>
           {[
-            { k: 'desejo', l: 'Desejo: o que eu quero nesta semana?', ph: '' },
+            { k: 'desejo', l: `Desejo: o que eu quero nesta semana em “${headingTitle(heading!).toLowerCase()}”?`, ph: '' },
             { k: 'resultado', l: 'Resultado: como vou me sentir se conseguir?', ph: 'Vou me sentir…' },
             { k: 'obstaculo', l: 'Obstáculo: o que, dentro de mim, pode me atrapalhar?', ph: 'Cansaço à noite, preguiça, esquecer…' },
             { k: 'plano', l: 'Plano: se esse obstáculo aparecer, então eu vou…', ph: 'Se eu estiver cansado(a), então eu vou fazer só 5 minutos.' }
