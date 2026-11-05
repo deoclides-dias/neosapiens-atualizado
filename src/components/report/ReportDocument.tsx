@@ -118,10 +118,23 @@ export default function ReportDocument({ row, email, error = null }: { row: any;
           }
           .rel-root {
             min-height: 0 !important;
+            zoom: 0.68;
           }
-          li,
-          svg {
+          /* Cartões e blocos inteiros na mesma página sempre que couberem */
+          .rel-root .rounded-2xl,
+          .rel-root .rounded-xl,
+          .rel-root li,
+          .rel-root svg,
+          .rel-root table,
+          .rel-root details {
             break-inside: avoid;
+          }
+          .rel-root h2,
+          .rel-root h3 {
+            break-after: avoid;
+          }
+          .rel-root .shadow-xl {
+            box-shadow: none !important;
           }
           .rel-root button {
             display: none !important;
