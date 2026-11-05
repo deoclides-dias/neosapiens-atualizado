@@ -4,10 +4,12 @@
 
 import { ReactNode, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
+import { ArrowRight, Infinity as InfinityIcon, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
 import { Card, CardTitle, DarkPanel, Eyebrow } from '../traditions/ui';
 import ElementStar from './ElementStar';
 import ResonanceWeb from './ResonanceWeb';
+import BridgeView from './BridgeView';
+import { elementBridge, personalityBridge } from '../../lib/integration/bridge';
 import { Contradiction, PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementMentions, radarAxes, resonanceNodes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
 
 const GRID = '#e5e7eb';
@@ -265,8 +267,10 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const axes = useMemo(() => radarAxes(sources, c), [sources, c]);
   const contra = useMemo(() => contradictions(c), [c]);
   const reson = useMemo(() => resonances(sources, c), [sources, c]);
+  const bridgeTr = useMemo(() => personalityBridge(sources, c), [sources, c]);
   const resNodes = useMemo(() => resonanceNodes(sources, c), [sources, c]);
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
+  const bridgeEl = useMemo(() => elementBridge(sources, c, mentions), [sources, c, mentions]);
   const themes = useMemo(() => traditionThemes(sources), [sources]);
   const windRoot = useMemo(() => windRootPattern(mentions, c, sources), [mentions, c, sources]);
   const filled = axes.filter((a) => a.value !== null);
@@ -519,6 +523,24 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
         )}
         <p className="m-0 text-xs text-purple-200">Leitura das tradições (astrologia ocidental, astrologia chinesa, numerologia e Medicina Tradicional Chinesa), separada das medidas científicas das camadas anteriores.</p>
       </DarkPanel>
+
+      {/* Camada 5: A Ponte */}
+      {(bridgeEl.some((x) => x.verdict) || bridgeTr.some((x) => x.verdict)) && (
+        <Card>
+          <div className="flex items-start gap-3">
+            <InfinityIcon className="w-7 h-7 text-amber-600 shrink-0 mt-1" aria-hidden="true" />
+            <div className="flex flex-col gap-1">
+              <Eyebrow>Camada 5 · ciência e tradições lado a lado</Eyebrow>
+              <CardTitle>A Ponte: onde as duas leituras se encontram</CardTitle>
+            </div>
+          </div>
+          <p className="m-0 text-[15px] leading-relaxed text-gray-700">
+            Aqui não misturamos os números: colocamos as medidas científicas e as leituras das tradições lado a lado e mostramos onde elas convergem e onde divergem, sempre
+            com o placar completo. Isto não é um resultado científico. É uma forma holística de olhar para você, com cada passo à vista.
+          </p>
+          <BridgeView elements={bridgeEl} traits={bridgeTr} mentions={mentions} />
+        </Card>
+      )}
 
       <Card>
         <div className="flex items-start gap-3">
