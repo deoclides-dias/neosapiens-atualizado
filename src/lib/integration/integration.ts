@@ -195,6 +195,20 @@ export function contradictions(c: Computed): Contradiction[] {
 // Camada 3: Ressonâncias entre módulos
 // ---------------------------------------------------------------------------
 
+export type ResNodeId =
+  | 'sono' | 'movimento' | 'bemestar'
+  | 'atencao' | 'memoria' | 'criatividade' | 'curiosidade'
+  | 'estabilidade' | 'abertura' | 'organizacao'
+  | 'sentido' | 'vida' | 'relacoes' | 'saude';
+
+export interface ResNode {
+  id: ResNodeId;
+  label: string;
+  module: 'Corpo' | 'Mente' | 'Personalidade' | 'Propósito';
+  value: number | null;
+  from: string;
+}
+
 export interface Resonance {
   id: string;
   title: string;
@@ -203,6 +217,39 @@ export interface Resonance {
   seen: string;
   why: string;
   strength: 'forte' | 'moderada' | 'possível';
+  /** Ligações na rede (na cascata, a seta vai de `from` para `to`) */
+  links: { from: ResNodeId; to: ResNodeId }[];
+}
+
+/** Os pontos da rede de ressonâncias, na ordem do círculo (agrupados por módulo) */
+export function resonanceNodes(s: Sources, c: Computed): ResNode[] {
+  const area = (id: string) => c.body?.areas.find((a) => a.id === id)?.score ?? null;
+  const mind = (id: string) => c.mind?.find((a) => a.id === id)?.score ?? null;
+  const trait = (id: string) => c.traits?.find((t) => t.id === id)?.score ?? null;
+  const rel = c.life?.areas.filter((x) => ['familia', 'casal', 'amizades'].includes(x.id));
+  const health = s.purpose?.respostas?.v_saude;
+  return [
+    { id: 'sono', label: 'Sono', module: 'Corpo', value: area('sono'), from: 'questionário do corpo' },
+    { id: 'movimento', label: 'Movimento', module: 'Corpo', value: area('movimento'), from: 'IPAQ (questionário do corpo)' },
+    { id: 'bemestar', label: 'Bem-estar', module: 'Corpo', value: area('bemestar'), from: 'OMS-5 (questionário do corpo)' },
+    { id: 'atencao', label: 'Atenção', module: 'Mente', value: mind('atencao'), from: 'teste de reação e Stroop' },
+    { id: 'memoria', label: 'Memória', module: 'Mente', value: mind('memoria'), from: 'teste de dígitos' },
+    { id: 'criatividade', label: 'Criatividade', module: 'Mente', value: mind('criatividade'), from: 'teste de usos alternativos' },
+    { id: 'curiosidade', label: 'Curiosidade', module: 'Mente', value: mind('curiosidade'), from: 'NCS-6' },
+    { id: 'estabilidade', label: 'Estabilidade', module: 'Personalidade', value: trait('N'), from: 'Mini-IPIP' },
+    { id: 'abertura', label: 'Abertura', module: 'Personalidade', value: trait('I'), from: 'Mini-IPIP' },
+    { id: 'organizacao', label: 'Organização', module: 'Personalidade', value: trait('C'), from: 'Mini-IPIP' },
+    { id: 'sentido', label: 'Sentido', module: 'Propósito', value: c.mlq ? to100(c.mlq.presence, 5, 35) : null, from: 'MLQ (presença de sentido)' },
+    { id: 'vida', label: 'Vida valorizada', module: 'Propósito', value: c.life ? c.life.composite : null, from: 'importância × vivência das áreas da vida' },
+    {
+      id: 'relacoes',
+      label: 'Relações',
+      module: 'Propósito',
+      value: rel && rel.length ? avg(rel.map((x) => to100(x.coherence, 1, 10))) : null,
+      from: 'vivência em família, casal e amizades'
+    },
+    { id: 'saude', label: 'Saúde (valor)', module: 'Propósito', value: typeof health === 'number' ? to100(health, 1, 7) : null, from: 'importância da saúde nos valores' }
+  ];
 }
 
 export function resonances(s: Sources, c: Computed): Resonance[] {
@@ -228,7 +275,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Corpo', 'Mente'],
       strength: 'forte',
       seen: `Sono em ${sleep} e ${lt(attention, 50) ? `atenção em ${attention}` : `memória em ${memory}`} nos testes.`,
-      why: 'Dormir pouco ou mal reduz atenção e memória de trabalho já no dia seguinte; é um dos efeitos mais bem documentados da ciência do sono.'
+      why: 'Dormir pouco ou mal reduz atenção e memória de trabalho já no dia seguinte; é um dos efeitos mais bem documentados da ciência do sono.',
+      links: [...(lt(attention, 50) ? [{ from: 'sono' as ResNodeId, to: 'atencao' as ResNodeId }] : []), ...(lt(memory, 50) ? [{ from: 'sono' as ResNodeId, to: 'memoria' as ResNodeId }] : [])]
     });
   }
   if (lt(sleep, 50) && typeof well === 'number' && well <= 50) {
@@ -239,7 +287,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Corpo'],
       strength: 'forte',
       seen: `Sono em ${sleep} e bem-estar em ${well}.`,
-      why: 'Sono ruim e humor baixo se alimentam um do outro; melhorar o sono costuma melhorar o humor.'
+      why: 'Sono ruim e humor baixo se alimentam um do outro; melhorar o sono costuma melhorar o humor.',
+      links: [{ from: 'sono', to: 'bemestar' }]
     });
   }
   if (lt(move, 50) && ((typeof well === 'number' && well <= 50) || lt(stability, 40))) {
@@ -250,7 +299,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Corpo', 'Personalidade'],
       strength: 'forte',
       seen: `Movimento em ${move}${typeof well === 'number' && well <= 50 ? `, bem-estar em ${well}` : ''}${lt(stability, 40) ? `, estabilidade emocional em ${stability}` : ''}.`,
-      why: 'Atividade física regular é um dos recursos com melhor evidência para humor e ansiedade, com efeito já em caminhadas.'
+      why: 'Atividade física regular é um dos recursos com melhor evidência para humor e ansiedade, com efeito já em caminhadas.',
+      links: [...(typeof well === 'number' && well <= 50 ? [{ from: 'movimento' as ResNodeId, to: 'bemestar' as ResNodeId }] : []), ...(lt(stability, 40) ? [{ from: 'movimento' as ResNodeId, to: 'estabilidade' as ResNodeId }] : [])]
     });
   }
   const wake = s.body?.respostas?.despertar === 'mesmo';
@@ -262,7 +312,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Personalidade', 'Corpo'],
       strength: 'moderada',
       seen: `Estabilidade emocional em ${stability} e despertar recorrente durante a noite.`,
-      why: 'Estresse e preocupação ativam o sistema de alerta e podem antecipar o despertar, sobretudo na segunda metade da noite.'
+      why: 'Estresse e preocupação ativam o sistema de alerta e podem antecipar o despertar, sobretudo na segunda metade da noite.',
+      links: [{ from: 'estabilidade', to: 'sono' }]
     });
   }
   if (ge(openness, 65) && (ge(mind('criatividade'), 60) || ge(mind('curiosidade'), 60))) {
@@ -273,7 +324,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Personalidade', 'Mente'],
       strength: 'forte',
       seen: `Abertura em ${openness}${ge(mind('criatividade'), 60) ? `, criatividade em ${mind('criatividade')}` : ''}${ge(mind('curiosidade'), 60) ? `, curiosidade em ${mind('curiosidade')}` : ''}.`,
-      why: 'Abertura a experiências é o traço de personalidade mais ligado à criatividade e ao gosto por aprender.'
+      why: 'Abertura a experiências é o traço de personalidade mais ligado à criatividade e ao gosto por aprender.',
+      links: [...(ge(mind('criatividade'), 60) ? [{ from: 'abertura' as ResNodeId, to: 'criatividade' as ResNodeId }] : []), ...(ge(mind('curiosidade'), 60) ? [{ from: 'abertura' as ResNodeId, to: 'curiosidade' as ResNodeId }] : [])]
     });
   }
   const orgGap = c.gaps.find((g) => g.id === 'C');
@@ -285,7 +337,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Personalidade', 'Propósito'],
       strength: 'possível',
       seen: `Você quer ser mais organizado(a) (+${orgGap.gap}) e o índice de vida valorizada está em ${c.life.composite}.`,
-      why: 'Organizar a rotina em torno do que é importante é um caminho prático para aproximar valores e ações.'
+      why: 'Organizar a rotina em torno do que é importante é um caminho prático para aproximar valores e ações.',
+      links: [{ from: 'organizacao', to: 'vida' }]
     });
   }
   if (c.values && c.life) {
@@ -299,7 +352,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
         modules: ['Propósito'],
         strength: 'moderada',
         seen: `Relações estão entre os seus valores mais fortes, e ${relGaps.map((x) => x.label.toLowerCase()).join(' e ')} ${relGaps.length > 1 ? 'têm' : 'tem'} distância de 3 ou mais entre importância e vivência.`,
-        why: 'Relações próximas estão entre os fatores mais consistentes de bem-estar e saúde ao longo da vida.'
+        why: 'Relações próximas estão entre os fatores mais consistentes de bem-estar e saúde ao longo da vida.',
+        links: [{ from: 'relacoes', to: 'vida' }]
       });
     }
     const health = s.purpose?.respostas?.v_saude;
@@ -312,7 +366,13 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
         modules: ['Propósito', 'Corpo'],
         strength: 'possível',
         seen: `Você deu ${health} de 7 para saúde como valor, e a média das áreas do corpo está em ${bodyAvg}.`,
-        why: 'Quando um valor importante já está claro, a mudança de hábito costuma vir com mais força; a questão é o primeiro passo.'
+        why: 'Quando um valor importante já está claro, a mudança de hábito costuma vir com mais força; a questão é o primeiro passo.',
+        links: (() => {
+          const ids = (['sono', 'movimento', 'bemestar'] as ResNodeId[]).filter((id) => typeof area(id) === 'number');
+          const low = ids.filter((id) => lt(area(id), 55));
+          const pick = low.length ? low : ids.sort((x, y) => (area(x) as number) - (area(y) as number)).slice(0, 1);
+          return pick.map((to) => ({ from: 'saude' as ResNodeId, to }));
+        })()
       });
     }
   }
@@ -324,7 +384,8 @@ export function resonances(s: Sources, c: Computed): Resonance[] {
       modules: ['Propósito', 'Corpo'],
       strength: 'moderada',
       seen: `Presença de sentido em ${c.mlq.presence} de 35 e bem-estar em ${well}.`,
-      why: 'Sentir que a vida tem sentido está associado a mais bem-estar; os dois costumam melhorar juntos.'
+      why: 'Sentir que a vida tem sentido está associado a mais bem-estar; os dois costumam melhorar juntos.',
+      links: [{ from: 'sentido', to: 'bemestar' }]
     });
   }
   return out;
