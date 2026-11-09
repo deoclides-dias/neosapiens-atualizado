@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { ArrowLeft } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import useAnalysisProgress from '../hooks/useAnalysisProgress';
@@ -22,6 +23,8 @@ import { FlightData, baselineFrom, compassHeadings, flightFromSaved } from '../l
 
 export default function FlightPage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const preselect = typeof router.query.rumo === 'string' ? { rumo: router.query.rumo, area: typeof router.query.area === 'string' ? router.query.area : undefined } : null;
   const { markAnalysisComplete } = useAnalysisProgress();
   const [row, setRow] = useState<any>(undefined);
   const [flight, setFlight] = useState<FlightData | null>(null);
@@ -100,9 +103,14 @@ export default function FlightPage() {
             ) : flight && !newFlight ? (
               <FlightLog flight={flight} onSave={save} onNewFlight={() => setNewFlight(true)} />
             ) : (
-              <FlightSetup headings={headings} vision={vision} baseline={sources ? baselineFrom(sources) : {}} onStart={save} />
+              <FlightSetup headings={headings} vision={vision} baseline={sources ? baselineFrom(sources) : {}} onStart={save} preselect={preselect} />
             )}
           </FormCard>
+          {(!flight || newFlight) && row !== undefined && !preselect && (
+            <Link href="/carta" className="text-sm text-purple-200 hover:text-white w-fit">
+              ✉️ Ainda não leu a Carta ao Navegante? Ela explica por que a bússola aponta esses rumos.
+            </Link>
+          )}
         </div>
       </div>
     </>

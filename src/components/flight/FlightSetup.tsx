@@ -2,7 +2,7 @@
 // Montagem do Voo de Experiência: Bússola → Destino → Plano de bordo (WOOP)
 // → Práticas (“depois de…, eu vou…”) → Decolar.
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, Check, Compass, Plane } from 'lucide-react';
 import { EVIDENCE_LABEL, RUMOS, rumoById } from '../../lib/flight/library';
 import { FLIGHT_DAYS, FLIGHT_VERSION, FlightData, Heading, isoDay } from '../../lib/flight/flight';
@@ -13,6 +13,8 @@ interface Props {
   vision?: string;
   baseline: Record<string, number>;
   onStart: (f: FlightData) => Promise<boolean>;
+  /** Rumo vindo da Carta ao Navegante (?rumo=…&area=…) */
+  preselect?: { rumo: string; area?: string } | null;
 }
 
 const STEPS = ['Bússola', 'Destino', 'Plano de bordo', 'Práticas'] as const;
@@ -20,7 +22,7 @@ const input = 'w-full px-3 py-2 rounded-lg border border-gray-300 text-base focu
 const areaLabel = (id?: string) => LIFE_AREAS.find((a) => a.id === id)?.label;
 const headingTitle = (h: Heading) => (h.rumo === 'area' ? `Viver mais: ${areaLabel(h.area)?.toLowerCase()}` : rumoById(h.rumo)?.title ?? h.rumo);
 
-export default function FlightSetup({ headings, vision, baseline, onStart }: Props) {
+export default function FlightSetup({ headings, vision, baseline, onStart, preselect }: Props) {
   const [step, setStep] = useState(0);
   const [showAll, setShowAll] = useState(false);
   const [heading, setHeading] = useState<Heading | null>(null);
@@ -35,6 +37,21 @@ export default function FlightSetup({ headings, vision, baseline, onStart }: Pro
     const rest: Heading[] = RUMOS.filter((r) => r.id !== 'area' && !suggested.some((h) => h.rumo === r.id)).map((r) => ({ rumo: r.id, title: r.title, reasons: [], score: 0 }));
     return { suggested, rest };
   }, [headings]);
+
+  // Vindo da Carta: já marca o rumo escolhido lá (uma vez só)
+  const [preApplied, setPreApplied] = useState(false);
+  useEffect(() => {
+    if (preApplied || !preselect || heading) return;
+    const h =
+      options.suggested.find((x) => x.rumo === preselect.rumo && (x.area ?? '') === (preselect.area ?? '')) ??
+      options.rest.find((x) => x.rumo === preselect.rumo);
+    if (h) {
+      choose(h);
+      if (!options.suggested.includes(h)) setShowAll(true);
+    }
+    setPreApplied(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [preselect, options]);
 
   const rumo = heading ? rumoById(heading.rumo) : null;
   const choose = (h: Heading) => {

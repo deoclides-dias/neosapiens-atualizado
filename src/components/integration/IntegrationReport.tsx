@@ -547,19 +547,19 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
           <Sparkles className="w-7 h-7 text-purple-600 shrink-0 mt-1" aria-hidden="true" />
           <div className="flex flex-col gap-1">
             <Eyebrow>Próximo passo</Eyebrow>
-            <CardTitle>O Plano de Voo</CardTitle>
+            <CardTitle>A Carta ao Navegante</CardTitle>
           </div>
         </div>
         <p className="m-0 text-[15px] leading-relaxed text-gray-700">
-          A partir deste mapa, a Bússola sugere os rumos com mais força para mudar agora. Você escolhe um e faz um Voo de Experiência de 7 dias, com uma ou duas
-          práticas pequenas e um diário de bordo.
+          Até aqui, o mapa só mostrou os seus números. Se quiser, a tripulação do NeoSapiens escreveu uma leitura breve: o que vemos em você, onde parece travar e
+          por onde talvez valha começar o Plano de Voo.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link href="/voo" className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit">
-            Abrir a Bússola <ArrowRight className="w-4 h-4" />
+          <Link href="/carta" className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit">
+            ✉️ Ler a Carta ao Navegante <ArrowRight className="w-4 h-4" />
           </Link>
-          <Link href="/results" className="inline-flex items-center gap-2 min-h-[48px] px-4 rounded-lg border border-purple-300 text-purple-800 font-semibold hover:bg-purple-50 w-fit">
-            Resultados de cada módulo
+          <Link href="/voo" className="inline-flex items-center gap-2 min-h-[48px] px-4 rounded-lg border border-purple-300 text-purple-800 font-semibold hover:bg-purple-50 w-fit">
+            Ir direto ao Plano de Voo
           </Link>
         </div>
       </Card>
