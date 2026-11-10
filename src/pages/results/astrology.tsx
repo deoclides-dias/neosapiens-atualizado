@@ -113,11 +113,16 @@ export default function TraditionsResults() {
 
           {!loading && !error && !result && (
             <div className="bg-white rounded-2xl p-6 flex flex-col gap-3 max-w-xl">
-              <h2 className="m-0 text-2xl font-bold text-indigo-950" style={{ fontFamily: DISPLAY_FONT }}>Faltam as coordenadas do nascimento</h2>
+              <h2 className="m-0 text-2xl font-bold text-indigo-950" style={{ fontFamily: DISPLAY_FONT }}>Precisamos do momento e do local exatos</h2>
               <p className="m-0 text-sm leading-relaxed text-gray-700">
-                Para calcular o Ascendente, as casas e o fuso horário, precisamos da cidade de nascimento escolhida na lista de sugestões.
-                {raw?.birthDate ? ' Seus dados foram salvos antes dessa melhoria.' : ''}
+                O NeoSapiens só calcula o mapa com a data, a hora e a cidade de nascimento. É isso que garante cálculos corretos: o Ascendente, por
+                exemplo, muda de signo a cada duas horas, mais ou menos. Quanto mais precisos os seus dados, mais precisos os resultados.
               </p>
+              {raw?.birthDate && (
+                <p className="m-0 text-sm leading-relaxed text-gray-700">
+                  No seu cadastro falta {[!raw?.birthTime && 'a hora', typeof raw?.birthPlace?.latitude !== 'number' && 'a cidade escolhida na lista', typeof raw?.birthPlace?.utcOffsetMinutes !== 'number' && typeof raw?.birthPlace?.latitude === 'number' && 'o fuso da cidade'].filter(Boolean).join(' e ') || 'um dado'}.
+                </p>
+              )}
               <Link href="/analysis/birth" className="inline-flex items-center justify-center min-h-[44px] px-5 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit">
                 Atualizar dados de nascimento
               </Link>

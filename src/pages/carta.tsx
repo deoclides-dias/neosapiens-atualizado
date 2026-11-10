@@ -62,7 +62,7 @@ export default function CartaPage() {
 
   const letter = useMemo(() => (sources ? buildLetter(sources, compute(sources)) : null), [sources]);
   const firstName = useMemo(() => {
-    const full = (birthInputFromSaved(row?.birth_data)?.fullName || (user?.user_metadata as any)?.full_name || '').trim();
+    const full = (row?.birth_data?.fullName || (user?.user_metadata as any)?.full_name || '').trim();
     const first = full.split(/\s+/)[0] ?? '';
     return first ? first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() : '';
   }, [row, user]);

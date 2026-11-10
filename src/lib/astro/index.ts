@@ -23,17 +23,19 @@ export function computeTraditions(input: BirthInput, referenceYear?: number): Tr
 
 /**
  * Converte o birth_data salvo pela análise /analysis/birth no formato do motor.
- * Retorna null quando faltam coordenadas ou fuso (registros antigos).
+ * Retorna null quando falta a data, a hora, as coordenadas ou o fuso: sem o
+ * momento e o local exatos, o NeoSapiens não calcula o mapa (nada de supor 12:00).
  */
 export function birthInputFromSaved(raw: any): BirthInput | null {
   const place = raw?.birthPlace;
   if (!raw?.birthDate || typeof place?.latitude !== 'number' || typeof place?.longitude !== 'number') return null;
   if (typeof place?.utcOffsetMinutes !== 'number') return null;
+  if (typeof raw?.birthTime !== 'string' || !/^\d{1,2}:\d{2}/.test(raw.birthTime)) return null;
 
   return {
     fullName: raw.fullName || '',
     date: raw.birthDate,
-    time: raw.birthTime || '12:00',
+    time: raw.birthTime,
     utcOffsetMinutes: place.utcOffsetMinutes,
     latitude: place.latitude,
     longitude: place.longitude,
