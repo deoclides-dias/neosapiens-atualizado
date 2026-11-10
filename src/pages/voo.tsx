@@ -106,6 +106,21 @@ export default function FlightPage() {
               <FlightSetup headings={headings} vision={vision} baseline={sources ? baselineFrom(sources) : {}} onStart={save} preselect={preselect} />
             )}
           </FormCard>
+          <Link
+            href="/santuario"
+            className="flex items-center gap-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 p-5 no-underline text-purple-50 transition-colors"
+          >
+            <span className="text-3xl" aria-hidden="true">
+              🌊
+            </span>
+            <span className="flex flex-col gap-0.5">
+              <span className="font-semibold text-white">Santuário do Navegante</span>
+              <span className="text-sm text-purple-200">Uma sessão guiada de relaxamento profundo (11 min) para ancorar o seu Voo. Use fones e um lugar tranquilo.</span>
+            </span>
+            <span className="ml-auto text-purple-200" aria-hidden="true">
+              →
+            </span>
+          </Link>
           {(!flight || newFlight) && row !== undefined && !preselect && (
             <Link href="/carta" className="text-sm text-purple-200 hover:text-white w-fit">
               ✉️ Ainda não leu a Carta ao Navegante? Ela explica por que a bússola aponta esses rumos.
