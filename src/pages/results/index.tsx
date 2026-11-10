@@ -382,6 +382,13 @@ const ResultsHub = () => {
               📄 Gerar relatório em PDF
             </button>
           )}
+
+          <button
+            onClick={() => router.push('/santuario')}
+            className="bg-white text-indigo-700 border border-indigo-200 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
+          >
+            🌊 Santuário do Navegante
+          </button>
         </div>
       </div>
     </div>
