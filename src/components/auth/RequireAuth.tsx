@@ -7,6 +7,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../hooks/useAuth';
+import TermsGate from '../legal/TermsGate';
 
 interface RequireAuthProps {
   children: ReactNode;
@@ -66,7 +67,7 @@ export default function RequireAuth({ children }: RequireAuthProps) {
           </div>
         </div>
       </div>
-      {children}
+      <TermsGate user={user}>{children}</TermsGate>
     </>
   );
 }

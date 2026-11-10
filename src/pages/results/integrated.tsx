@@ -10,6 +10,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 import { DISPLAY_FONT } from '../../components/traditions/ui';
 import IntegrationReport from '../../components/integration/IntegrationReport';
+import ResearchConsentCard from '../../components/legal/ResearchConsentCard';
 import { bodyFromSaved } from '../../lib/body/scoring';
 import { mindFromSaved } from '../../lib/mind/mind';
 import { resultFromSaved } from '../../lib/psych/miniIpip';
@@ -118,6 +119,7 @@ export default function IntegratedResults() {
           {row === undefined && <p className="text-purple-100">Carregando...</p>}
           {row !== undefined && error && <div className="bg-white rounded-2xl p-6 text-gray-800">{error}</div>}
           {sources && <IntegrationReport sources={sources} />}
+          {sources && user && <ResearchConsentCard user={user} />}
         </div>
       </div>
     </>
