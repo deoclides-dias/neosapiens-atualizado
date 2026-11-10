@@ -5,13 +5,36 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { ReactNode } from 'react';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Check, ChevronDown } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { CompassRose, SampleRadar, SampleStar } from '../components/landing/Illustrations';
 import { CONTACT_EMAIL } from '../lib/legal';
 
 const SERIF = "'Cormorant Garamond', Georgia, serif";
 const HAN_TEXT = encodeURIComponent('木火土金水');
+
+const WOUNDS = [
+  { icon: '🧭', title: 'Desconexão de propósito', text: 'A sensação de vazio mesmo com conquistas por fora: a vida cheia e o sentido escasso.' },
+  { icon: '🧬', title: 'Desenraizamento do corpo', text: 'O corpo tratado como suporte da cabeça, longe do sono, do movimento e dos ritmos que o sustentam.' },
+  { icon: '📚', title: 'Sobrecarga da mente', text: 'Atenção fragmentada, disputada o dia inteiro por telas e informação sem fim.' }
+];
+
+/** Céu estrelado discreto, fixo (sem aleatoriedade para não mudar entre servidor e navegador) */
+function Stars() {
+  const pts = Array.from({ length: 70 }, (_, i) => ({
+    x: (i * 137.508) % 100,
+    y: (i * 61.803 + (i % 7) * 9) % 100,
+    r: i % 9 === 0 ? 1.6 : i % 3 === 0 ? 1.1 : 0.7,
+    o: 0.25 + ((i * 37) % 60) / 100
+  }));
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100" aria-hidden="true">
+      {pts.map((p, i) => (
+        <circle key={i} cx={p.x.toFixed(2)} cy={p.y.toFixed(2)} r={p.r / 10} fill="#fff" opacity={p.o.toFixed(2)} />
+      ))}
+    </svg>
+  );
+}
 
 const MODULES = [
   {
@@ -124,13 +147,16 @@ export default function HomePage() {
       </Head>
 
       <div className="bg-[#0d0b24] text-gray-900" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-        {/* ---------- Topo ---------- */}
-        <header className="bg-gradient-to-br from-indigo-950 via-purple-950 to-[#0d0b24] text-white overflow-hidden">
-          <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-6">
+        {/* ---------- Topo: a chamada ---------- */}
+        <header className="relative bg-gradient-to-b from-[#0d0b24] via-indigo-950 to-[#0d0b24] text-white overflow-hidden">
+          <nav className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-6">
             <Link href="/" className="text-2xl font-semibold text-white no-underline" style={{ fontFamily: SERIF }}>
               NeoSapiens
             </Link>
             <div className="hidden md:flex items-center gap-6 text-sm text-purple-100">
+              <a href="#manifesto" className="hover:text-white">
+                Manifesto
+              </a>
               <a href="#como-funciona" className="hover:text-white">
                 Como funciona
               </a>
@@ -152,18 +178,107 @@ export default function HomePage() {
               </Link>
             </div>
           </nav>
+          <Stars />
+          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 min-h-[calc(100svh-64px)] flex flex-col items-center justify-center text-center gap-7 pb-16">
+            <Kicker light>Manifesto NeoSapiens</Kicker>
+            <h1 className="m-0 text-5xl sm:text-7xl leading-[1.05] font-semibold" style={{ fontFamily: SERIF }}>
+              Há uma nova espécie surgindo.
+            </h1>
+            <p className="m-0 text-xl sm:text-2xl leading-relaxed text-purple-100 max-w-2xl" style={{ fontFamily: SERIF }}>
+              Não nasce de mutações genéticas, mas de inquietações existenciais.
+              <br />
+              Não brota da biologia, mas do profundo desejo de sentido.
+            </p>
+            <p className="m-0 text-2xl sm:text-3xl text-amber-200" style={{ fontFamily: SERIF }}>
+              Chamamos essa espécie de <strong className="font-semibold">NeoSapiens</strong>.
+            </p>
+            <a href="#manifesto" className="mt-6 inline-flex flex-col items-center gap-2 text-sm text-purple-200 hover:text-white">
+              continue lendo
+              <ChevronDown className="w-5 h-5 animate-bounce motion-reduce:animate-none" />
+            </a>
+          </div>
+        </header>
 
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-10 pb-20 sm:pt-16 sm:pb-28 grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
-            <div className="flex flex-col gap-6">
-              <Kicker light>Autoconhecimento com ciência e tradição</Kicker>
-              <h1 className="m-0 text-5xl sm:text-7xl leading-[1.02] font-semibold" style={{ fontFamily: SERIF }}>
-                Uma bússola,
+        {/* ---------- A crise e o paradoxo ---------- */}
+        <section id="manifesto" className="bg-[#0d0b24] text-white scroll-mt-4">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 flex flex-col gap-14">
+            <div className="grid md:grid-cols-2 gap-10 md:gap-16">
+              <div className="flex flex-col gap-4">
+                <Kicker light>A crise</Kicker>
+                <H2 light>Vivemos uma crise invisível.</H2>
+                <p className="m-0 text-lg leading-relaxed text-purple-100">
+                  Não é a falta de tempo. Não é a falta de recursos. Não é a falta de tecnologia.
+                </p>
+                <p className="m-0 text-2xl leading-snug text-white" style={{ fontFamily: SERIF }}>
+                  É a ausência de si mesmo. É a normose, o piloto automático, o scroll infinito da vida.
+                </p>
+              </div>
+              <div className="flex flex-col gap-4">
+                <Kicker light>O paradoxo</Kicker>
+                <p className="m-0 text-lg leading-relaxed text-purple-100">
+                  O humano moderno sabe muito. Conquistou planetas com telescópios e dobrou o DNA em laboratórios… Mas tropeça no espelho todas as manhãs, sem
+                  saber quem é.
+                </p>
+                <p className="m-0 text-2xl leading-snug text-white" style={{ fontFamily: SERIF }}>
+                  Freud chamou isso de ferida narcísica. <em className="text-amber-200">Nós chamamos de oportunidade sagrada.</em>
+                </p>
+              </div>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-4">
+              {WOUNDS.map((w) => (
+                <div key={w.title} className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 flex flex-col gap-2">
+                  <span className="text-3xl" aria-hidden="true">
+                    {w.icon}
+                  </span>
+                  <h3 className="m-0 text-xl font-semibold" style={{ fontFamily: SERIF }}>
+                    {w.title}
+                  </h3>
+                  <p className="m-0 text-[15px] leading-relaxed text-purple-200">{w.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- O despertar e a recusa ---------- */}
+        <section className="bg-gradient-to-b from-[#0d0b24] to-indigo-950 text-white">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 sm:py-28 flex flex-col gap-12 text-center">
+            <div className="flex flex-col gap-4">
+              <Kicker light>O despertar</Kicker>
+              <p className="m-0 text-3xl sm:text-5xl leading-tight" style={{ fontFamily: SERIF }}>
+                É tempo de lembrar quem somos.
+              </p>
+              <p className="m-0 text-2xl sm:text-3xl text-purple-100" style={{ fontFamily: SERIF }}>
+                Corpo que vibra. Mente que cria. Alma que sente.
+              </p>
+              <p className="m-0 text-lg text-purple-200">Somos propósito em movimento. E propósito não se acha: se constrói.</p>
+            </div>
+            <div className="flex flex-col gap-3">
+              <Kicker light>A recusa</Kicker>
+              <p className="m-0 text-2xl sm:text-3xl leading-snug" style={{ fontFamily: SERIF }}>
+                O NeoSapiens se recusa a ser só engrenagem.
                 <br />
-                <em className="text-amber-200 font-medium">não um manual.</em>
-              </h1>
+                Recusa-se a viver sem perguntar.
+                <br />
+                <em className="text-amber-200">Recusa-se a morrer sem dançar.</em>
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ---------- A proposta: a bússola ---------- */}
+        <section className="bg-gradient-to-br from-indigo-950 via-purple-950 to-[#0d0b24] text-white overflow-hidden">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
+            <div className="flex flex-col gap-6">
+              <Kicker light>A proposta</Kicker>
+              <blockquote className="m-0 text-3xl sm:text-4xl leading-snug" style={{ fontFamily: SERIF }}>
+                Nossa proposta não é cura — <em className="text-amber-200">é potência.</em> Não é te dar um novo destino, é te devolver o mapa. É acender contigo a
+                fogueira que ilumina o caminho, e não o holofote que cega.
+              </blockquote>
               <p className="m-0 text-lg leading-relaxed text-purple-100 max-w-xl">
-                Um mapa de você em cinco dimensões, do corpo ao propósito, passando pelas tradições do seu nascimento, com cada cálculo à vista. Para você
-                enxergar onde está e escolher, com clareza, o próximo rumo.
+                Por isso criamos o NeoSapiens: <strong className="text-white">uma bússola, não um manual.</strong> Um mapa de você em cinco dimensões, do corpo ao
+                propósito, passando pelas tradições do seu nascimento, com cada cálculo à vista. Para você enxergar onde está e escolher, com clareza, o próximo
+                rumo.
               </p>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
@@ -181,21 +296,6 @@ export default function HomePage() {
             <div className="flex justify-center md:justify-end">
               <CompassRose size={400} />
             </div>
-          </div>
-        </header>
-
-        {/* ---------- Manifesto ---------- */}
-        <section className="bg-[#0d0b24] text-white">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 sm:py-24 flex flex-col gap-6 text-center">
-            <Kicker light>O manifesto</Kicker>
-            <p className="m-0 text-3xl sm:text-4xl leading-snug" style={{ fontFamily: SERIF }}>
-              Uma nova espécie de ser humano está surgindo. Não por mutação genética, mas por <em className="text-amber-200">evolução consciente</em>: gente que
-              decide se conhecer por inteiro, corpo, mente e propósito, e navegar a própria vida em vez de ser levada por ela.
-            </p>
-            <p className="m-0 text-base leading-relaxed text-purple-200">
-              O NeoSapiens não diz quem você deve ser. Ele mostra, com o máximo de honestidade que a ciência e as tradições permitem, onde você está, e deixa o
-              leme com você.
-            </p>
           </div>
         </section>
 
@@ -296,6 +396,9 @@ export default function HomePage() {
               <H2 light>Ciência e tradição, lado a lado, sem confusão</H2>
               <p className="m-0 text-lg text-purple-100 leading-relaxed">
                 A gente acredita que as duas têm algo a dizer sobre você. Mas cada uma fala a sua língua, e a gente nunca mistura as duas sem avisar.
+              </p>
+              <p className="m-0 text-2xl text-amber-100" style={{ fontFamily: SERIF }}>
+                “Os sistemas ancestrais podem te explicar… mas não te definem.”
               </p>
             </div>
             <div className="grid md:grid-cols-[1fr_auto_1fr] gap-6 items-stretch">
@@ -409,21 +512,28 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ---------- Convite final ---------- */}
+        {/* ---------- O convite ---------- */}
         <section className="bg-gradient-to-br from-indigo-950 via-purple-950 to-[#0d0b24] text-white">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 sm:py-24 flex flex-col items-center gap-6 text-center">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 sm:py-28 flex flex-col items-center gap-6 text-center">
+            <Kicker light>O convite</Kicker>
             <h2 className="m-0 text-4xl sm:text-6xl leading-tight font-semibold" style={{ fontFamily: SERIF }}>
-              O mapa é seu.
+              Isso não é uma promessa.
               <br />
-              <em className="text-amber-200 font-medium">O leme também.</em>
+              <em className="text-amber-200 font-medium">É um convite.</em>
             </h2>
+            <p className="m-0 text-xl sm:text-2xl text-purple-100" style={{ fontFamily: SERIF }}>
+              A jornada é tua. Mas não estás só.
+            </p>
             <Link
               href={primary.href}
               className="inline-flex items-center justify-center gap-2 min-h-[52px] px-8 rounded-xl bg-amber-400 text-indigo-950 font-semibold hover:bg-amber-300"
             >
               {primary.label} <ArrowRight className="w-4 h-4" />
             </Link>
-            <p className="m-0 text-sm text-purple-200">Gratuito durante a fase de testes</p>
+            <p className="m-0 text-lg text-purple-200" style={{ fontFamily: SERIF }}>
+              Bem-vindo ao NeoSapiens. Que se inicie o retorno ao que sempre esteve dentro.
+            </p>
+            <p className="m-0 text-sm text-purple-300">Gratuito durante a fase de testes</p>
           </div>
         </section>
 
