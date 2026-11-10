@@ -6,8 +6,10 @@
 import { ReactNode, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 
+import { LEGAL_VERSION } from '../../lib/legal';
+
 /** Versão da Política de Privacidade (data de atualização em /privacidade). */
-export const PRIVACY_POLICY_VERSION = '2026-10-28';
+export const PRIVACY_POLICY_VERSION = LEGAL_VERSION;
 
 export interface ConsentRecord {
   acceptedAt: string;
@@ -61,7 +63,7 @@ export default function SensitiveDataConsent({ dataLabel, items, scope, children
           className="mt-1 w-5 h-5 accent-purple-600 shrink-0"
         />
         <span className="text-sm text-gray-900">
-          Concordo com a coleta e o uso das minhas {dataLabel} para gerar os meus resultados, nos termos da Política de Privacidade.
+          Concordo com a coleta e o uso das minhas {dataLabel} para gerar os meus resultados no NeoSapiens, nos termos da Política de Privacidade. Sei que posso retirar este consentimento a qualquer momento.
         </span>
       </label>
 

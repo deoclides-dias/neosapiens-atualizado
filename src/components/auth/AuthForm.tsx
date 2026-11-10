@@ -9,6 +9,7 @@ import { useAuth } from '../../hooks/useAuth'; // ✅ USAR O HOOK
 import { Mail, Lock, AlertCircle, Loader } from 'lucide-react';
 import InAppBrowserNotice from './InAppBrowserNotice';
 import { detectInAppBrowser, InAppInfo } from '../../utils/inAppBrowser';
+import { LEGAL_VERSION } from '../../lib/legal';
 
 interface AuthFormProps {
   mode: 'login' | 'signup';
@@ -24,6 +25,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [aceite, setAceite] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState('');
@@ -85,8 +87,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
           throw new Error('As senhas não coincidem');
         }
 
+        if (!aceite) {
+          throw new Error('Para criar a conta, confirme que tem 18 anos ou mais e aceita os Termos de Uso e a Política de Privacidade');
+        }
+
         // ✅ USAR A FUNÇÃO DO HOOK
-        const { session } = await signUpWithEmail(email, password);
+        const { session } = await signUpWithEmail(email, password, {
+          termos: { version: LEGAL_VERSION, acceptedAt: new Date().toISOString() }
+        });
 
         if (!session) {
           // Confirmação de email ativa no Supabase: ainda não há sessão
@@ -260,6 +268,29 @@ export default function AuthForm({ mode }: AuthFormProps) {
             </div>
           )}
 
+          {mode === 'signup' && (
+            <label className="flex items-start gap-3 p-3 rounded-lg border border-purple-200 bg-purple-50 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={aceite}
+                onChange={(e) => setAceite(e.target.checked)}
+                className="mt-0.5 w-5 h-5 accent-purple-600 shrink-0"
+                disabled={loading || googleLoading}
+              />
+              <span className="text-sm text-gray-800">
+                Tenho 18 anos ou mais e li e aceito os{' '}
+                <a href="/termos" target="_blank" rel="noopener noreferrer" className="text-purple-700 font-semibold underline">
+                  Termos de Uso
+                </a>{' '}
+                e a{' '}
+                <a href="/privacidade" target="_blank" rel="noopener noreferrer" className="text-purple-700 font-semibold underline">
+                  Política de Privacidade
+                </a>
+                .
+              </span>
+            </label>
+          )}
+
           {/* Botão submit */}
           <button
             type="submit"
@@ -343,7 +374,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </p>
 
           <p className="mt-4 text-center text-xs text-gray-500">
-            Ao continuar, você concorda com a{' '}
+            Ao continuar, você concorda com os{' '}
+            <a href="/termos" className="text-purple-600 underline hover:text-purple-700">Termos de Uso</a> e a{' '}
             <a href="/privacidade" className="text-purple-600 underline hover:text-purple-700">Política de Privacidade</a>.
           </p>
         </div>

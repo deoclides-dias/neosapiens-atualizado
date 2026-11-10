@@ -1,144 +1,159 @@
 // src/pages/privacidade.tsx
-// Política de Privacidade do NeoSapiens (página pública, exigida pelo Google
-// para publicar o login OAuth e pela LGPD). Rascunho: revisar antes de abrir
-// o site ao público.
+// Política de Privacidade do NeoSapiens (pública; exigida pela LGPD e pelo
+// Google para o login OAuth). Ao mudar o texto, atualize LEGAL_VERSION.
 
-import Head from 'next/head';
-import Link from 'next/link';
-import { ReactNode } from 'react';
+import LegalLayout, { Email, Secao, Tabela } from '../components/legal/LegalLayout';
 
-const ATUALIZADA_EM = '28 de outubro de 2026';
-const CONTATO = 'deoclides@gmail.com';
-
-function Secao({ titulo, children }: { titulo: string; children: ReactNode }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="m-0 text-2xl font-bold text-indigo-950" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>{titulo}</h2>
-      <div className="flex flex-col gap-3 text-[15px] leading-relaxed text-gray-700">{children}</div>
-    </section>
-  );
-}
+const Sim = ({ why }: { why: string }) => (
+  <>
+    <strong>Sim</strong> ({why})
+  </>
+);
 
 export default function Privacidade() {
   return (
-    <>
-      <Head>
-        <title>Política de Privacidade — NeoSapiens</title>
-        <meta name="description" content="Como o NeoSapiens coleta, usa e protege os seus dados." />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;600;700&display=swap" />
-      </Head>
+    <LegalLayout
+      title="Política de Privacidade"
+      description="Quais dados o NeoSapiens coleta, por que, com quem compartilha e como você controla tudo isso."
+      other={{ href: '/termos', label: 'Termos de Uso' }}
+    >
+      <p className="m-0 text-[15px] leading-relaxed text-gray-700">
+        Esta política explica, em linguagem simples, quais dados o NeoSapiens coleta, por que, com quem compartilha e como você controla tudo isso, nos
+        termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018, LGPD).
+      </p>
 
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 px-4 py-10" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
-        <article className="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl shadow-black/25 p-6 sm:p-10 flex flex-col gap-8">
-          <header className="flex flex-col gap-2">
-            <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">NeoSapiens</p>
-            <h1 className="m-0 text-4xl font-bold text-indigo-950" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Política de Privacidade</h1>
-            <p className="m-0 text-sm text-gray-600">Última atualização: {ATUALIZADA_EM}</p>
-          </header>
+      <Secao titulo="1. Quem é o responsável">
+        <p className="m-0">
+          O controlador dos dados é <strong>Deoclides dos Santos Costa Dias</strong>, pessoa física, com sede em São Luís (MA), responsável pelo NeoSapiens. Ele
+          também atua como encarregado pelo tratamento de dados (DPO). Contato para qualquer assunto sobre dados: <Email />.
+        </p>
+      </Secao>
 
-          <p className="m-0 text-[15px] leading-relaxed text-gray-700">
-            O NeoSapiens é uma plataforma de autoconhecimento que combina tradições ancestrais (astrologia ocidental e chinesa, numerologia),
-            hábitos de saúde e avaliações psicológicas e cognitivas. Esta política explica, em linguagem simples, quais dados coletamos, para quê,
-            com quem eles ficam e como você pode controlá-los, nos termos da Lei Geral de Proteção de Dados (Lei nº 13.709/2018, LGPD).
-          </p>
+      <Secao titulo="2. Quais dados coletamos">
+        <Tabela
+          head={['Módulo', 'Dados', 'Sensível pela LGPD?']}
+          rows={[
+            ['Conta', 'e-mail e senha (guardada criptografada); com login Google, nome, e-mail e foto do perfil', 'Não'],
+            ['Nascimento (Tradições)', 'nome completo, data, hora e cidade de nascimento, coordenadas e fuso horário', 'Não'],
+            [
+              'Corpo',
+              'sono e horários de despertar, atividade física, alimentação, digestão e evacuação, cor da urina, sinais do corpo, álcool (AUDIT-C), tabaco, bem-estar (OMS-5)',
+              <Sim key="s" why="saúde" />
+            ],
+            ['Personalidade', 'respostas ao Mini-IPIP, como você é e como gostaria de ser', <Sim key="s" why="psicológico" />],
+            ['Mente', 'resultados dos testes de reação, memória, foco, flexibilidade e criatividade, e autoavaliação', <Sim key="s" why="cognitivo" />],
+            ['Propósito', 'valores, sentido de vida, áreas da vida, florescimento, Cinco Espíritos', <Sim key="s" why="pode incluir espiritualidade e vida afetiva" />],
+            ['Plano de Voo', 'rumo escolhido, plano WOOP, práticas, diário de bordo e revisão', 'Pode conter, conforme o que você escrever'],
+            ['Santuário e Carta', 'notas de relaxamento antes e depois das sessões; sua resposta à Carta ao Navegante', 'Pode conter, conforme o que você escrever'],
+            ['Uso técnico', 'tempos de resposta e verificações de qualidade das respostas', 'Não']
+          ]}
+        />
+        <p className="m-0">Não pedimos documentos, dados bancários nem localização em tempo real.</p>
+      </Secao>
 
-          <Secao titulo="1. Quem é o responsável">
-            <p className="m-0">
-              O controlador dos dados é Deoclides dos Santos Costa Dias, responsável pelo NeoSapiens. Para qualquer assunto sobre os seus dados,
-              escreva para <a href={`mailto:${CONTATO}`} className="text-purple-700 font-semibold underline">{CONTATO}</a>.
-            </p>
-          </Secao>
+      <Secao titulo="3. Para que usamos e com que base legal">
+        <Tabela
+          head={['Finalidade', 'Base legal (LGPD)']}
+          rows={[
+            ['Criar e manter a sua conta, guardar o seu progresso', 'Execução do serviço que você pediu (art. 7º, V)'],
+            [
+              'Calcular os mapas e gerar os seus resultados, a Carta e o Plano de Voo',
+              'Dados comuns: execução do serviço (art. 7º, V). Dados sensíveis: seu consentimento específico e destacado (art. 11, I)'
+            ],
+            [
+              <>
+                Melhorar a plataforma e pesquisar padrões, sempre com dados <strong>anonimizados e agregados</strong>
+              </>,
+              'Legítimo interesse (art. 7º, IX) para dados comuns; dados sensíveis só com a sua autorização opcional para pesquisa e depois de anonimizados'
+            ],
+            ['Responder seus pedidos e mensagens', 'Execução do serviço (art. 7º, V)'],
+            ['Cumprir obrigações legais e se defender em processos', 'Obrigação legal e exercício de direitos (art. 7º, II e VI)']
+          ]}
+        />
+        <p className="m-0">
+          O que <strong>não</strong> fazemos: vender dados, usar para publicidade, criar perfis para terceiros ou tomar decisões automáticas que afetem os seus
+          direitos. Ninguém da equipe abre as suas respostas individuais para ler: o relatório em PDF só chega a alguém se você mesmo enviar.
+        </p>
+      </Secao>
 
-          <Secao titulo="2. Quais dados coletamos">
-            <ul className="m-0 pl-5 flex flex-col gap-2 list-disc">
-              <li><strong>Conta:</strong> e-mail e senha (guardada criptografada) ou, se você entrar com o Google, nome, e-mail e foto do perfil fornecidos pelo Google.</li>
-              <li><strong>Dados de nascimento:</strong> nome completo, data, hora e cidade de nascimento, com as coordenadas e o fuso horário da cidade.</li>
-              <li><strong>Avaliação de corpo e energia (biohacking):</strong> medidas corporais, sono, alimentação, atividade física e informações de saúde, como condições crônicas, histórico familiar, medicamentos, suplementos, alergias, sintomas e níveis de estresse e ansiedade.</li>
-              <li><strong>Avaliações psicológica e cognitiva:</strong> as suas respostas aos questionários (personalidade, estilos de aprendizagem e processamento, Cinco Elementos).</li>
-            </ul>
-            <p className="m-0">
-              As informações de saúde e as respostas psicológicas são <strong>dados pessoais sensíveis</strong> pela LGPD (art. 5º, II) e recebem
-              cuidado reforçado. Você só as informa se quiser, preenchendo a avaliação correspondente.
-            </p>
-          </Secao>
+      <Secao titulo="4. Dados sensíveis e pesquisa">
+        <p className="m-0">
+          Antes de cada módulo com dados sensíveis (Corpo, Personalidade, Mente e Propósito), pedimos o seu consentimento numa tela própria, que explica o que
+          será coletado. Guardamos a data e a versão desta política junto com o aceite. Você pode retirar o consentimento a qualquer momento escrevendo para{' '}
+          <Email />; nesse caso apagamos os dados daquele módulo e ele deixa de aparecer nas análises integradas.
+        </p>
+        <p className="m-0">
+          No fim do Mapa NeoSapiens há uma autorização <strong>opcional</strong>, desmarcada, para usar as suas respostas de forma anonimizada e junto com as de
+          outras pessoas em pesquisas que melhorem o NeoSapiens. Sem ela, as suas respostas servem só para os seus resultados. Você pode mudar essa escolha
+          quando quiser.
+        </p>
+      </Secao>
 
-          <Secao titulo="3. Para que usamos">
-            <ul className="m-0 pl-5 flex flex-col gap-2 list-disc">
-              <li>Gerar os seus resultados: mapa natal, astrologia chinesa, numerologia e os perfis das avaliações.</li>
-              <li>Guardar o seu progresso entre as análises.</li>
-              <li>Manter a sua conta e permitir o login.</li>
-            </ul>
-            <p className="m-0">
-              Não vendemos os seus dados, não os usamos para publicidade e não os compartilhamos com terceiros para fins comerciais. Os resultados
-              são leituras simbólicas e de autoconhecimento: <strong>não são diagnóstico médico ou psicológico</strong> e não substituem
-              profissionais de saúde.
-            </p>
-          </Secao>
+      <Secao titulo="5. Com quem compartilhamos">
+        <p className="m-0">Só com os serviços que fazem a plataforma funcionar (operadores), que tratam os dados em nosso nome:</p>
+        <Tabela
+          head={['Serviço', 'Para quê', 'Onde']}
+          rows={[
+            ['Supabase', 'banco de dados e login', 'Estados Unidos'],
+            ['Vercel', 'hospedagem do site', 'Estados Unidos e rede global'],
+            ['Google', 'login com Google (opcional); sugestão de cidades e fuso horário, que recebem só o texto digitado no campo de cidade', 'Estados Unidos'],
+            ['Google Fonts', 'fontes do site, que recebem o endereço IP do navegador', 'Estados Unidos'],
+            ['Zoho', 'e-mail do NeoSapiens, quando você nos escreve', 'Estados Unidos e Índia']
+          ]}
+        />
+        <p className="m-0">
+          Como esses servidores ficam fora do Brasil, há transferência internacional de dados (art. 33), apoiada nas cláusulas contratuais desses fornecedores e
+          no seu consentimento. Fora isso, só entregamos dados a autoridades por ordem legal.
+        </p>
+      </Secao>
 
-          <Secao titulo="4. Base legal">
-            <p className="m-0">
-              Tratamos os seus dados com base no seu consentimento (LGPD, art. 7º, I) e, no caso dos dados sensíveis, no consentimento específico
-              e destacado para essa finalidade (art. 11, I). Você pode retirar o consentimento a qualquer momento, pedindo a exclusão dos dados.
-            </p>
-          </Secao>
+      <Secao titulo="6. Segurança">
+        <p className="m-0">
+          A conexão é sempre criptografada (HTTPS). As senhas são guardadas criptografadas pelo Supabase. Cada pessoa só consegue ler os próprios dados, por
+          regras de acesso no banco. Se houver um incidente que possa trazer risco, avisaremos você e a ANPD.
+        </p>
+      </Secao>
 
-          <Secao titulo="5. Com quem os dados ficam">
-            <p className="m-0">Usamos serviços de terceiros apenas para operar a plataforma:</p>
-            <ul className="m-0 pl-5 flex flex-col gap-2 list-disc">
-              <li><strong>Supabase:</strong> banco de dados e autenticação. Os dados ficam armazenados em servidores nos Estados Unidos.</li>
-              <li><strong>Vercel:</strong> hospedagem do site.</li>
-              <li><strong>Google:</strong> login com conta Google (se você escolher) e sugestão de cidades no formulário de nascimento, que envia ao Google o texto digitado no campo de cidade.</li>
-            </ul>
-            <p className="m-0">
-              Por usarmos esses serviços, há transferência internacional de dados (LGPD, art. 33). Esses fornecedores adotam medidas de segurança
-              e contratos próprios de proteção de dados.
-            </p>
-          </Secao>
+      <Secao titulo="7. Por quanto tempo guardamos">
+        <p className="m-0">
+          Enquanto a sua conta existir. Ao pedir a exclusão, apagamos a conta e todas as respostas em até <strong>15 dias</strong>. Dados já anonimizados para
+          pesquisa não identificam ninguém e podem ser mantidos. Contas sem acesso por <strong>2 anos</strong> serão avisadas por e-mail e depois excluídas.
+        </p>
+      </Secao>
 
-          <Secao titulo="6. Como protegemos">
-            <p className="m-0">
-              A comunicação com o site é criptografada (HTTPS). No banco de dados, regras de acesso garantem que cada pessoa só consiga ler e
-              alterar os próprios registros. Os cálculos das tradições são feitos no seu navegador a partir dos dados que você salvou.
-            </p>
-          </Secao>
+      <Secao titulo="8. Seus direitos">
+        <p className="m-0">Pela LGPD (art. 18), você pode, a qualquer momento e sem custo:</p>
+        <ul className="m-0 pl-5 flex flex-col gap-1.5 list-disc">
+          <li>confirmar se tratamos os seus dados e ter acesso a eles (o relatório em PDF já reúne tudo);</li>
+          <li>corrigir dados incompletos ou desatualizados (refazendo o módulo);</li>
+          <li>pedir anonimização, bloqueio ou exclusão;</li>
+          <li>pedir a portabilidade dos dados;</li>
+          <li>saber com quem compartilhamos;</li>
+          <li>retirar o consentimento;</li>
+          <li>reclamar à Autoridade Nacional de Proteção de Dados (ANPD).</li>
+        </ul>
+        <p className="m-0">
+          Para exercer qualquer um deles, escreva para <Email />. Respondemos em até 15 dias.
+        </p>
+      </Secao>
 
-          <Secao titulo="7. Por quanto tempo guardamos">
-            <p className="m-0">
-              Os dados ficam guardados enquanto a sua conta existir. Se você pedir a exclusão, apagamos a conta e os dados associados, exceto o que
-              a lei obrigar a manter.
-            </p>
-          </Secao>
+      <Secao titulo="9. Menores de idade">
+        <p className="m-0">O NeoSapiens é só para pessoas com 18 anos ou mais. Se soubermos que uma conta é de menor, ela será excluída.</p>
+      </Secao>
 
-          <Secao titulo="8. Seus direitos">
-            <p className="m-0">Pela LGPD (art. 18), você pode, a qualquer momento:</p>
-            <ul className="m-0 pl-5 flex flex-col gap-2 list-disc">
-              <li>confirmar se tratamos os seus dados e ter acesso a eles;</li>
-              <li>corrigir dados incompletos ou desatualizados;</li>
-              <li>pedir a exclusão dos dados e da conta;</li>
-              <li>pedir a portabilidade dos dados;</li>
-              <li>retirar o consentimento.</li>
-            </ul>
-            <p className="m-0">
-              Para exercer qualquer desses direitos, escreva para <a href={`mailto:${CONTATO}`} className="text-purple-700 font-semibold underline">{CONTATO}</a>.
-              Você também pode recorrer à Autoridade Nacional de Proteção de Dados (ANPD).
-            </p>
-          </Secao>
+      <Secao titulo="10. Cookies e armazenamento no navegador">
+        <p className="m-0">
+          Usamos apenas o necessário para o site funcionar: a sessão do login e o armazenamento local do navegador, que guarda respostas em andamento para você
+          não perder o que já respondeu. Não usamos cookies de publicidade nem de rastreamento.
+        </p>
+      </Secao>
 
-          <Secao titulo="9. Menores de idade">
-            <p className="m-0">O NeoSapiens é destinado a pessoas com 18 anos ou mais.</p>
-          </Secao>
-
-          <Secao titulo="10. Mudanças nesta política">
-            <p className="m-0">
-              Se esta política mudar, atualizaremos a data no topo da página. Mudanças importantes serão avisadas no próprio site.
-            </p>
-          </Secao>
-
-          <footer className="pt-4 border-t border-gray-100">
-            <Link href="/" className="inline-flex items-center min-h-[44px] text-purple-700 font-semibold hover:text-purple-900">← Voltar ao NeoSapiens</Link>
-          </footer>
-        </article>
-      </div>
-    </>
+      <Secao titulo="11. Mudanças nesta política">
+        <p className="m-0">
+          Quando a política mudar, a data da versão muda e avisamos no site, pedindo o seu aceite da versão nova. Se a mudança afetar o uso de dados sensíveis,
+          pediremos o seu consentimento de novo.
+        </p>
+      </Secao>
+    </LegalLayout>
   );
 }

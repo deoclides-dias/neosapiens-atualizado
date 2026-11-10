@@ -12,6 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 import MindFlow from '../../components/mind/MindFlow';
 import { MindData, mindFromSaved } from '../../lib/mind/mind';
+import SensitiveDataConsent, { ConsentRecord } from '../../components/consent/SensitiveDataConsent';
 
 export default function CognitivePage() {
   const router = useRouter();
@@ -19,6 +20,7 @@ export default function CognitivePage() {
   const { markAnalysisComplete } = useAnalysisProgress();
   const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState<MindData | null>(null);
+  const [consent, setConsent] = useState<ConsentRecord | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -31,6 +33,7 @@ export default function CognitivePage() {
           .order('updated_at', { ascending: false })
           .limit(1);
         setSaved(mindFromSaved(data?.[0]?.cognitive_data));
+        setConsent(data?.[0]?.cognitive_data?._consentimento ?? null);
       } catch (err) {
         console.error('Erro ao carregar dados da mente:', err);
       } finally {
@@ -40,6 +43,18 @@ export default function CognitivePage() {
   }, [user]);
 
   if (!user) return null; // RequireAuth cuida do redirecionamento
+
+  const flow = (c: ConsentRecord) => (
+    <MindFlow
+      initial={saved}
+      onSave={async (data, complete) => {
+        const ok = await markAnalysisComplete('cognitive', { ...data, _consentimento: c }, complete);
+        if (!ok) alert('Erro ao salvar. Tente novamente.');
+        return ok;
+      }}
+      onFinished={() => router.push('/results/cognitive')}
+    />
+  );
 
   return (
     <AnalysisLayout
@@ -53,16 +68,20 @@ export default function CognitivePage() {
           <div className="flex items-center justify-center py-16">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
           </div>
+        ) : consent ? (
+          flow(consent)
         ) : (
-          <MindFlow
-            initial={saved}
-            onSave={async (data, complete) => {
-              const ok = await markAnalysisComplete('cognitive', data, complete);
-              if (!ok) alert('Erro ao salvar. Tente novamente.');
-              return ok;
-            }}
-            onFinished={() => router.push('/results/cognitive')}
-          />
+          <SensitiveDataConsent
+            dataLabel="respostas e resultados dos testes da mente"
+            scope="cognitive"
+            items={[
+              'como você avalia a sua própria atenção, memória e criatividade',
+              'tempos de reação, acertos e erros nos testes de memória, foco e flexibilidade',
+              'as ideias que você escrever no teste de criatividade'
+            ]}
+          >
+            {flow}
+          </SensitiveDataConsent>
         )}
       </FormCard>
     </AnalysisLayout>
