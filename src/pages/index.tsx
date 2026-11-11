@@ -100,7 +100,7 @@ const FAQ = [
   },
   {
     q: 'Preciso saber a hora em que nasci?',
-    a: 'Ajuda, porque o ascendente e algumas leituras dependem dela. Se não souber, o mapa é feito do mesmo jeito, e o que depende da hora é marcado.'
+    a: 'Sim. Só fazemos o mapa com a data, a hora e o local de nascimento, porque é isso que garante cálculos corretos: o Ascendente, por exemplo, muda de signo a cada duas horas, mais ou menos. Quanto mais precisos os seus dados, mais precisos os resultados. Vale conferir na certidão de nascimento.'
   },
   {
     q: 'Quanto custa?',
@@ -220,7 +220,8 @@ export default function HomePage() {
                   saber quem é.
                 </p>
                 <p className="m-0 text-2xl leading-snug text-white" style={{ fontFamily: SERIF }}>
-                  Freud chamou isso de ferida narcísica. <em className="text-amber-200">Nós chamamos de oportunidade sagrada.</em>
+                  Freud chamou isso de ferida narcísica, a terceira depois de Copérnico e Darwin: o eu não é senhor em sua própria casa.{' '}
+                  <em className="text-amber-200">Nós chamamos de oportunidade sagrada.</em>
                 </p>
               </div>
             </div>

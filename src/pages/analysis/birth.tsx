@@ -97,6 +97,14 @@ const BirthAnalysis = () => {
     >
       <form onSubmit={handleSubmit}>
         <FormCard className="space-y-8">
+          <div className="rounded-xl border border-purple-200 bg-purple-50 p-4 flex flex-col gap-1.5">
+            <p className="m-0 text-sm font-semibold text-purple-900">Por que pedimos tudo com exatidão</p>
+            <p className="m-0 text-sm leading-relaxed text-gray-700">
+              Só fazemos o mapa com a data, a hora e o local de nascimento. É isso que garante que os cálculos estão corretos: o Ascendente, por
+              exemplo, muda de signo a cada duas horas, mais ou menos. Quanto mais precisos forem os seus dados, mais precisos serão os seus resultados.
+            </p>
+          </div>
+
           <section>
             <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-purple-600" />
@@ -143,7 +151,7 @@ const BirthAnalysis = () => {
                 </div>
               </div>
               <p className="text-xs text-gray-500">
-                Procure no documento de nascimento ou pergunte aos familiares.
+                Confira na certidão de nascimento ou pergunte aos familiares. Se não souber a hora, ainda não é possível fazer o mapa.
               </p>
             </div>
           </section>
