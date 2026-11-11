@@ -220,8 +220,8 @@ export default function HomePage() {
                   saber quem é.
                 </p>
                 <p className="m-0 text-2xl leading-snug text-white" style={{ fontFamily: SERIF }}>
-                  Freud lembrava que, depois de Copérnico e Darwin, veio a terceira ferida: descobrir que o eu não é senhor em sua própria casa.{' '}
-                  <em className="text-amber-200">Nós chamamos isso de oportunidade sagrada.</em>
+                  Freud chamou isso de ferida narcísica, a terceira depois de Copérnico e Darwin: o eu não é senhor em sua própria casa.{' '}
+                  <em className="text-amber-200">Nós chamamos de oportunidade sagrada.</em>
                 </p>
               </div>
             </div>
