@@ -4,7 +4,7 @@
 
 import type { TraditionsResult } from '../../lib/astro';
 import { ELEMENT_HAN, SIGN_GLYPHS } from '../../lib/astro';
-import { integrationThemes, ThemeEvidence } from '../../lib/astro/interpretation';
+import { IntegrationTheme, integrationThemes, strengthLabel, ThemeEvidence } from '../../lib/astro/interpretation';
 import { ELEMENT_COLORS } from './WuXingPentagram';
 import { westernElementRows } from './ElementWeights';
 import { Bars, Card, CardTitle, DarkPanel, DISPLAY_FONT, HAN_FONT, SYMBOL_FONT } from './ui';
@@ -21,9 +21,47 @@ function Evidence({ e }: { e: ThemeEvidence }) {
   );
 }
 
+function ThemeTable({ themes }: { themes: IntegrationTheme[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-sm min-w-[820px]">
+        <thead>
+          <tr className="text-left text-gray-600 text-xs uppercase tracking-wide">
+            {['Tema', 'Mapa Natal', 'Astrologia Chinesa', 'Numerologia', 'Força'].map((h) => (
+              <th key={h} className="px-3 py-2.5 border-b border-gray-200 font-semibold">{h}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {themes.map((t) => (
+            <tr key={t.id} className="border-b border-gray-100 last:border-0">
+              <td className="px-3 py-3.5 align-top font-bold text-gray-900">
+                {t.title}
+                <span className={`block mt-1 text-xs font-semibold ${t.confirmed ? 'text-purple-700' : 'text-gray-500'}`}>{strengthLabel(t.strength)}</span>
+              </td>
+              <Evidence e={t.western} />
+              <Evidence e={t.chinese} />
+              <Evidence e={t.numerology} />
+              <td className="px-3 py-3.5 align-top">
+                <span className="inline-flex gap-1" role="img" aria-label={`${t.strength} de 3`}>
+                  {[0, 1, 2].map((i) => (
+                    <span key={i} className={`w-3 h-3 rounded-full ${i < t.strength ? 'bg-purple-700' : 'border-2 border-gray-300'}`} />
+                  ))}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function IntegrationTab({ result }: { result: TraditionsResult }) {
   const { western: w, chinese: c, numerology: n } = result;
   const themes = integrationThemes(result);
+  const confirmed = themes.filter((t) => t.confirmed).sort((a, b) => b.strength - a.strength);
+  const unconfirmed = themes.filter((t) => !t.confirmed);
   const sun = w.planets.find((p) => p.id === 'Sun')!;
   const topChinese = (Object.entries(c.elements) as [keyof typeof c.elements, number][]).sort((a, b) => b[1] - a[1])[0][0];
 
@@ -54,40 +92,23 @@ export default function IntegrationTab({ result }: { result: TraditionsResult })
 
       <Card>
         <div className="flex flex-wrap justify-between items-baseline gap-2">
-          <CardTitle>Onde as três tradições se encontram</CardTitle>
-          <p className="m-0 text-[13px] text-gray-600">Cada linha é um tema; a força mostra quantas tradições o indicam</p>
+          <CardTitle>Onde as tradições se encontram</CardTitle>
+          <p className="m-0 text-[13px] text-gray-600">Um tema só conta quando se repete em duas ou três tradições</p>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm min-w-[820px]">
-            <thead>
-              <tr className="text-left text-gray-600 text-xs uppercase tracking-wide">
-                {['Tema', 'Mapa Natal', 'Astrologia Chinesa', 'Numerologia', 'Força'].map((h) => (
-                  <th key={h} className="px-3 py-2.5 border-b border-gray-200 font-semibold">{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {themes.map((t) => (
-                <tr key={t.id} className="border-b border-gray-100 last:border-0">
-                  <td className="px-3 py-3.5 align-top font-bold text-gray-900">
-                    {t.title}
-                    {t.divergent && <span className="block mt-1 text-xs font-semibold text-amber-700">As tradições divergem</span>}
-                  </td>
-                  <Evidence e={t.western} />
-                  <Evidence e={t.chinese} />
-                  <Evidence e={t.numerology} />
-                  <td className="px-3 py-3.5 align-top">
-                    <span className="inline-flex gap-1" role="img" aria-label={`${t.strength} de 3`}>
-                      {[0, 1, 2].map((i) => (
-                        <span key={i} className={`w-3 h-3 rounded-full ${i < t.strength ? 'bg-purple-700' : 'border-2 border-gray-300'}`} />
-                      ))}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {confirmed.length > 0 ? (
+          <ThemeTable themes={confirmed} />
+        ) : (
+          <p className="m-0 text-sm text-gray-700">Neste mapa, nenhum dos três temas se repete em duas tradições. Isso também é informação: as tradições não apontam juntas para um mesmo traço.</p>
+        )}
+        {unconfirmed.length > 0 && (
+          <details className="group">
+            <summary className="cursor-pointer list-none inline-flex items-center gap-1 text-sm font-semibold text-purple-700">
+              Sem confirmação ({unconfirmed.length}) <span className="group-open:rotate-180 transition-transform">▾</span>
+            </summary>
+            <p className="mt-2 mb-1 text-[13px] text-gray-600">Temas indicados por uma tradição ou por nenhuma. Ficam aqui para consulta, sem peso na leitura.</p>
+            <ThemeTable themes={unconfirmed} />
+          </details>
+        )}
       </Card>
 
       <div className="flex flex-col gap-6">
