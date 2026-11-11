@@ -75,9 +75,24 @@ export interface WesternChart {
   houseSystem: 'Placidus' | 'Casas Iguais';
   aspects: Aspect[];
   patterns: ChartPattern[];
+  /** Elementos PONDERADOS pela tabela de pesos (ver ElementWeight) */
   elements: Record<WesternElement, number>;
-  /** Total de pontos usados na contagem de elementos (planetas + AC) */
+  /** Soma dos pesos (denominador das proporções de elemento) */
   elementPoints: number;
+  /** Contagem simples, 1 por ponto (10 planetas + AC), só para referência */
+  elementCounts: Record<WesternElement, number>;
+  /** Cada ponto que entra na contagem, com o peso e o motivo */
+  weights: ElementWeight[];
+}
+
+export interface ElementWeight {
+  /** PlanetId, 'AC' ou 'MC' */
+  point: string;
+  label: string;
+  sign: SignName;
+  element: WesternElement;
+  weight: number;
+  reason: string;
 }
 
 // ---------------------------------------------------------------------------

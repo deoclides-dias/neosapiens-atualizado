@@ -4,7 +4,7 @@
 
 import * as Astronomy from 'astronomy-engine';
 import type {
-  Aspect, AspectType, BirthInput, ChartPattern, PlanetId, PlanetPosition,
+  Aspect, AspectType, BirthInput, ChartPattern, ElementWeight, PlanetId, PlanetPosition,
   SignName, WesternChart, WesternElement, ZodiacPosition
 } from './types';
 
@@ -36,6 +36,27 @@ export const ASPECTS: { type: AspectType; angle: number; orb: number; name: stri
   { type: 'sextil', angle: 60, orb: 5, name: 'Sextil' },
   { type: 'quintil', angle: 72, orb: 2, name: 'Quintil' }
 ];
+
+// ---------------------------------------------------------------------------
+// Tabela de pesos (v1, 10/11/2026). Documento "Mapa e Psique", seção dos pesos.
+// Sol, Lua e Ascendente são os pilares; os planetas lentos falam da geração e
+// só sobem quando estão ativados: a até 5° de um ângulo, ou em conjunção,
+// quadratura ou oposição a até 3° do Sol ou da Lua. Regentes tradicionais.
+// ---------------------------------------------------------------------------
+export const BASE_WEIGHTS: Record<PlanetId, number> = {
+  Sun: 4, Moon: 4, Mercury: 2, Venus: 2, Mars: 2, Jupiter: 1, Saturn: 1, Uranus: 0.5, Neptune: 0.5, Pluto: 0.5
+};
+export const AC_WEIGHT = 4;
+export const MC_WEIGHT = 3;
+export const RULER_WEIGHT = 3;
+export const ACTIVATED_OUTER_WEIGHT = 2;
+export const ANGLE_ORB = 5;
+export const TIGHT_ORB = 3;
+/** Regente tradicional de cada signo (Áries → Marte … Peixes → Júpiter) */
+export const TRADITIONAL_RULER: PlanetId[] = ['Mars', 'Venus', 'Mercury', 'Moon', 'Sun', 'Mercury', 'Venus', 'Mars', 'Jupiter', 'Saturn', 'Saturn', 'Jupiter'];
+const OUTER: PlanetId[] = ['Uranus', 'Neptune', 'Pluto'];
+const LUMINARIES: PlanetId[] = ['Sun', 'Moon'];
+const WEIGHT_ASPECTS: AspectType[] = ['conjuncao', 'oposicao', 'quadratura'];
 
 const norm = (x: number) => ((x % 360) + 360) % 360;
 const rad = (d: number) => (d * Math.PI) / 180;
@@ -219,21 +240,53 @@ export function computeWestern(input: BirthInput): WesternChart {
   const aspects = findAspects(planets);
   const patterns = findPatterns(planets, aspects);
 
-  const elements: Record<WesternElement, number> = { Fogo: 0, Terra: 0, Ar: 0, Água: 0 };
-  planets.forEach((p) => elements[SIGN_ELEMENTS[p.signIndex % 4]]++);
   const ascPos = zodiacPosition(asc);
-  elements[SIGN_ELEMENTS[ascPos.signIndex % 4]]++;
+  const mcPos = zodiacPosition(mc);
+
+  // Contagem simples (referência): 1 por planeta + AC
+  const elementCounts: Record<WesternElement, number> = { Fogo: 0, Terra: 0, Ar: 0, Água: 0 };
+  planets.forEach((p) => elementCounts[SIGN_ELEMENTS[p.signIndex % 4]]++);
+  elementCounts[SIGN_ELEMENTS[ascPos.signIndex % 4]]++;
+
+  // Contagem ponderada
+  const ruler = TRADITIONAL_RULER[ascPos.signIndex];
+  const angleList = [asc, mc, norm(asc + 180), norm(mc + 180)];
+  const weights: ElementWeight[] = planets.map((p) => {
+    let weight = BASE_WEIGHTS[p.id];
+    let reason = p.id === 'Sun' || p.id === 'Moon' ? 'pilar do mapa' : OUTER.includes(p.id) ? 'planeta geracional' : ['Jupiter', 'Saturn'].includes(p.id) ? 'planeta social' : 'planeta pessoal';
+    if (p.id === ruler && weight < RULER_WEIGHT) {
+      weight = RULER_WEIGHT;
+      reason = 'regente do Ascendente';
+    }
+    if (OUTER.includes(p.id)) {
+      const angular = angleList.some((a) => angularDistance(p.lon, a) <= ANGLE_ORB);
+      const tight = aspects.find(
+        (x) => (x.a === p.id || x.b === p.id) && LUMINARIES.includes(x.a === p.id ? x.b : x.a) && WEIGHT_ASPECTS.includes(x.type) && x.orb <= TIGHT_ORB
+      );
+      if (angular || tight) {
+        weight = ACTIVATED_OUTER_WEIGHT;
+        reason = angular ? 'geracional ativado: junto a um ângulo' : `geracional ativado: aspecto apertado com ${PLANETS.find((q) => q.id === (tight!.a === p.id ? tight!.b : tight!.a))!.name}`;
+      }
+    }
+    return { point: p.id, label: p.name, sign: p.sign, element: SIGN_ELEMENTS[p.signIndex % 4], weight, reason };
+  });
+  weights.push({ point: 'AC', label: 'Ascendente', sign: ascPos.sign, element: SIGN_ELEMENTS[ascPos.signIndex % 4], weight: AC_WEIGHT, reason: 'pilar do mapa' });
+  weights.push({ point: 'MC', label: 'Meio do Céu', sign: mcPos.sign, element: SIGN_ELEMENTS[mcPos.signIndex % 4], weight: MC_WEIGHT, reason: 'eixo estrutural' });
+  const elements: Record<WesternElement, number> = { Fogo: 0, Terra: 0, Ar: 0, Água: 0 };
+  weights.forEach((w) => (elements[w.element] += w.weight));
 
   return {
     planets,
     ascendant: ascPos,
-    midheaven: zodiacPosition(mc),
+    midheaven: mcPos,
     cusps,
     houseSystem,
     aspects,
     patterns,
     elements,
-    elementPoints: planets.length + 1
+    elementPoints: weights.reduce((a, w) => a + w.weight, 0),
+    elementCounts,
+    weights
   };
 }
 

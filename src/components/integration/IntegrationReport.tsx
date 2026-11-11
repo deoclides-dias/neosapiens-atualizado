@@ -11,6 +11,7 @@ import ResonanceWeb from './ResonanceWeb';
 import BridgeView from './BridgeView';
 import { elementBridge, personalityBridge } from '../../lib/integration/bridge';
 import { Contradiction, PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementMentions, radarAxes, resonanceNodes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
+import { strengthLabel } from '../../lib/astro/interpretation';
 
 const GRID = '#e5e7eb';
 const INK = '#111827';
@@ -476,6 +477,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
                     <span className="font-semibold text-white">{t.title}</span>
                     <span className="text-xs text-amber-100 whitespace-nowrap">{t.strength} de 3</span>
                   </div>
+                  <span className={`text-xs font-semibold ${t.confirmed ? 'text-emerald-300' : 'text-purple-300/80'}`}>{strengthLabel(t.strength)}</span>
                   {[
                     { l: 'Mapa natal', e: t.western },
                     { l: 'Mapa chinês', e: t.chinese },

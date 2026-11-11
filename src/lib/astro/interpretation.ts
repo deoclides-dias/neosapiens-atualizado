@@ -6,7 +6,7 @@ import type {
   ChartPattern, ChineseChart, ChineseElement, NumerologyChart, PlanetId,
   TraditionsResult, WesternChart, WesternElement
 } from './types';
-import { PLANETS, SIGN_ELEMENTS } from './western';
+import { PLANETS } from './western';
 
 const planetName = (id: PlanetId) => PLANETS.find((p) => p.id === id)?.name || id;
 /** "o Sol", "a Lua", "Mercúrio"… (Sol e Lua levam artigo) */
@@ -194,56 +194,64 @@ export interface IntegrationTheme {
   western: ThemeEvidence;
   chinese: ThemeEvidence;
   numerology: ThemeEvidence;
-  /** Quantas tradições confirmam (0–3) */
+  /** Quantas tradições indicam (0–3). Só 2 ou 3 contam como confirmação. */
   strength: number;
-  /** Alguma tradição diverge das outras */
-  divergent: boolean;
+  /** strength >= 2: o tema se repete em duas ou mais tradições */
+  confirmed: boolean;
   /** Ponte sugerida para a dimensão psicológica */
   bridge: string;
 }
 
 const pct = (n: number, total: number) => (total ? n / total : 0);
+/** "38%" — parte do peso do mapa natal */
+const share = (n: number, total: number) => `${Math.round(pct(n, total) * 100)}%`;
+/**
+ * Limiares calibrados (10/11/2026) com 3.000 nascimentos simulados: cada voto de
+ * cada tradição sai em ~25–35% das pessoas, para que o tema diga algo sobre a pessoa.
+ */
+export const WESTERN_THRESHOLDS = { movimento: 0.6, intuicao: 1 / 3, raiz: 1 / 3 };
 
 export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
   const w = r.western, c = r.chinese, n = r.numerology;
   const wp = w.elementPoints;
-  const core = [n.lifePath, n.expression];
   const sun = w.planets.find((p) => p.id === 'Sun')!;
   const moon = w.planets.find((p) => p.id === 'Moon')!;
-  const isWater = (signIndex: number) => SIGN_ELEMENTS[signIndex % 4] === 'Água';
   const arrow = (id: string) => n.arrows.find((a) => a.id === id)?.complete;
 
-  const themes: Omit<IntegrationTheme, 'strength' | 'divergent'>[] = [
+  const lp = `Caminho de Vida ${n.lifePath} (a Expressão ${n.expression} não vota)`;
+  const dm = `Mestre do Dia ${c.day.stemElement} ${c.day.yin ? 'Yin' : 'Yang'}`;
+
+  const themes: Omit<IntegrationTheme, 'strength' | 'confirmed'>[] = [
     {
       id: 'movimento',
       title: 'Mente em movimento',
-      // Ar + Fogo ≥ 50% · Madeira + Fogo ≥ 4 de 8 · Caminho ou Expressão em 1, 3 ou 5
-      western: { supports: pct(w.elements.Ar + w.elements.Fogo, wp) >= 0.5, text: `Ar e Fogo em ${w.elements.Ar + w.elements.Fogo} de ${wp} pontos` },
-      chinese: { supports: c.elements.Madeira + c.elements.Fogo >= 4, text: `Madeira e Fogo em ${c.elements.Madeira + c.elements.Fogo} de 8 caracteres` },
-      numerology: { supports: core.some((x) => [1, 3, 5].includes(x)), text: `Caminho ${n.lifePath} · Expressão ${n.expression}` },
+      // Ar + Fogo ≥ 60% do peso · Madeira + Fogo ≥ 4 de 8 · Caminho de Vida 1, 3 ou 5
+      western: { supports: pct(w.elements.Ar + w.elements.Fogo, wp) >= WESTERN_THRESHOLDS.movimento, text: `Ar e Fogo com ${share(w.elements.Ar + w.elements.Fogo, wp)} do peso do mapa (indica a partir de 60%)` },
+      chinese: { supports: c.elements.Madeira + c.elements.Fogo >= 4, text: `Madeira e Fogo em ${c.elements.Madeira + c.elements.Fogo} de 8 caracteres (indica a partir de 4)` },
+      numerology: { supports: [1, 3, 5].includes(n.lifePath), text: `${lp} · indica com 1, 3 ou 5` },
       bridge: 'Abertura à experiência (Big Five)'
     },
     {
       id: 'intuicao',
       title: 'Intuição e sensibilidade',
-      // Água ≥ 25% ou Sol/Lua/AC em Água · Água ≥ 2 ou Mestre do Dia Yin · 2, 7, 9, 11 ou 33
+      // Água ≥ 1/3 do peso · Água ≥ 3 ou Mestre do Dia de Água · Caminho de Vida 2, 7, 9, 11 ou 33
       western: {
-        supports: pct(w.elements.Água, wp) >= 0.25 || isWater(sun.signIndex) || isWater(moon.signIndex) || isWater(w.ascendant.signIndex),
-        text: `Água em ${w.elements.Água} de ${wp} pontos · Sol em ${sun.sign}, Lua em ${moon.sign}, AC em ${w.ascendant.sign}`
+        supports: pct(w.elements.Água, wp) >= WESTERN_THRESHOLDS.intuicao,
+        text: `Água com ${share(w.elements.Água, wp)} do peso do mapa (indica a partir de 33%) · Sol em ${sun.sign}, Lua em ${moon.sign}, AC em ${w.ascendant.sign}`
       },
-      chinese: { supports: c.elements.Água >= 2 || c.day.yin, text: `Mestre do Dia ${c.day.stemElement} ${c.day.yin ? 'Yin' : 'Yang'} · Água ${c.elements.Água}` },
-      numerology: { supports: core.some((x) => [2, 7, 9, 11, 33].includes(x)), text: `Caminho ${n.lifePath} · Expressão ${n.expression}` },
+      chinese: { supports: c.elements.Água >= 3 || c.day.stemElement === 'Água', text: `${dm} · Água em ${c.elements.Água} de 8 (indica com Mestre do Dia de Água ou Água a partir de 3)` },
+      numerology: { supports: [2, 7, 9, 11, 33].includes(n.lifePath), text: `${lp} · indica com 2, 7, 9, 11 ou 33` },
       bridge: 'Amabilidade e sensibilidade emocional (Big Five)'
     },
     {
       id: 'raiz',
       title: 'Enraizamento e estrutura',
-      // Terra ≥ 25% · Terra + Metal ≥ 3 · seta 1-4-7 completa ou 4, 8 ou 22 no núcleo
-      western: { supports: pct(w.elements.Terra, wp) >= 0.25, text: `Terra em ${w.elements.Terra} de ${wp} pontos` },
-      chinese: { supports: c.elements.Terra + c.elements.Metal >= 3, text: `Terra ${c.elements.Terra} · Metal ${c.elements.Metal}` },
+      // Terra ≥ 1/3 do peso · Terra + Metal ≥ 5 de 8 · seta 1-4-7 completa ou Caminho de Vida 4, 8 ou 22
+      western: { supports: pct(w.elements.Terra, wp) >= WESTERN_THRESHOLDS.raiz, text: `Terra com ${share(w.elements.Terra, wp)} do peso do mapa (indica a partir de 33%)` },
+      chinese: { supports: c.elements.Terra + c.elements.Metal >= 5, text: `Terra ${c.elements.Terra} + Metal ${c.elements.Metal} = ${c.elements.Terra + c.elements.Metal} de 8 (indica a partir de 5)` },
       numerology: {
-        supports: Boolean(arrow('147')) || core.some((x) => [4, 8, 22].includes(x)),
-        text: arrow('147') ? 'Seta 1·4·7 completa (praticidade)' : `Caminho ${n.lifePath} · Expressão ${n.expression}`
+        supports: Boolean(arrow('147')) || [4, 8, 22].includes(n.lifePath),
+        text: `${arrow('147') ? 'Seta 1·4·7 completa (praticidade)' : 'Seta 1·4·7 incompleta'} · ${lp} · indica com a seta ou 4, 8 ou 22`
       },
       bridge: 'Conscienciosidade (Big Five)'
     }
@@ -252,6 +260,10 @@ export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
   return themes.map((t) => {
     const votes = [t.western.supports, t.chinese.supports, t.numerology.supports];
     const strength = votes.filter(Boolean).length;
-    return { ...t, strength, divergent: strength > 0 && strength < 3 };
+    return { ...t, strength, confirmed: strength >= 2 };
   });
 }
+
+/** Rótulo honesto da força: ausência não é divergência */
+export const strengthLabel = (strength: number) =>
+  strength === 3 ? 'As três tradições concordam' : strength === 2 ? 'Duas tradições concordam' : strength === 1 ? 'Só uma tradição indica (sem confirmação)' : 'Nenhuma tradição indica';

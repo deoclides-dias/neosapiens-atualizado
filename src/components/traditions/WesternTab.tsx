@@ -5,6 +5,7 @@ import type { WesternChart } from '../../lib/astro';
 import { formatDegree } from '../../lib/astro';
 import { groupedPatterns, patternText, patternTitle, SIGN_KEYWORDS, sunHorizonText } from '../../lib/astro/interpretation';
 import NatalWheel, { ASPECT_STYLE } from './NatalWheel';
+import ElementWeights, { westernElementRows } from './ElementWeights';
 import { Bars, Card, CardTitle, DarkPanel, LegendLine, SYMBOL_FONT } from './ui';
 
 const VS = '︎';
@@ -14,10 +15,7 @@ export default function WesternTab({ chart }: { chart: WesternChart }) {
   const moon = chart.planets.find((p) => p.id === 'Moon')!;
   const patterns = groupedPatterns(chart);
   const used = new Set(chart.aspects.map((a) => a.type));
-  const max = chart.elementPoints;
-  const elementRows = (['Fogo', 'Terra', 'Ar', 'Água'] as const)
-    .map((e) => ({ label: e, value: chart.elements[e], max, color: { Fogo: '#dc2626', Terra: '#a16207', Ar: '#0284c7', Água: '#4338ca' }[e] }))
-    .sort((a, b) => b.value - a.value);
+  const elementRows = westernElementRows(chart, { Fogo: '#dc2626', Terra: '#a16207', Ar: '#0284c7', Água: '#4338ca' });
 
   const pillars = [
     { glyph: sun.glyph + VS, color: '#b45309', label: 'Sol', sign: sun.sign, detail: `${formatDegree(sun.degree)} · casa ${sun.house}` },
@@ -70,8 +68,9 @@ export default function WesternTab({ chart }: { chart: WesternChart }) {
 
           <Card>
             <CardTitle>Equilíbrio dos elementos</CardTitle>
-            <p className="m-0 text-[13px] text-gray-600">{chart.planets.length} planetas + Ascendente</p>
-            <Bars rows={elementRows} />
+            <p className="m-0 text-[13px] text-gray-600">Parte do peso do mapa em cada elemento</p>
+            <Bars rows={elementRows} suffix="%" />
+            <ElementWeights chart={chart} />
           </Card>
         </div>
       </div>
