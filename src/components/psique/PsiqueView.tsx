@@ -269,8 +269,8 @@ export default function PsiqueView({ row }: { row: any }) {
                         )
                       ) : (
                         <p className="m-0 text-sm text-gray-700">
-                          Nenhum questionário chega aqui. É o lugar das perguntas da bússola acima, dos símbolos e do{' '}
-                          <Link href="/santuario" className="text-purple-700 font-semibold underline">Santuário</Link>.
+                          Nenhum questionário chega aqui. É o lugar das perguntas da bússola acima, dos símbolos e da{' '}
+                          <Link href="/carta" className="text-purple-700 font-semibold underline">Carta ao Navegante</Link>.
                         </p>
                       )}
                     </div>
@@ -279,6 +279,12 @@ export default function PsiqueView({ row }: { row: any }) {
               )}
               <p className="m-0 text-xs text-gray-500">Um traço só sai do &quot;Aberto&quot; com diferença de 16 pontos ou mais. Vazire (2010): os outros costumam perceber melhor alguns traços que se mostram, e você, os internos.</p>
             </Card>
+          )}
+
+          {row !== undefined && blocks && (
+            <Link href="/carta" className="inline-flex items-center justify-center min-h-[48px] px-6 rounded-lg bg-white text-indigo-950 font-semibold hover:bg-purple-50 w-fit">
+              Ler a Carta ao Navegante
+            </Link>
           )}
 
           <p className="m-0 text-xs text-purple-200 leading-relaxed">

@@ -4,7 +4,7 @@
 
 import { ReactNode, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Infinity as InfinityIcon, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
+import { ArrowRight, Eye, Infinity as InfinityIcon, Layers, Repeat, Scale, Sparkles } from 'lucide-react';
 import { Card, CardTitle, DarkPanel, Eyebrow } from '../traditions/ui';
 import ElementStar from './ElementStar';
 import ResonanceWeb from './ResonanceWeb';
@@ -12,6 +12,7 @@ import BridgeView from './BridgeView';
 import { elementBridge, personalityBridge } from '../../lib/integration/bridge';
 import { Contradiction, PILLARS, Pillar, RadarAxis, Sources, compute, contradictions, elementMentions, radarAxes, resonanceNodes, resonances, traditionThemes, windRootPattern } from '../../lib/integration/integration';
 import { strengthLabel } from '../../lib/astro/interpretation';
+import { psiqueSummary } from '../../lib/psique/summary';
 
 const GRID = '#e5e7eb';
 const INK = '#111827';
@@ -272,6 +273,7 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
   const resNodes = useMemo(() => resonanceNodes(sources, c), [sources, c]);
   const mentions = useMemo(() => elementMentions(sources, c), [sources, c]);
   const bridgeEl = useMemo(() => elementBridge(sources, c, mentions), [sources, c, mentions]);
+  const psique = useMemo(() => psiqueSummary(sources.traditions?.western ?? null, sources.psych), [sources]);
   const themes = useMemo(() => traditionThemes(sources), [sources]);
   const windRoot = useMemo(() => windRootPattern(mentions, c, sources), [mentions, c, sources]);
   const filled = axes.filter((a) => a.value !== null);
@@ -541,6 +543,41 @@ export default function IntegrationReport({ sources }: { sources: Sources }) {
             com o placar completo. Isto não é um resultado científico. É uma forma holística de olhar para você, com cada passo à vista.
           </p>
           <BridgeView elements={bridgeEl} traits={bridgeTr} mentions={mentions} />
+        </Card>
+      )}
+
+      {/* A Ponte da Psique: resumo do Mapa da Psique */}
+      {psique && psique.rows.some((x) => x.symbol) && (
+        <Card>
+          <div className="flex items-start gap-3">
+            <Eye className="w-7 h-7 text-amber-600 shrink-0 mt-1" aria-hidden="true" />
+            <div className="flex flex-col gap-1">
+              <Eyebrow>A Ponte da Psique · Freud, Jung e o seu mapa</Eyebrow>
+              <CardTitle>Quatro perguntas, dois olhares</CardTitle>
+            </div>
+          </div>
+          <p className="m-0 text-[15px] leading-relaxed text-gray-700">
+            Um resumo do Mapa da Psique. Aqui não há placar de convergência: em cada pergunta, o símbolo do seu mapa natal e a sua medida ficam lado a lado, e um não
+            explica o outro.
+          </p>
+          <div className="flex flex-col divide-y divide-gray-100">
+            {psique.rows.map((r) => (
+              <div key={r.id} className="py-3 grid sm:grid-cols-[180px_1fr_1fr] gap-x-5 gap-y-1">
+                <p className="m-0 font-semibold text-gray-900">{r.question}</p>
+                <p className="m-0 text-sm text-gray-700">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-purple-700">Símbolo · </span>
+                  {r.symbol ?? '—'}
+                </p>
+                <p className="m-0 text-sm text-gray-700">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-purple-700">Medida · </span>
+                  {r.measure}
+                </p>
+              </div>
+            ))}
+          </div>
+          <Link href="/results/psique" className="inline-flex items-center gap-2 min-h-[44px] px-5 rounded-lg border border-purple-200 text-purple-700 font-semibold hover:bg-purple-50 w-fit">
+            Ver o Mapa da Psique completo <ArrowRight className="w-4 h-4" />
+          </Link>
         </Card>
       )}
 

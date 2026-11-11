@@ -90,7 +90,7 @@ export default function LetterView({
   const [texto, setTexto] = useState('');
   const [sent, setSent] = useState(Boolean(initialFeedback));
   const [saving, setSaving] = useState(false);
-  const { strengths, central, lever, bridge, headings } = letter;
+  const { strengths, central, lever, bridge, headings, psique } = letter;
   const voo = (rumo: string, area?: string) => `/voo?rumo=${encodeURIComponent(rumo)}${area ? `&area=${encodeURIComponent(area)}` : ''}`;
 
   const send = async () => {
@@ -235,6 +235,79 @@ export default function LetterView({
         )}
       </section>
 
+      {/* Os outros olhares (Mapa da Psique) */}
+      {psique && (
+        <>
+        <div className="flex items-center gap-3 text-purple-300" aria-hidden="true">
+          <span className="flex-1 h-px bg-current" /> ✦ <span className="flex-1 h-px bg-current" />
+        </div>
+        <section className="flex flex-col gap-6 text-[18px] leading-relaxed">
+          <h3 className="m-0 text-2xl sm:text-3xl font-semibold">Os outros olhares</h3>
+          {psique.dever && (
+            <div>
+              <p className="m-0">
+                Quando você respondeu pensando em como <em>deveria</em> ser, a maior distância apareceu em <strong>{psique.dever.trait.toLowerCase()}</strong>: você sente que
+                deveria ter {psique.dever.dever > psique.dever.today ? 'bem mais' : 'bem menos'} do que se reconhece hoje. Vale perguntar de quem é essa régua, e se ela
+                ainda serve a você.
+              </p>
+              <Why>
+                <Bar label="Hoje" value={psique.dever.today} color="#7c3aed" />
+                <Bar label="Como acha que deveria ser" value={psique.dever.dever} color="#64748b" />
+                <span className="text-xs text-gray-500">
+                  Mini-IPIP respondido duas vezes. Higgins (1987): a distância da régua do dever costuma vir com culpa e ansiedade. Só citamos diferenças de 16 pontos ou mais.
+                </span>
+              </Why>
+            </div>
+          )}
+          {psique.blind && (
+            <div>
+              <p className="m-0">
+                {psique.blind.modo === 'com_alguem' ? (
+                  <>
+                    {psique.blind.relacao ? <>Segundo {psique.blind.relacao}</> : <>Segundo quem respondeu com você</>}, você tem{' '}
+                    {psique.blind.other > psique.blind.self ? 'mais' : 'menos'} <strong>{psique.blind.trait.toLowerCase()}</strong> do que você mesmo enxerga.
+                  </>
+                ) : (
+                  <>
+                    Você imagina que os outros veem {psique.blind.other > psique.blind.self ? 'mais' : 'menos'} <strong>{psique.blind.trait.toLowerCase()}</strong> em você
+                    do que você mesmo enxerga.
+                  </>
+                )}{' '}
+                Nenhum dos dois olhares está certo sozinho: a diferença é só um convite para conversar.
+              </p>
+              <Why>
+                <Bar label="Como você se vê" value={psique.blind.self} color="#7c3aed" />
+                <Bar label={psique.blind.modo === 'com_alguem' ? 'Como o outro vê você' : 'Como acha que os outros veem'} value={psique.blind.other} color="#9ca3af" />
+                <span className="text-xs text-gray-500">Janela de Johari (Luft e Ingham, 1955), com as mesmas 20 frases. Só citamos diferenças de 16 pontos ou mais.</span>
+              </Why>
+            </div>
+          )}
+          {!psique.dever && !psique.blind && (psique.missing.dever || psique.missing.outro) && (
+            <p className="m-0">
+              Ainda faltam dois olhares sobre você: como acha que deveria ser e como os outros veem você.{' '}
+              <Link href="/analysis/psique" className="text-purple-800 underline">
+                Responder agora
+              </Link>
+              .
+            </p>
+          )}
+          {psique.compass && (
+            <div>
+              <Tag>uma pergunta do seu mapa natal · reflexão</Tag>
+              <p className="m-0 italic">{psique.compass.text}</p>
+              <p className="m-0 mt-2 text-base text-gray-700">
+                Ela vem da pergunta “{psique.compass.question}”, no{' '}
+                <Link href="/results/psique" className="text-purple-800 underline">
+                  Mapa da Psique
+                </Link>
+                . O símbolo não responde: ele só pergunta.
+              </p>
+            </div>
+          )}
+        </section>
+        </>
+      )}
+
       <div className="flex items-center gap-3 text-purple-300" aria-hidden="true">
         <span className="flex-1 h-px bg-current" /> ✦ <span className="flex-1 h-px bg-current" />
       </div>
@@ -310,6 +383,20 @@ export default function LetterView({
           </p>
         </section>
       )}
+
+      <div className="flex items-center gap-3 text-purple-300" aria-hidden="true">
+        <span className="flex-1 h-px bg-current" /> ✦ <span className="flex-1 h-px bg-current" />
+      </div>
+
+      {/* Uma palavra final */}
+      <section className="flex flex-col gap-3 text-[18px] leading-relaxed">
+        <h3 className="m-0 text-2xl sm:text-3xl font-semibold">Uma palavra final</h3>
+        <p className="m-0">
+          Esta carta seguiu procedimentos técnicos e, no que cabe, científicos, com cada regra à vista. Ainda assim, não cabe ao NeoSapiens interpretar quem você é, nem
+          quem quer que seja. Se você viu semelhanças entre os números, os símbolos e a sua vida, elas são suas para pensar.
+        </p>
+        <p className="m-0 text-xl font-semibold">Nada nem ninguém nos define. É o propósito que nos guia.</p>
+      </section>
 
       <div className="flex flex-col items-end gap-1 pt-2">
         <Ship />
