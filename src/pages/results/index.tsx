@@ -1,7 +1,7 @@
 // src/pages/results/index.tsx
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { ArrowLeft, Star, Activity, Brain, Zap, Target, ChevronRight, Compass } from 'lucide-react';
+import { ArrowLeft, Star, Activity, Brain, Zap, Target, ChevronRight, Compass, Eye } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
 
@@ -133,11 +133,22 @@ const ResultsHub = () => {
       status: progress?.purpose_complete ? 'available' : 'locked',
       description: 'Seus valores, o sentido de vida e onde o que você valoriza e o que você vive não batem.',
       requiredAnalysis: ['purpose']
+    },
+    {
+      id: 'psique',
+      title: 'Mapa da Psique',
+      subtitle: 'Freud, Jung e o seu mapa',
+      icon: Eye,
+      color: 'indigo',
+      href: '/results/psique',
+      status: progress?.birth_complete && progress?.psychological_complete ? 'available' : 'locked',
+      description: 'Como você se vê, como os outros veem você, como a cultura pesa em você e a sua Janela de Johari.',
+      requiredAnalysis: ['birth', 'psychological']
     }
   ];
 
   // O Mapa funciona com dados parciais: basta ter dois módulos respondidos
-  const integrationAvailable = resultCards.filter(card => card.status === 'available').length >= 2;
+  const integrationAvailable = resultCards.filter(card => card.id !== 'psique' && card.status === 'available').length >= 2;
 
   if (loading) {
     return (
@@ -320,10 +331,7 @@ const ResultsHub = () => {
                 </div>
               ) : (
                 <div className="text-indigo-200">
-                  <span className="font-medium">🔒 Complete todas as análises para desbloquear</span>
-                  <div className="text-sm mt-1">
-                    {4 - resultCards.filter(card => card.status === 'available').length} análises restantes
-                  </div>
+                  <span className="font-medium">🔒 Complete pelo menos dois módulos para desbloquear</span>
                 </div>
               )}
             </div>
@@ -380,15 +388,6 @@ const ResultsHub = () => {
               className="bg-white text-indigo-700 border border-indigo-200 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
             >
               📄 Gerar relatório em PDF
-            </button>
-          )}
-
-          {progress?.psychological_complete && progress?.birth_complete && (
-            <button
-              onClick={() => router.push('/results/psique')}
-              className="bg-white text-indigo-700 border border-indigo-200 px-6 py-3 rounded-lg hover:bg-indigo-50 transition-colors font-medium"
-            >
-              🪞 Mapa da Psique
             </button>
           )}
 
