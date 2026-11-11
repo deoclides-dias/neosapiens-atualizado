@@ -91,7 +91,7 @@ export default function LetterView({
   const [sent, setSent] = useState(Boolean(initialFeedback));
   const [saving, setSaving] = useState(false);
   const { strengths, central, lever, bridge, headings, psique } = letter;
-  const voo = (rumo: string, area?: string) => `/voo?rumo=${encodeURIComponent(rumo)}${area ? `&area=${encodeURIComponent(area)}` : ''}`;
+  const voo = (rumo: string, area?: string) => `/jornada?rumo=${encodeURIComponent(rumo)}${area ? `&area=${encodeURIComponent(area)}` : ''}`;
 
   const send = async () => {
     if (!resposta) return;
