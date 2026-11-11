@@ -6,6 +6,7 @@ import type { TraditionsResult } from '../../lib/astro';
 import { ELEMENT_HAN, SIGN_GLYPHS } from '../../lib/astro';
 import { integrationThemes, ThemeEvidence } from '../../lib/astro/interpretation';
 import { ELEMENT_COLORS } from './WuXingPentagram';
+import { westernElementRows } from './ElementWeights';
 import { Bars, Card, CardTitle, DarkPanel, DISPLAY_FONT, HAN_FONT, SYMBOL_FONT } from './ui';
 
 function Evidence({ e }: { e: ThemeEvidence }) {
@@ -94,8 +95,8 @@ export default function IntegrationTab({ result }: { result: TraditionsResult })
           <h2 className="m-0 text-[26px] font-bold text-white" style={{ fontFamily: DISPLAY_FONT }}>Os elementos lado a lado</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2.5">
-              <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-200">Ocidental · 4 elementos</p>
-              <Bars dark rows={(['Fogo', 'Terra', 'Ar', 'Água'] as const).map((e) => ({ label: e, value: w.elements[e], max: w.elementPoints, color: { Fogo: '#f4725e', Terra: '#d6aa3c', Ar: '#6ec3f0', Água: '#8a82f5' }[e] })).sort((a, b) => b.value - a.value)} />
+              <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-200">Ocidental · 4 elementos · % do peso</p>
+              <Bars dark suffix="%" rows={westernElementRows(w, { Fogo: '#f4725e', Terra: '#d6aa3c', Ar: '#6ec3f0', Água: '#8a82f5' })} />
             </div>
             <div className="flex flex-col gap-2.5">
               <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-200">Chinesa · 5 elementos</p>

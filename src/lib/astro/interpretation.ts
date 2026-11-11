@@ -6,7 +6,7 @@ import type {
   ChartPattern, ChineseChart, ChineseElement, NumerologyChart, PlanetId,
   TraditionsResult, WesternChart, WesternElement
 } from './types';
-import { PLANETS, SIGN_ELEMENTS } from './western';
+import { PLANETS } from './western';
 
 const planetName = (id: PlanetId) => PLANETS.find((p) => p.id === id)?.name || id;
 /** "o Sol", "a Lua", "Mercúrio"… (Sol e Lua levam artigo) */
@@ -203,6 +203,10 @@ export interface IntegrationTheme {
 }
 
 const pct = (n: number, total: number) => (total ? n / total : 0);
+/** "38%" — parte do peso do mapa natal */
+const share = (n: number, total: number) => `${Math.round(pct(n, total) * 100)}%`;
+/** Limiares calibrados (10/11/2026) com 3.000 nascimentos simulados: cada voto ocidental sai em ~25–30% das pessoas */
+export const WESTERN_THRESHOLDS = { movimento: 0.6, intuicao: 1 / 3, raiz: 1 / 3 };
 
 export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
   const w = r.western, c = r.chinese, n = r.numerology;
@@ -210,15 +214,14 @@ export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
   const core = [n.lifePath, n.expression];
   const sun = w.planets.find((p) => p.id === 'Sun')!;
   const moon = w.planets.find((p) => p.id === 'Moon')!;
-  const isWater = (signIndex: number) => SIGN_ELEMENTS[signIndex % 4] === 'Água';
   const arrow = (id: string) => n.arrows.find((a) => a.id === id)?.complete;
 
   const themes: Omit<IntegrationTheme, 'strength' | 'divergent'>[] = [
     {
       id: 'movimento',
       title: 'Mente em movimento',
-      // Ar + Fogo ≥ 50% · Madeira + Fogo ≥ 4 de 8 · Caminho ou Expressão em 1, 3 ou 5
-      western: { supports: pct(w.elements.Ar + w.elements.Fogo, wp) >= 0.5, text: `Ar e Fogo em ${w.elements.Ar + w.elements.Fogo} de ${wp} pontos` },
+      // Ar + Fogo ≥ 60% do peso · Madeira + Fogo ≥ 4 de 8 · Caminho ou Expressão em 1, 3 ou 5
+      western: { supports: pct(w.elements.Ar + w.elements.Fogo, wp) >= WESTERN_THRESHOLDS.movimento, text: `Ar e Fogo com ${share(w.elements.Ar + w.elements.Fogo, wp)} do peso do mapa (indica a partir de 60%)` },
       chinese: { supports: c.elements.Madeira + c.elements.Fogo >= 4, text: `Madeira e Fogo em ${c.elements.Madeira + c.elements.Fogo} de 8 caracteres` },
       numerology: { supports: core.some((x) => [1, 3, 5].includes(x)), text: `Caminho ${n.lifePath} · Expressão ${n.expression}` },
       bridge: 'Abertura à experiência (Big Five)'
@@ -226,10 +229,10 @@ export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
     {
       id: 'intuicao',
       title: 'Intuição e sensibilidade',
-      // Água ≥ 25% ou Sol/Lua/AC em Água · Água ≥ 2 ou Mestre do Dia Yin · 2, 7, 9, 11 ou 33
+      // Água ≥ 1/3 do peso (Sol, Lua e AC já pesam 4) · Água ≥ 2 ou Mestre do Dia Yin · 2, 7, 9, 11 ou 33
       western: {
-        supports: pct(w.elements.Água, wp) >= 0.25 || isWater(sun.signIndex) || isWater(moon.signIndex) || isWater(w.ascendant.signIndex),
-        text: `Água em ${w.elements.Água} de ${wp} pontos · Sol em ${sun.sign}, Lua em ${moon.sign}, AC em ${w.ascendant.sign}`
+        supports: pct(w.elements.Água, wp) >= WESTERN_THRESHOLDS.intuicao,
+        text: `Água com ${share(w.elements.Água, wp)} do peso do mapa (indica a partir de 33%) · Sol em ${sun.sign}, Lua em ${moon.sign}, AC em ${w.ascendant.sign}`
       },
       chinese: { supports: c.elements.Água >= 2 || c.day.yin, text: `Mestre do Dia ${c.day.stemElement} ${c.day.yin ? 'Yin' : 'Yang'} · Água ${c.elements.Água}` },
       numerology: { supports: core.some((x) => [2, 7, 9, 11, 33].includes(x)), text: `Caminho ${n.lifePath} · Expressão ${n.expression}` },
@@ -238,8 +241,8 @@ export function integrationThemes(r: TraditionsResult): IntegrationTheme[] {
     {
       id: 'raiz',
       title: 'Enraizamento e estrutura',
-      // Terra ≥ 25% · Terra + Metal ≥ 3 · seta 1-4-7 completa ou 4, 8 ou 22 no núcleo
-      western: { supports: pct(w.elements.Terra, wp) >= 0.25, text: `Terra em ${w.elements.Terra} de ${wp} pontos` },
+      // Terra ≥ 1/3 do peso · Terra + Metal ≥ 3 · seta 1-4-7 completa ou 4, 8 ou 22 no núcleo
+      western: { supports: pct(w.elements.Terra, wp) >= WESTERN_THRESHOLDS.raiz, text: `Terra com ${share(w.elements.Terra, wp)} do peso do mapa (indica a partir de 33%)` },
       chinese: { supports: c.elements.Terra + c.elements.Metal >= 3, text: `Terra ${c.elements.Terra} · Metal ${c.elements.Metal}` },
       numerology: {
         supports: Boolean(arrow('147')) || core.some((x) => [4, 8, 22].includes(x)),

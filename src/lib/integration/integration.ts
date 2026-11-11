@@ -434,13 +434,13 @@ export function elementMentions(s: Sources, c: Computed): ElementMention[] {
     entries
       .filter(([, v]) => v === max)
       .forEach(([e, v]) => {
-        out.push({ element: e, source: 'Mapa natal', note: `elemento mais forte (${v} de ${w.elementPoints} pontos)`, sign: 'forte' });
+        out.push({ element: e, source: 'Mapa natal', note: `elemento mais forte (${Math.round((v / w.elementPoints) * 100)}% do peso do mapa)`, sign: 'forte' });
         // Ponte: o Ar ocidental conversa com o vento, que na MTC pertence à Madeira
-        if (e === 'Ar') out.push({ element: 'Madeira', source: 'Mapa natal (Ar ↔ vento)', note: `Ar em destaque (${v} de ${w.elementPoints} pontos), lido como vento da Madeira`, sign: 'forte' });
+        if (e === 'Ar') out.push({ element: 'Madeira', source: 'Mapa natal (Ar ↔ vento)', note: `Ar em destaque (${Math.round((v / w.elementPoints) * 100)}% do peso do mapa), lido como vento da Madeira`, sign: 'forte' });
       });
     entries
       .filter(([, v]) => v / w.elementPoints <= 0.125)
-      .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `pouco presente (${v} de ${w.elementPoints} pontos)`, sign: 'atencao' }));
+      .forEach(([e, v]) => out.push({ element: e, source: 'Mapa natal', note: `pouco presente (${Math.round((v / w.elementPoints) * 100)}% do peso do mapa)`, sign: 'atencao' }));
   }
   // Numerologia: os três temas que ela confirma ou não
   if (s.traditions) {

@@ -31,9 +31,9 @@ export function Eyebrow({ children }: { children: ReactNode }) {
   return <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">{children}</p>;
 }
 
-export function Bars({ rows, dark = false }: { rows: { label: string; value: number; max: number; color: string }[]; dark?: boolean }) {
+export function Bars({ rows, dark = false, suffix = '' }: { rows: { label: string; value: number; max: number; color: string }[]; dark?: boolean; suffix?: string }) {
   return (
-    <div className="grid items-center gap-x-3 gap-y-2.5 text-sm" style={{ gridTemplateColumns: '72px minmax(0, 1fr) 24px' }}>
+    <div className="grid items-center gap-x-3 gap-y-2.5 text-sm" style={{ gridTemplateColumns: `72px minmax(0, 1fr) ${suffix ? 40 : 24}px` }}>
       {rows.map((r) => (
         <div key={r.label} className="contents">
           <span className={`font-semibold ${dark ? 'text-purple-50' : 'text-gray-900'}`}>{r.label}</span>
@@ -44,7 +44,10 @@ export function Bars({ rows, dark = false }: { rows: { label: string; value: num
           ) : (
             <div className={`h-3 rounded-full border border-dashed ${dark ? 'border-white/40' : 'border-gray-400'}`} />
           )}
-          <span className={`text-right font-bold ${dark ? 'text-purple-50' : 'text-gray-900'}`}>{r.value}</span>
+          <span className={`text-right font-bold ${dark ? 'text-purple-50' : 'text-gray-900'}`}>
+            {r.value}
+            {suffix}
+          </span>
         </div>
       ))}
     </div>
