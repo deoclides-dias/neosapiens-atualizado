@@ -25,12 +25,15 @@ export interface Lever {
   neighbors: ResNode[];
 }
 
+import { PsiqueSummary, psiqueSummary } from '../psique/summary';
+
 export interface Letter {
   strengths: RadarAxis[];
   central: Contradiction | null;
   lever: Lever | null;
   bridge: ElementBridge | null;
   headings: Heading[];
+  psique: PsiqueSummary | null;
 }
 
 /** Ponto de alavanca: o nó com mais vizinhos em fios de cascata ou tensão */
@@ -75,7 +78,8 @@ export function buildLetter(s: Sources, c: Computed): Letter {
   const lever = leverPoint(resonanceNodes(s, c), resonances(s, c));
   const bridge = elementBridge(s, c, elementMentions(s, c)).find((e) => e.verdict === 'converge') ?? null;
   const headings = compassHeadings(s, c).slice(0, 3);
-  return { strengths, central, lever, bridge, headings };
+  const psique = s.psych ? psiqueSummary(s.traditions?.western ?? null, s.psych) : null;
+  return { strengths, central, lever, bridge, headings, psique };
 }
 
 /** Lista em português: "a, b e c" */
