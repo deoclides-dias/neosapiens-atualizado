@@ -64,11 +64,14 @@ export default function Saber() {
           <h2 className="m-0 text-2xl font-bold text-gray-900">De onde vêm as técnicas</h2>
           <p className="m-0">
             A Primeira Jornada foi pensada a partir da <Ext href={HIPNOSE}>Hipnoterapia Clínica</Ext>, com <Ext href={PNL}>técnicas de PNL</Ext> e à luz da{' '}
-            <Ext href={NEUROPSI}>Neuropsicanálise</Ext>.
+            <Ext href={NEUROPSI}>Neuropsicanálise</Ext>. Por trás desses nomes, a ideia é simples: no relaxamento profundo, o corpo desacelera e a atenção se recolhe.
+            Esse estado é um bom terreno para acalmar a mente, treinar o foco e ensaiar por dentro os hábitos que você quer levar para fora.
           </p>
-          <p className="m-0 text-sm text-gray-600">
-            Sobre a hipnose: uma revisão de 49 meta-análises (Rosendahl, Alldredge e Haddenhorst, 2024) concluiu que ela pode melhorar resultados de saúde mental e física,
-            com a evidência mais forte para dor e para pessoas passando por procedimentos médicos.
+          <p className="m-0">
+            Nada disso é novidade. A hipnose é usada há mais de um século em consultórios e hospitais, para ajudar a relaxar e a lidar com a ansiedade e a dor.
+            Recursos como a âncora, da PNL, são usados por terapeutas, professores e atletas para voltar depressa a um estado de calma ou de concentração. E a
+            Neuropsicanálise nos ajuda a olhar para tudo isso com um pé na psicanálise e outro no cérebro. Aqui, essas técnicas estão a serviço de uma coisa só: o rumo
+            que você escolheu na sua Carta.
           </p>
         </div>
 
