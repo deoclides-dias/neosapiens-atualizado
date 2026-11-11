@@ -125,7 +125,7 @@ export default function Santuario() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 text-gray-900" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
         <div className="max-w-[760px] mx-auto px-4 sm:px-6 pt-8 pb-14 flex flex-col gap-7">
           <Link href="/voo" className="inline-flex items-center gap-2 text-sm text-purple-100 hover:text-white w-fit min-h-[44px]">
-            <ArrowLeft className="w-4 h-4" /> Voltar ao Plano de Voo
+            <ArrowLeft className="w-4 h-4" /> Voltar à Primeira Jornada
           </Link>
           <header className="flex flex-col gap-2.5">
             <p className="m-0 text-[13px] tracking-[0.12em] uppercase text-purple-200 font-semibold">NeoSapiens · Sessão 1 · 11 minutos</p>
@@ -250,7 +250,7 @@ export default function Santuario() {
                 </p>
                 <History logs={logs} />
                 <Link href="/voo" className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 flex items-center justify-center">
-                  Voltar ao Plano de Voo
+                  Voltar à Primeira Jornada
                 </Link>
               </div>
             )}

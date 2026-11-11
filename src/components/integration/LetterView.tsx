@@ -91,7 +91,7 @@ export default function LetterView({
   const [sent, setSent] = useState(Boolean(initialFeedback));
   const [saving, setSaving] = useState(false);
   const { strengths, central, lever, bridge, headings, psique } = letter;
-  const voo = (rumo: string, area?: string) => `/voo?rumo=${encodeURIComponent(rumo)}${area ? `&area=${encodeURIComponent(area)}` : ''}`;
+  const voo = (rumo: string, area?: string) => `/jornada?rumo=${encodeURIComponent(rumo)}${area ? `&area=${encodeURIComponent(area)}` : ''}`;
 
   const send = async () => {
     if (!resposta) return;
@@ -131,18 +131,15 @@ export default function LetterView({
             por onde talvez valha começar. É uma leitura, não uma sentença. Você vai poder dizer se ela faz sentido.
           </p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-3 w-full max-w-[560px]">
+        <div className="flex justify-center w-full max-w-[560px]">
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="flex-1 min-h-[52px] rounded-xl font-semibold text-white shadow-lg hover:brightness-110"
+            className="w-full sm:w-auto sm:px-12 min-h-[52px] rounded-xl font-semibold text-white shadow-lg hover:brightness-110"
             style={{ background: SEAL }}
           >
-            Quero ouvir a leitura
+            Ler a Carta
           </button>
-          <Link href="/voo" className="flex-1 min-h-[52px] rounded-xl border border-white/30 text-purple-50 font-semibold hover:bg-white/10 flex items-center justify-center">
-            Agora não, ir para o Plano de Voo
-          </Link>
         </div>
       </div>
     );

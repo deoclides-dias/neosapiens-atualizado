@@ -20,6 +20,8 @@ import { resultFromSaved } from '../lib/psych/miniIpip';
 import { purposeFromSaved } from '../lib/purpose/purpose';
 import { Sources, compute } from '../lib/integration/integration';
 import { FlightData, baselineFrom, compassHeadings, flightFromSaved } from '../lib/flight/flight';
+import useJornada from '../hooks/useJornada';
+import { renewedToday, today } from '../lib/jornada';
 
 export default function FlightPage() {
   const { user } = useAuth();
@@ -29,6 +31,9 @@ export default function FlightPage() {
   const [row, setRow] = useState<any>(undefined);
   const [flight, setFlight] = useState<FlightData | null>(null);
   const [newFlight, setNewFlight] = useState(false);
+  const { jornada, update: updateJornada } = useJornada();
+  const signed = Boolean(jornada?.saber && jornada?.compromisso);
+  const [renewing, setRenewing] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -79,24 +84,55 @@ export default function FlightPage() {
   return (
     <>
       <Head>
-        <title>Plano de Voo — NeoSapiens</title>
+        <title>Primeira Jornada — NeoSapiens</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" />
       </Head>
       <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-950 text-gray-900" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
         <div className="max-w-[860px] mx-auto px-4 sm:px-6 pt-8 pb-14 flex flex-col gap-7">
-          <Link href="/results/integrated" className="inline-flex items-center gap-2 text-sm text-purple-100 hover:text-white w-fit min-h-[44px]">
-            <ArrowLeft className="w-4 h-4" /> Voltar ao Mapa NeoSapiens
+          <Link href="/jornada" className="inline-flex items-center gap-2 text-sm text-purple-100 hover:text-white w-fit min-h-[44px]">
+            <ArrowLeft className="w-4 h-4" /> Voltar à Primeira Jornada
           </Link>
           <header className="flex flex-col gap-2.5">
-            <p className="m-0 text-[13px] tracking-[0.12em] uppercase text-purple-200 font-semibold">NeoSapiens · Plano de Voo</p>
+            <p className="m-0 text-[13px] tracking-[0.12em] uppercase text-purple-200 font-semibold">NeoSapiens · Primeira Jornada</p>
             <h1 className="m-0 text-4xl sm:text-5xl leading-tight font-semibold text-white" style={{ fontFamily: DISPLAY_FONT }}>
-              {flight && !newFlight ? 'Diário de Bordo' : 'Voo de Experiência'}
+              {flight && !newFlight ? 'Diário de Bordo' : 'Primeira Jornada'}
             </h1>
             {(!flight || newFlight) && <p className="m-0 text-[15px] text-purple-100">Sete dias, um rumo, uma ou duas práticas pequenas. A bússola aponta; o timoneiro é você.</p>}
           </header>
           <FormCard>
-            {row === undefined ? (
+            {row === undefined || jornada === null ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
+              </div>
+            ) : !signed && !flight ? (
+              <div className="flex flex-col gap-3">
+                <p className="m-0 text-[15px] text-gray-800">A Primeira Jornada começa por dois passos: saber o que ela é e assinar o seu compromisso.</p>
+                <Link href={`/jornada${router.asPath.includes('?') ? router.asPath.slice(router.asPath.indexOf('?')) : ''}`} className="inline-flex items-center justify-center min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 w-fit">
+                  Ir para a Primeira Jornada
+                </Link>
+              </div>
+            ) : flight && !newFlight && jornada && !renewedToday(jornada) ? (
+              <div className="flex flex-col gap-4 items-start">
+                <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">Antes do Diário de hoje</p>
+                <p className="m-0 text-2xl leading-snug text-gray-900" style={{ fontFamily: DISPLAY_FONT, fontSize: 26 }}>
+                  Hoje, dia {Math.min(7, Math.max(1, Math.floor((Date.parse(today()) - Date.parse(flight.inicio.slice(0, 10))) / 864e5) + 1))}, eu renovo o meu compromisso com a minha Primeira Jornada.
+                </p>
+                <button
+                  type="button"
+                  disabled={renewing}
+                  onClick={async () => {
+                    setRenewing(true);
+                    const ok = await updateJornada({ renovacoes: [...(jornada.renovacoes ?? []), today()].slice(-30) });
+                    setRenewing(false);
+                    if (!ok) alert('Não foi possível salvar agora. Tente de novo.');
+                  }}
+                  className="min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40"
+                >
+                  {renewing ? 'Salvando…' : 'Eu renovo'}
+                </button>
+              </div>
+            ) : row === undefined ? (
               <div className="flex items-center justify-center py-16">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600" />
               </div>
