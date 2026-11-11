@@ -32,6 +32,33 @@ export const SCALE_IDEAL = [
   { value: 5, label: 'Quero muito ser assim' }
 ] as const;
 
+/** Terceira passada (como acho que deveria ser): a régua do dever, Higgins (1987) */
+export const SCALE_DEVER = [
+  { value: 1, label: 'Acho que não devo ser assim' },
+  { value: 2, label: 'Acho que devo ser pouco assim' },
+  { value: 3, label: 'Mais ou menos' },
+  { value: 4, label: 'Acho que devo ser assim' },
+  { value: 5, label: 'Acho que devo muito ser assim' }
+] as const;
+
+/** Olhar do outro: a pessoa responde junto com alguém próximo, que diz o quanto a frase tem a ver com ela */
+export const SCALE_OUTRO = [
+  { value: 1, label: 'Diria que não tem nada a ver comigo' },
+  { value: 2, label: 'Diria que tem pouco a ver comigo' },
+  { value: 3, label: 'Diria que mais ou menos' },
+  { value: 4, label: 'Diria que tem a ver comigo' },
+  { value: 5, label: 'Diria que tem tudo a ver comigo' }
+] as const;
+
+/** Metapercepção: a pessoa responde sozinha, como acha que os outros a descreveriam */
+export const SCALE_META = [
+  { value: 1, label: 'Acho que diriam: nada a ver comigo' },
+  { value: 2, label: 'Acho que diriam: pouco a ver comigo' },
+  { value: 3, label: 'Acho que diriam: mais ou menos' },
+  { value: 4, label: 'Acho que diriam: tem a ver comigo' },
+  { value: 5, label: 'Acho que diriam: tudo a ver comigo' }
+] as const;
+
 // Ordem original do Mini-IPIP, com os itens de atenção intercalados
 export const ITEMS: Item[] = [
   { id: 'e1', trait: 'E', text: 'Sou a alma da festa.' },
@@ -189,10 +216,10 @@ const median = (xs: number[]) => {
   return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
 };
 
-export type Mode = 'real' | 'ideal';
+export type Mode = 'real' | 'ideal' | 'dever' | 'outro' | 'meta';
 
 /**
- * No modo 'ideal' (como gostaria de ser), repetir a mesma resposta é esperado
+ * Nos modos 'ideal' e 'dever', repetir a mesma resposta é esperado
  * (querer "um pouco mais de tudo"), então essa verificação não conta.
  */
 export function checkQuality(answers: Answers, timings: Timings, mode: Mode = 'real'): QualityReport {
@@ -243,7 +270,7 @@ export function checkQuality(answers: Answers, timings: Timings, mode: Mode = 'r
     }
   ];
 
-  const counted = mode === 'ideal' ? checks.filter((c) => c.id !== 'repeticao') : checks;
+  const counted = mode === 'ideal' || mode === 'dever' ? checks.filter((c) => c.id !== 'repeticao') : checks;
   const failed = counted.filter((c) => !c.ok).length;
   const status = attentionMisses > 0 || failed >= 2 ? 'invalido' : failed === 1 ? 'atencao' : 'ok';
   return { status, checks: counted };
@@ -275,6 +302,17 @@ export interface PsychologicalResult {
   concluidoEm: string;
   /** Segunda passada: as mesmas frases, "como eu gostaria de ser" */
   ideal?: IdealResult;
+  /** Terceira passada (Mapa da Psique): "como acho que deveria ser" */
+  dever?: IdealResult;
+  /** Olhar dos outros (Mapa da Psique): respondido com alguém ou pela metapercepção */
+  outro?: OtherResult;
+}
+
+export interface OtherResult extends IdealResult {
+  /** 'com_alguem' = respondido junto com alguém próximo; 'sozinho' = metapercepção */
+  modo: 'com_alguem' | 'sozinho';
+  /** Apelido opcional da relação ("minha irmã"); nunca o nome do terceiro */
+  relacao?: string;
 }
 
 export function buildResult(answers: Answers, timings: Timings): PsychologicalResult {
@@ -290,12 +328,12 @@ export function buildResult(answers: Answers, timings: Timings): PsychologicalRe
   };
 }
 
-export function buildIdeal(answers: Answers, timings: Timings): IdealResult {
+export function buildIdeal(answers: Answers, timings: Timings, mode: Mode = 'ideal'): IdealResult {
   const scores = scoreTraits(answers);
   return {
     respostas: answers,
     tempos: timings,
-    qualidade: checkQuality(answers, timings, 'ideal'),
+    qualidade: checkQuality(answers, timings, mode),
     escores: Object.fromEntries(scores.map((s) => [s.id, s.score])) as Record<TraitId, number>,
     concluidoEm: new Date().toISOString()
   };
@@ -317,10 +355,11 @@ export interface TraitGap {
   meaningful: boolean;
 }
 
-export function traitGaps(result: PsychologicalResult): TraitGap[] {
-  if (!result.ideal) return [];
+export function traitGaps(result: PsychologicalResult, against: 'ideal' | 'dever' | 'outro' = 'ideal'): TraitGap[] {
+  const other = result[against];
+  if (!other) return [];
   const real = scoreTraits(result.respostas);
-  const ideal = scoreTraits(result.ideal.respostas);
+  const ideal = scoreTraits(other.respostas);
   return real
     .map((r) => {
       const i = ideal.find((x) => x.id === r.id)!;
@@ -335,5 +374,7 @@ export function resultFromSaved(raw: any): PsychologicalResult | null {
   if (!raw || raw.instrumento !== INSTRUMENT.id || !answersComplete(raw.respostas)) return null;
   const result = { ...raw } as PsychologicalResult;
   if (!answersComplete(raw.ideal?.respostas)) delete result.ideal;
+  if (!answersComplete(raw.dever?.respostas)) delete result.dever;
+  if (!answersComplete(raw.outro?.respostas)) delete result.outro;
   return result;
 }
