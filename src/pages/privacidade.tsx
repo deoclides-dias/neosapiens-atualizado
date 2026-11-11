@@ -40,7 +40,7 @@ export default function Privacidade() {
               'sono e horários de despertar, atividade física, alimentação, digestão e evacuação, cor da urina, sinais do corpo, álcool (AUDIT-C), tabaco, bem-estar (OMS-5)',
               <Sim key="s" why="saúde" />
             ],
-            ['Personalidade', 'respostas ao Mini-IPIP, como você é e como gostaria de ser', <Sim key="s" why="psicológico" />],
+            ['Personalidade', 'respostas ao Mini-IPIP: como você é, como gostaria de ser, como acha que deveria ser e como os outros veem você (respondido com alguém próximo, sem guardar nome nem dados dessa pessoa, ou por você mesmo)', <Sim key="s" why="psicológico" />],
             ['Mente', 'resultados dos testes de reação, memória, foco, flexibilidade e criatividade, e autoavaliação', <Sim key="s" why="cognitivo" />],
             ['Propósito', 'valores, sentido de vida, áreas da vida, florescimento, Cinco Espíritos', <Sim key="s" why="pode incluir espiritualidade e vida afetiva" />],
             ['Plano de Voo', 'rumo escolhido, plano WOOP, práticas, diário de bordo e revisão', 'Pode conter, conforme o que você escrever'],

@@ -5,11 +5,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, AlertTriangle, RotateCcw } from 'lucide-react';
-import { ITEMS, SCALE, SCALE_IDEAL, Answers, Timings, Mode, checkQuality, QualityReport } from '../../lib/psych/miniIpip';
+import { ITEMS, SCALE, SCALE_DEVER, SCALE_IDEAL, SCALE_META, SCALE_OUTRO, Answers, Timings, Mode, checkQuality, QualityReport } from '../../lib/psych/miniIpip';
 
 interface Props {
   draftKey: string;
-  /** 'real' = como você é hoje; 'ideal' = como gostaria de ser */
+  /** 'real' = hoje; 'ideal' = como gostaria; 'dever' = como deveria; 'outro' = com alguém; 'meta' = como acha que os outros veem */
   mode?: Mode;
   onComplete: (answers: Answers, timings: Timings) => void;
 }
@@ -35,8 +35,40 @@ const COPY = {
         não no que os outros esperam de você. Seja sincero(a): querer mudar pouco, ou nada, também é uma resposta.
       </>
     )
+  },
+  dever: {
+    eyebrow: 'Como você acha que deveria ser',
+    title: 'Agora, como você acha que deveria ser',
+    intro: (
+      <>
+        As <strong>mesmas frases</strong>, cerca de <strong>3 minutos</strong>. Agora não é o que você deseja: é o que você sente que <strong>deveria</strong> ser,
+        pelo que aprendeu em casa, na escola, no trabalho, na sua cultura. As regras que você tomou para si.
+      </>
+    )
+  },
+  outro: {
+    eyebrow: 'Como alguém próximo vê você',
+    title: 'Agora, pelo olhar de alguém próximo',
+    intro: (
+      <>
+        Sente com alguém que conhece você bem e leia cada frase em voz alta. <strong>Quem responde é a outra pessoa</strong>: o quanto ela acha que a frase tem
+        a ver com você. Você só marca o que ela disser, sem discutir. Cerca de <strong>4 minutos</strong>.
+      </>
+    )
+  },
+  meta: {
+    eyebrow: 'Como você acha que os outros veem você',
+    title: 'Agora, como você acha que os outros veem você',
+    intro: (
+      <>
+        As <strong>mesmas frases</strong>, cerca de <strong>4 minutos</strong>. Pense em quem convive com você e responda <strong>como acha que essas pessoas
+        descreveriam você</strong>, mesmo que você não concorde com elas.
+      </>
+    )
   }
 } as const;
+
+const SCALES = { real: SCALE, ideal: SCALE_IDEAL, dever: SCALE_DEVER, outro: SCALE_OUTRO, meta: SCALE_META } as const;
 
 interface Draft {
   answers: Answers;
@@ -217,7 +249,7 @@ export default function MiniIpipQuestionnaire({ draftKey, mode = 'real', onCompl
       </h2>
 
       <div className="flex flex-col gap-2.5" role="radiogroup" aria-label="Quanto esta frase tem a ver com você">
-        {(mode === 'ideal' ? SCALE_IDEAL : SCALE).map((s) => {
+        {SCALES[mode].map((s) => {
           const selected = current === s.value;
           return (
             <button
