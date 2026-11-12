@@ -9,7 +9,18 @@ export interface JornadaMeta {
   compromisso?: { texto: string; em: string; version: string };
   renovacoes?: string[]; // datas YYYY-MM-DD (fuso local)
   sessoes?: SessaoLog[];
+  /** Como é o Santuário, escrito depois da sessão do Dia 4 */
+  santuario?: SantuarioNota;
 }
+
+export interface SantuarioNota {
+  texto: string;
+  detalhe: string; // a cor, o som ou o cheiro guardado na volta
+  em: string; // YYYY-MM-DD
+}
+
+/** Dia em que o Santuário nasce; só nele o campo se abre */
+export const DIA_SANTUARIO = 4;
 
 export interface SessaoLog {
   dia: number;
