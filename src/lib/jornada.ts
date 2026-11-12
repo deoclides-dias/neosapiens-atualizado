@@ -42,7 +42,7 @@ export const SESSOES: Sessao[] = [
   { dia: 2, titulo: 'Mais fundo', resumo: 'O mesmo veleiro, à noite, um pouco mais fundo e mais depressa.', audio: '/audio/primeira-jornada-dia-2.mp3', minutos: 10 },
   { dia: 3, titulo: 'A chave', resumo: 'O gesto dos dedos ganha um nome: a chave do relaxamento.', audio: '/audio/primeira-jornada-dia-3.mp3', minutos: 9 },
   { dia: 4, titulo: 'O Santuário', resumo: 'O veleiro leva você até o seu lugar seguro.', audio: '/audio/primeira-jornada-dia-4.mp3', minutos: 11 },
-  { dia: 5, titulo: 'Chegar mais rápido', resumo: 'A chave leva você ao Santuário em poucos minutos.', audio: null, minutos: 14 },
+  { dia: 5, titulo: 'Chegar mais rápido', resumo: 'A chave e o detalhe levam você direto ao seu Santuário.', audio: '/audio/primeira-jornada-dia-5.mp3', minutos: 8 },
   { dia: 6, titulo: 'Alguém se anuncia', resumo: 'Um encontro marcado para o dia seguinte.', audio: null, minutos: 14 },
   { dia: 7, titulo: 'O Palácio', resumo: 'Juntos, vocês começam o seu Palácio Mental.', audio: null, minutos: 20 }
 ];
