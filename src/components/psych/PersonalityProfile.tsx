@@ -224,7 +224,7 @@ export default function PersonalityProfile({ result }: { result: PsychologicalRe
               ? `Em nenhum traço a distância passou de ${GAP_THRESHOLD} pontos: hoje você se descreve perto da pessoa que gostaria de ser.`
               : `${main.length === 1 ? 'A maior distância está' : 'As maiores distâncias estão'} em ${main
                   .map((g) => TRAITS.find((t) => t.id === g.id)!.name.toLowerCase())
-                  .join(' e ')}. É daí que nasce o seu Plano de Voo.`}
+                  .join(' e ')}. É daí que nasce a sua Primeira Jornada.`}
           </p>
           <ul className="m-0 p-0 list-none flex flex-col divide-y divide-gray-100">
             {gaps.map((g) => {

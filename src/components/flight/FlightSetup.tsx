@@ -1,9 +1,9 @@
 // src/components/flight/FlightSetup.tsx
-// Montagem do Voo de Experiência: Bússola → Destino → Plano de bordo (WOOP)
-// → Práticas (“depois de…, eu vou…”) → Decolar.
+// Montagem da Primeira Jornada: Bússola → Destino → Plano de bordo (WOOP)
+// → Práticas (“depois de…, eu vou…”) → Zarpar.
 
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, Check, Compass, Plane } from 'lucide-react';
+import { ArrowLeft, Check, Compass, Sailboat } from 'lucide-react';
 import { EVIDENCE_LABEL, RUMOS, rumoById } from '../../lib/flight/library';
 import { FLIGHT_DAYS, FLIGHT_VERSION, FlightData, Heading, isoDay } from '../../lib/flight/flight';
 import { LIFE_AREAS } from '../../lib/purpose/purpose';
@@ -122,7 +122,7 @@ export default function FlightSetup({ headings, vision, baseline, onStart, prese
           <span>
             Etapa {step + 1} de {STEPS.length} · {STEPS[step]}
           </span>
-          <span>Voo de Experiência · {FLIGHT_DAYS} dias</span>
+          <span>Primeira Jornada · {FLIGHT_DAYS} dias</span>
         </div>
         <div className="flex gap-1" aria-hidden="true">
           {STEPS.map((s, i) => (
@@ -296,7 +296,7 @@ export default function FlightSetup({ headings, vision, baseline, onStart, prese
             onClick={start}
             className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40"
           >
-            <Plane className="w-4 h-4" /> {saving ? 'Salvando…' : 'Decolar'}
+            <Sailboat className="w-4 h-4" /> {saving ? 'Salvando…' : 'Zarpar'}
           </button>
         )}
       </div>
