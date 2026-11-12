@@ -6,11 +6,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Headphones, ShieldCheck, Sparkles } from 'lucide-react';
+import { Headphones, Landmark, ShieldCheck, Sparkles } from 'lucide-react';
 import JornadaShell from '../../../components/jornada/JornadaShell';
 import FormCard from '../../../components/ui/FormCard';
 import useJornada from '../../../hooks/useJornada';
-import { SESSOES, sessaoStatus, today } from '../../../lib/jornada';
+import { DIA_SANTUARIO, SantuarioNota, SESSOES, sessaoStatus, today } from '../../../lib/jornada';
 
 type Step = 'aviso' | 'antes' | 'ouvir' | 'depois' | 'fim';
 
@@ -41,6 +41,23 @@ function Scale({ value, onChange, low, high }: { value: number | null; onChange:
   );
 }
 
+function SantuarioCard({ nota, titulo }: { nota: SantuarioNota; titulo: string }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-purple-200 bg-purple-50 p-4">
+      <div className="flex items-center gap-2">
+        <Landmark className="w-5 h-5 text-purple-700" aria-hidden="true" />
+        <h3 className="m-0 text-sm font-bold text-gray-900">{titulo}</h3>
+      </div>
+      {nota.texto && <p className="m-0 text-[15px] leading-relaxed text-gray-800 whitespace-pre-line">{nota.texto}</p>}
+      {nota.detalhe && (
+        <p className="m-0 text-sm text-purple-800">
+          <strong>O detalhe:</strong> {nota.detalhe}
+        </p>
+      )}
+    </div>
+  );
+}
+
 export default function SessaoDia() {
   const router = useRouter();
   const dia = Number(router.query.dia);
@@ -50,6 +67,8 @@ export default function SessaoDia() {
   const [ok, setOk] = useState(false);
   const [antes, setAntes] = useState<number | null>(null);
   const [depois, setDepois] = useState<number | null>(null);
+  const [santTexto, setSantTexto] = useState('');
+  const [santDetalhe, setSantDetalhe] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +94,10 @@ export default function SessaoDia() {
     const i = logs.map((l) => l.dia === dia && l.depois === null).lastIndexOf(true);
     if (i >= 0) logs[i] = { ...logs[i], depois };
     else logs.push({ dia, data: today(), antes, depois });
-    const okSave = await update({ sessoes: logs.slice(-60) });
+    const texto = santTexto.trim();
+    const detalhe = santDetalhe.trim();
+    const santuario = dia === DIA_SANTUARIO && (texto || detalhe) ? { santuario: { texto, detalhe, em: today() } } : {};
+    const okSave = await update({ sessoes: logs.slice(-60), ...santuario });
     setSaving(false);
     if (!okSave) return setError('Não foi possível salvar agora. Tente de novo.');
     setStep('fim');
@@ -137,6 +159,7 @@ export default function SessaoDia() {
                 <h2 className="m-0 text-xl font-bold text-gray-900">Como você está agora?</h2>
                 <p className="m-0 text-sm text-gray-700">De 0 a 10, quão relaxado(a) você se sente neste momento? A primeira resposta é a melhor.</p>
                 <Scale value={antes} onChange={setAntes} low="muito tenso" high="totalmente relaxado" />
+                {dia > DIA_SANTUARIO && jornada.santuario && <SantuarioCard nota={jornada.santuario} titulo="Lembre o seu Santuário antes de começar" />}
                 {error && <p className="m-0 text-sm text-rose-700">{error}</p>}
                 <button type="button" disabled={antes === null || saving} onClick={start} className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40">
                   Ir para a sessão
@@ -169,6 +192,37 @@ export default function SessaoDia() {
                 <h2 className="m-0 text-xl font-bold text-gray-900">Bem-vindo de volta, navegante</h2>
                 <p className="m-0 text-sm text-gray-700">E agora, de 0 a 10, quão relaxado(a) você se sente?</p>
                 <Scale value={depois} onChange={setDepois} low="muito tenso" high="totalmente relaxado" />
+                {dia === DIA_SANTUARIO && (
+                  <div className="flex flex-col gap-4 rounded-xl border border-purple-200 bg-purple-50 p-4">
+                    <div className="flex items-center gap-2">
+                      <Landmark className="w-5 h-5 text-purple-700" aria-hidden="true" />
+                      <h3 className="m-0 text-base font-bold text-gray-900">Como é o seu Santuário?</h3>
+                    </div>
+                    <p className="m-0 text-sm text-gray-700">
+                      Escreva agora, enquanto a imagem está fresca: o lugar, as cores, os sons, o que você sentiu na pele. Poucas palavras bastam. Nos
+                      próximos dias, você vai ler isto antes de cada sessão, e o lugar fica cada vez mais nítido.
+                    </p>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-gray-800">O meu Santuário</span>
+                      <textarea
+                        value={santTexto}
+                        onChange={(e) => setSantTexto(e.target.value.slice(0, 600))}
+                        rows={4}
+                        placeholder="Ex.: uma cabana de madeira na beira de um lago, com a luz da manhã entrando pela janela…"
+                        className="rounded-lg border border-gray-300 bg-white p-3 text-[15px] text-gray-900 focus:border-purple-500 focus:outline-none"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-gray-800">O detalhe que você guardou</span>
+                      <input
+                        value={santDetalhe}
+                        onChange={(e) => setSantDetalhe(e.target.value.slice(0, 120))}
+                        placeholder="Uma cor, um som ou um cheiro"
+                        className="min-h-[44px] rounded-lg border border-gray-300 bg-white px-3 text-[15px] text-gray-900 focus:border-purple-500 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+                )}
                 {error && <p className="m-0 text-sm text-rose-700">{error}</p>}
                 <button type="button" disabled={depois === null || saving} onClick={save} className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40">
                   {saving ? 'Salvando…' : 'Registrar no Diário de Bordo'}
@@ -193,6 +247,7 @@ export default function SessaoDia() {
                     <span className="text-3xl font-bold text-purple-700">{depois}</span>
                   </div>
                 </div>
+                {dia === DIA_SANTUARIO && jornada.santuario && <SantuarioCard nota={jornada.santuario} titulo="O seu Santuário, guardado no Diário" />}
                 <p className="m-0 text-sm text-gray-700">{dia < 7 ? `A sessão do Dia ${dia + 1} se abre amanhã. Até lá, siga a prática do seu rumo.` : 'Você completou a Primeira Jornada.'}</p>
                 <Link href="/voo" className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 flex items-center justify-center">
                   Voltar à Primeira Jornada
