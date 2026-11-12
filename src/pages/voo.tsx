@@ -21,7 +21,7 @@ import { purposeFromSaved } from '../lib/purpose/purpose';
 import { Sources, compute } from '../lib/integration/integration';
 import { FlightData, baselineFrom, compassHeadings, flightFromSaved } from '../lib/flight/flight';
 import useJornada from '../hooks/useJornada';
-import { renewedToday, today } from '../lib/jornada';
+import { SESSOES, renewedToday, sessaoStatus, today } from '../lib/jornada';
 
 export default function FlightPage() {
   const { user } = useAuth();
@@ -142,21 +142,40 @@ export default function FlightPage() {
               <FlightSetup headings={headings} vision={vision} baseline={sources ? baselineFrom(sources) : {}} onStart={save} preselect={preselect} />
             )}
           </FormCard>
-          <Link
-            href="/santuario"
-            className="flex items-center gap-4 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 p-5 no-underline text-purple-50 transition-colors"
-          >
-            <span className="text-3xl" aria-hidden="true">
-              🌊
-            </span>
-            <span className="flex flex-col gap-0.5">
-              <span className="font-semibold text-white">Santuário do Navegante</span>
-              <span className="text-sm text-purple-200">Uma sessão guiada de relaxamento profundo (11 min) para ancorar o seu Voo. Use fones e um lugar tranquilo.</span>
-            </span>
-            <span className="ml-auto text-purple-200" aria-hidden="true">
-              →
-            </span>
-          </Link>
+          {signed && (
+            <section className="bg-white rounded-2xl shadow-xl shadow-black/25 p-5 sm:p-6 flex flex-col gap-3">
+              <h2 className="m-0 text-xl font-bold text-gray-900">As sessões guiadas</h2>
+              <p className="m-0 text-sm text-gray-600">Uma por dia, de preferência à noite. Cada uma se abre no dia seguinte ao da anterior.</p>
+              <ol className="m-0 p-0 list-none flex flex-col gap-2">
+                {SESSOES.map((s) => {
+                  const st = jornada ? sessaoStatus(jornada, s.dia) : 'fechada';
+                  const label = { feita: '✓ feita · ouvir de novo', aberta: 'disponível hoje', amanha: 'abre amanhã', gravacao: 'em gravação', fechada: '🔒' }[st];
+                  const open = st === 'feita' || st === 'aberta';
+                  const inner = (
+                    <>
+                      <span className={`w-9 h-9 rounded-full grid place-items-center text-sm font-bold shrink-0 ${open ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400'}`}>{s.dia}</span>
+                      <span className="flex flex-col flex-1">
+                        <span className="font-semibold text-gray-900">{s.titulo}</span>
+                        <span className="text-xs text-gray-500">{s.resumo}</span>
+                      </span>
+                      <span className={`text-xs font-semibold shrink-0 ${st === 'aberta' ? 'text-purple-700' : st === 'feita' ? 'text-emerald-700' : 'text-gray-400'}`}>{label}</span>
+                    </>
+                  );
+                  return (
+                    <li key={s.dia}>
+                      {open ? (
+                        <Link href={`/jornada/sessao/${s.dia}`} className="flex items-center gap-3 rounded-xl border border-gray-200 hover:border-purple-300 hover:bg-purple-50 p-3 no-underline">
+                          {inner}
+                        </Link>
+                      ) : (
+                        <div className="flex items-center gap-3 rounded-xl border border-gray-100 p-3 opacity-70">{inner}</div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+            </section>
+          )}
           {(!flight || newFlight) && row !== undefined && !preselect && (
             <Link href="/carta" className="text-sm text-purple-200 hover:text-white w-fit">
               ✉️ Ainda não leu a Carta ao Navegante? Ela explica por que a bússola aponta esses rumos.
