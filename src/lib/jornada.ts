@@ -28,7 +28,7 @@ export interface Sessao {
 
 export const SESSOES: Sessao[] = [
   { dia: 1, titulo: 'O veleiro', resumo: 'Relaxamento profundo no convés de um veleiro ancorado.', audio: '/audio/primeira-jornada-dia-1.mp3', minutos: 14 },
-  { dia: 2, titulo: 'Mais fundo', resumo: 'O mesmo veleiro, um pouco mais fundo e mais depressa.', audio: null, minutos: 15 },
+  { dia: 2, titulo: 'Mais fundo', resumo: 'O mesmo veleiro, à noite, um pouco mais fundo e mais depressa.', audio: '/audio/primeira-jornada-dia-2.mp3', minutos: 10 },
   { dia: 3, titulo: 'A chave', resumo: 'O gesto dos dedos ganha um nome e um propósito.', audio: null, minutos: 15 },
   { dia: 4, titulo: 'O Santuário', resumo: 'Você cria o seu lugar seguro.', audio: null, minutos: 18 },
   { dia: 5, titulo: 'Chegar mais rápido', resumo: 'A chave leva você ao Santuário em poucos minutos.', audio: null, minutos: 14 },

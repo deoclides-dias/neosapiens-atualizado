@@ -108,7 +108,12 @@ export default function SessaoDia() {
                   <div className="flex flex-col gap-2">
                     <h2 className="m-0 text-xl font-bold text-gray-900">Antes de começar</h2>
                     <p className="m-0 text-sm leading-relaxed text-gray-700">
-                      Ouça sentado ou deitado, num lugar tranquilo, com fone de ouvido se puder. <strong>Nunca ouça dirigindo ou operando máquinas.</strong> Você
+                      {dia === 2 || dia === 3 ? (
+                        <>Hoje, de preferência, ouça <strong>sentado ou recostado</strong>, para chegar até o fim da sessão. </>
+                      ) : (
+                        <>Ouça sentado ou deitado. </>
+                      )}
+                      Escolha um lugar tranquilo e use fone de ouvido se puder. <strong>Nunca ouça dirigindo ou operando máquinas.</strong> Você
                       fica consciente o tempo todo e pode abrir os olhos quando quiser.
                     </p>
                     <p className="m-0 text-sm leading-relaxed text-gray-700">
