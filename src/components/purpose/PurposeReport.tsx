@@ -296,7 +296,7 @@ export default function PurposeReport({ answers }: { answers: Answers }) {
               <strong>O que você quer deixar no mundo:</strong> {legado}
             </p>
           )}
-          <p className="m-0 text-sm text-gray-600">Estas palavras são suas e vão orientar o Plano de Voo, quando juntarmos todas as dimensões.</p>
+          <p className="m-0 text-sm text-gray-600">Estas palavras são suas e vão orientar a sua Primeira Jornada, quando juntarmos todas as dimensões.</p>
         </Card>
       )}
 

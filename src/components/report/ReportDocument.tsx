@@ -83,7 +83,7 @@ export default function ReportDocument({ row, email, error = null }: { row: any;
         { label: 'Personalidade', done: Boolean(sources.psych) },
         { label: 'Mente', done: Boolean(sources.mind?.concluidoEm) },
         { label: 'Propósito', done: Boolean(sources.purpose?.concluidoEm) },
-        { label: 'Plano de Voo', done: Boolean(flight) }
+        { label: 'Primeira Jornada', done: Boolean(flight) }
       ]
     : [];
   let part = 1;
@@ -232,7 +232,7 @@ export default function ReportDocument({ row, email, error = null }: { row: any;
               )}
 
               {flight && (
-                <Section n={part++} title="Plano de Voo" sub={`Voo de Experiência de ${FLIGHT_DAYS} dias · início em ${formatDateBR(flight.inicio)}`}>
+                <Section n={part++} title="Primeira Jornada" sub={`Jornada de ${FLIGHT_DAYS} dias · início em ${formatDateBR(flight.inicio)}`}>
                   <Card>
                     <Eyebrow>Rumo escolhido</Eyebrow>
                     <CardTitle>
@@ -300,7 +300,7 @@ export default function ReportDocument({ row, email, error = null }: { row: any;
                     </div>
                     {flight.revisao && (
                       <p className="m-0 text-sm text-gray-800">
-                        <strong>Revisão de Voo</strong> feita em {formatDateBR(flight.revisao.data.slice(0, 10))}
+                        <strong>Revisão da Jornada</strong> feita em {formatDateBR(flight.revisao.data.slice(0, 10))}
                         {flight.revisao.comentario ? `: ${flight.revisao.comentario}` : '.'}
                       </p>
                     )}

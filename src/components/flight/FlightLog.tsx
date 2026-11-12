@@ -1,5 +1,5 @@
 // src/components/flight/FlightLog.tsx
-// Diário de bordo dos 7 dias e a Revisão de Voo (antes × depois).
+// Diário de bordo dos 7 dias e a Revisão da Jornada (antes × depois).
 
 import { useMemo, useState } from 'react';
 import { Anchor, Check, Compass, Flag, Sparkles } from 'lucide-react';
@@ -72,7 +72,7 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
         <div className="flex items-start gap-3">
           <Flag className="w-8 h-8 text-purple-600 shrink-0" aria-hidden="true" />
           <div className="flex flex-col gap-1">
-            <h2 className="m-0 text-2xl font-bold text-gray-900">Revisão de Voo</h2>
+            <h2 className="m-0 text-2xl font-bold text-gray-900">Revisão da Jornada</h2>
             <p className="m-0 text-[15px] text-gray-700">
               Você praticou em <strong>{done} de {FLIGHT_DAYS} dias</strong> no rumo “{title?.toLowerCase()}”.
             </p>
@@ -100,7 +100,7 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
               </div>
             </div>
           ))}
-          <p className="m-0 text-xs text-gray-500">Barra cinza: antes do voo (respostas dos módulos). Barra roxa: agora. De 0 a 100.</p>
+          <p className="m-0 text-xs text-gray-500">Barra cinza: antes da Jornada (respostas dos módulos). Barra roxa: agora. De 0 a 100.</p>
         </div>
         {dropped && (
           <p className="m-0 text-[15px] leading-relaxed text-gray-800">
@@ -129,7 +129,7 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
           )}
         </div>
         <button type="button" onClick={onNewFlight} className="min-h-[44px] px-4 rounded-lg border border-purple-300 text-purple-800 font-semibold hover:bg-purple-50 w-fit">
-          Fazer outro Voo de Experiência
+          Começar uma nova Jornada
         </button>
       </div>
     );
@@ -141,7 +141,7 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
     return (
       <div className="flex flex-col gap-6 max-w-2xl mx-auto">
         <div className="flex flex-col gap-1">
-          <h2 className="m-0 text-2xl font-bold text-gray-900">Revisão de Voo</h2>
+          <h2 className="m-0 text-2xl font-bold text-gray-900">Revisão da Jornada</h2>
           <p className="m-0 text-[15px] text-gray-700">Algumas perguntas que você já respondeu nos módulos, para comparar o antes e o agora. Pense nos últimos dias.</p>
         </div>
         {questions.map((q) => (
@@ -190,7 +190,7 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
       <div className="flex items-start gap-3">
         <Compass className="w-8 h-8 text-purple-600 shrink-0" aria-hidden="true" />
         <div className="flex flex-col gap-1">
-          <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">Voo de Experiência · rumo</p>
+          <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">Primeira Jornada · rumo</p>
           <h2 className="m-0 text-2xl font-bold text-gray-900">{title}</h2>
           <p className="m-0 text-sm text-gray-600">
             {idx < FLIGHT_DAYS ? `Dia ${idx + 1} de ${FLIGHT_DAYS}` : 'Os 7 dias terminaram'} · praticou em {done} dia(s)
@@ -294,10 +294,10 @@ export default function FlightLog({ flight, onSave, onNewFlight }: Props) {
 
       {canReview ? (
         <button type="button" onClick={() => setReviewing(true)} className="inline-flex items-center gap-2 min-h-[48px] px-6 rounded-lg bg-indigo-950 text-white font-semibold w-fit">
-          <Sparkles className="w-4 h-4" /> Fazer a Revisão de Voo
+          <Sparkles className="w-4 h-4" /> Fazer a Revisão da Jornada
         </button>
       ) : (
-        <p className="m-0 text-sm text-gray-600">A Revisão de Voo abre no 7º dia ({fmtDay(days[FLIGHT_DAYS - 1])}).</p>
+        <p className="m-0 text-sm text-gray-600">A Revisão da Jornada abre no 7º dia ({fmtDay(days[FLIGHT_DAYS - 1])}).</p>
       )}
     </div>
   );

@@ -223,7 +223,7 @@ export default function PurposeFlow({ initial, onSave, onFinished }: Props) {
 
         {current === 'meta' && (
           <>
-            <p className="m-0 -mt-3 text-[15px] text-gray-700">Sem nota e sem certo ou errado. Escreva com calma: estas respostas vão alimentar o seu Plano de Voo.</p>
+            <p className="m-0 -mt-3 text-[15px] text-gray-700">Sem nota e sem certo ou errado. Escreva com calma: estas respostas vão alimentar a sua Primeira Jornada.</p>
             {[
               { id: 'meta_dia', q: 'Imagine que, daqui a 5 anos, tudo deu certo. Como é um dia seu? Onde você está, com quem, fazendo o quê?', ph: 'Acordo e…' },
               { id: 'meta_legado', q: 'Em uma frase: o que você quer deixar no mundo?', ph: 'Quero…' }

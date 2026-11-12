@@ -130,7 +130,7 @@ export default function ResonanceWeb({ nodes, items }: { nodes: ResNode[]; items
             <p className="m-0 text-xs font-semibold uppercase tracking-wider text-purple-700">Ponto de alavanca</p>
             <p className="m-0 text-[15px] text-gray-900">
               <strong>{byId(lever.id).label}</strong> está ligado a {lever.n.length} outras áreas: {listPt(lever.n.map((id) => byId(id).label.toLowerCase()))}. Cuidar
-              dele mexe em todas, e por isso é um bom primeiro rumo para a Bússola do Plano de Voo.
+              dele mexe em todas, e por isso é um bom primeiro rumo para a Bússola da Primeira Jornada.
             </p>
           </div>
         </div>
