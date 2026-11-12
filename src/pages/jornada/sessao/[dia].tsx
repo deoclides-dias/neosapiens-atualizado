@@ -108,7 +108,7 @@ export default function SessaoDia() {
                   <div className="flex flex-col gap-2">
                     <h2 className="m-0 text-xl font-bold text-gray-900">Antes de começar</h2>
                     <p className="m-0 text-sm leading-relaxed text-gray-700">
-                      {dia === 2 || dia === 3 ? (
+                      {dia >= 2 && dia <= 4 ? (
                         <>Hoje, de preferência, ouça <strong>sentado ou recostado</strong>, para chegar até o fim da sessão. </>
                       ) : (
                         <>Ouça sentado ou deitado. </>
