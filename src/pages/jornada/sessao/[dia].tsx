@@ -6,11 +6,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Headphones, Landmark, ShieldCheck, Sparkles } from 'lucide-react';
+import { Headphones, Landmark, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
 import JornadaShell from '../../../components/jornada/JornadaShell';
 import FormCard from '../../../components/ui/FormCard';
 import useJornada from '../../../hooks/useJornada';
-import { DIA_SANTUARIO, SantuarioNota, SESSOES, sessaoStatus, today } from '../../../lib/jornada';
+import { DIA_SABIO, DIA_SANTUARIO, SantuarioNota, SESSOES, sessaoStatus, today } from '../../../lib/jornada';
 
 type Step = 'aviso' | 'antes' | 'ouvir' | 'depois' | 'fim';
 
@@ -69,6 +69,7 @@ export default function SessaoDia() {
   const [depois, setDepois] = useState<number | null>(null);
   const [santTexto, setSantTexto] = useState('');
   const [santDetalhe, setSantDetalhe] = useState('');
+  const [sabioTexto, setSabioTexto] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,7 +98,8 @@ export default function SessaoDia() {
     const texto = santTexto.trim();
     const detalhe = santDetalhe.trim();
     const santuario = dia === DIA_SANTUARIO && (texto || detalhe) ? { santuario: { texto, detalhe, em: today() } } : {};
-    const okSave = await update({ sessoes: logs.slice(-60), ...santuario });
+    const sabio = dia === DIA_SABIO && sabioTexto.trim() ? { sabio: { texto: sabioTexto.trim(), em: today() } } : {};
+    const okSave = await update({ sessoes: logs.slice(-60), ...santuario, ...sabio });
     setSaving(false);
     if (!okSave) return setError('Não foi possível salvar agora. Tente de novo.');
     setStep('fim');
@@ -130,7 +132,7 @@ export default function SessaoDia() {
                   <div className="flex flex-col gap-2">
                     <h2 className="m-0 text-xl font-bold text-gray-900">Antes de começar</h2>
                     <p className="m-0 text-sm leading-relaxed text-gray-700">
-                      {dia >= 2 && dia <= 5 ? (
+                      {dia >= 2 && dia <= 6 ? (
                         <>Hoje, de preferência, ouça <strong>sentado ou recostado</strong>, para chegar até o fim da sessão. </>
                       ) : (
                         <>Ouça sentado ou deitado. </>
@@ -160,6 +162,15 @@ export default function SessaoDia() {
                 <p className="m-0 text-sm text-gray-700">De 0 a 10, quão relaxado(a) você se sente neste momento? A primeira resposta é a melhor.</p>
                 <Scale value={antes} onChange={setAntes} low="muito tenso" high="totalmente relaxado" />
                 {dia > DIA_SANTUARIO && jornada.santuario && <SantuarioCard nota={jornada.santuario} titulo="Lembre o seu Santuário antes de começar" />}
+                {dia > DIA_SABIO && jornada.sabio?.texto && (
+                  <div className="flex flex-col gap-2 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <div className="flex items-center gap-2">
+                      <UserRound className="w-5 h-5 text-amber-700" aria-hidden="true" />
+                      <h3 className="m-0 text-sm font-bold text-gray-900">O seu Sábio espera você</h3>
+                    </div>
+                    <p className="m-0 text-[15px] leading-relaxed text-gray-800 whitespace-pre-line">{jornada.sabio.texto}</p>
+                  </div>
+                )}
                 {error && <p className="m-0 text-sm text-rose-700">{error}</p>}
                 <button type="button" disabled={antes === null || saving} onClick={start} className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40">
                   Ir para a sessão
@@ -221,6 +232,25 @@ export default function SessaoDia() {
                         className="min-h-[44px] rounded-lg border border-gray-300 bg-white px-3 text-[15px] text-gray-900 focus:border-purple-500 focus:outline-none"
                       />
                     </label>
+                  </div>
+                )}
+                {dia === DIA_SABIO && (
+                  <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                    <div className="flex items-center gap-2">
+                      <UserRound className="w-5 h-5 text-amber-700" aria-hidden="true" />
+                      <h3 className="m-0 text-base font-bold text-gray-900">Como era o seu Sábio?</h3>
+                    </div>
+                    <p className="m-0 text-sm text-gray-700">
+                      O que você viu, ouviu ou sentiu: uma luz, um rosto, uma voz, uma sensação. Poucas palavras bastam. Amanhã, antes do encontro, você vai ler
+                      isto.
+                    </p>
+                    <textarea
+                      value={sabioTexto}
+                      onChange={(e) => setSabioTexto(e.target.value.slice(0, 600))}
+                      rows={4}
+                      placeholder="Ex.: um senhor de barba branca, sentado à beira da água, com um olhar muito calmo…"
+                      className="rounded-lg border border-gray-300 bg-white p-3 text-[15px] text-gray-900 focus:border-amber-500 focus:outline-none"
+                    />
                   </div>
                 )}
                 {error && <p className="m-0 text-sm text-rose-700">{error}</p>}
