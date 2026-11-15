@@ -11,6 +11,8 @@ export interface JornadaMeta {
   sessoes?: SessaoLog[];
   /** Como é o Santuário, escrito depois da sessão do Dia 4 */
   santuario?: SantuarioNota;
+  /** Como era o Sábio, escrito depois da sessão do Dia 6 */
+  sabio?: { texto: string; em: string };
 }
 
 export interface SantuarioNota {
@@ -21,6 +23,9 @@ export interface SantuarioNota {
 
 /** Dia em que o Santuário nasce; só nele o campo se abre */
 export const DIA_SANTUARIO = 4;
+
+/** Dia em que o Sábio se anuncia; só nele o campo se abre */
+export const DIA_SABIO = 6;
 
 export interface SessaoLog {
   dia: number;
@@ -43,7 +48,7 @@ export const SESSOES: Sessao[] = [
   { dia: 3, titulo: 'A chave', resumo: 'O gesto dos dedos ganha um nome: a chave do relaxamento.', audio: '/audio/primeira-jornada-dia-3.mp3', minutos: 9 },
   { dia: 4, titulo: 'O Santuário', resumo: 'O veleiro leva você até o seu lugar seguro.', audio: '/audio/primeira-jornada-dia-4.mp3', minutos: 11 },
   { dia: 5, titulo: 'Chegar mais rápido', resumo: 'A chave e o detalhe levam você direto ao seu Santuário.', audio: '/audio/primeira-jornada-dia-5.mp3', minutos: 8 },
-  { dia: 6, titulo: 'Alguém se anuncia', resumo: 'Um encontro marcado para o dia seguinte.', audio: null, minutos: 14 },
+  { dia: 6, titulo: 'Alguém se anuncia', resumo: 'O Sábio se apresenta, conta cem ondas com você e mostra uma porta secreta.', audio: '/audio/primeira-jornada-dia-6.mp3', minutos: 19 },
   { dia: 7, titulo: 'O Palácio', resumo: 'Juntos, vocês começam o seu Palácio Mental.', audio: null, minutos: 20 }
 ];
 
