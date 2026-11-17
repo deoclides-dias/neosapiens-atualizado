@@ -6,11 +6,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Headphones, Landmark, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
+import { Bell, Castle, DoorClosed, Headphones, Landmark, ShieldCheck, Sparkles, UserRound } from 'lucide-react';
 import JornadaShell from '../../../components/jornada/JornadaShell';
 import FormCard from '../../../components/ui/FormCard';
 import useJornada from '../../../hooks/useJornada';
-import { DIA_SABIO, DIA_SANTUARIO, SantuarioNota, SESSOES, sessaoStatus, today } from '../../../lib/jornada';
+import { DIA_PALACIO, DIA_SABIO, DIA_SANTUARIO, PalacioNota, PORTAS, SantuarioNota, SESSOES, sessaoStatus, today } from '../../../lib/jornada';
 
 type Step = 'aviso' | 'antes' | 'ouvir' | 'depois' | 'fim';
 
@@ -58,6 +58,44 @@ function SantuarioCard({ nota, titulo }: { nota: SantuarioNota; titulo: string }
   );
 }
 
+function PalacioCard({ nota, titulo }: { nota: PalacioNota; titulo: string }) {
+  const portas = PORTAS.filter((p) => nota.portas[p.key]);
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+      <div className="flex items-center gap-2">
+        <Castle className="w-5 h-5 text-indigo-700" aria-hidden="true" />
+        <h3 className="m-0 text-sm font-bold text-gray-900">{titulo}</h3>
+      </div>
+      {nota.texto && <p className="m-0 text-[15px] leading-relaxed text-gray-800 whitespace-pre-line">{nota.texto}</p>}
+      {portas.length > 0 && (
+        <ul className="m-0 p-0 list-none flex flex-col gap-1.5">
+          {portas.map((p) => (
+            <li key={p.key} className="flex items-start gap-2 text-sm text-gray-800">
+              <DoorClosed className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" aria-hidden="true" />
+              <span>
+                <strong>{p.nome}:</strong> {nota.portas[p.key]}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {nota.sala && (
+        <p className="m-0 text-sm text-indigo-900">
+          <strong>A primeira sala de guardar:</strong> {nota.sala}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const CONQUISTAS = [
+  'Relaxar fundo, de olhos fechados, no convés do veleiro',
+  'A chave do relaxamento, e depois a chave profunda',
+  'O seu Santuário, o lugar seguro que só você conhece',
+  'O seu Sábio, que agora mora no seu Palácio',
+  'O seu Palácio Mental, com três portas e a primeira sala de guardar'
+];
+
 export default function SessaoDia() {
   const router = useRouter();
   const dia = Number(router.query.dia);
@@ -70,6 +108,10 @@ export default function SessaoDia() {
   const [santTexto, setSantTexto] = useState('');
   const [santDetalhe, setSantDetalhe] = useState('');
   const [sabioTexto, setSabioTexto] = useState('');
+  const [palTexto, setPalTexto] = useState('');
+  const [palPortas, setPalPortas] = useState<PalacioNota['portas']>({ perdao: '', cofre: '', sabedoria: '' });
+  const [palSala, setPalSala] = useState('');
+  const [avisar, setAvisar] = useState<'idle' | 'saving' | 'ok' | 'erro'>('idle');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,11 +141,22 @@ export default function SessaoDia() {
     const detalhe = santDetalhe.trim();
     const santuario = dia === DIA_SANTUARIO && (texto || detalhe) ? { santuario: { texto, detalhe, em: today() } } : {};
     const sabio = dia === DIA_SABIO && sabioTexto.trim() ? { sabio: { texto: sabioTexto.trim(), em: today() } } : {};
-    const okSave = await update({ sessoes: logs.slice(-60), ...santuario, ...sabio });
+    const portas = { perdao: palPortas.perdao.trim(), cofre: palPortas.cofre.trim(), sabedoria: palPortas.sabedoria.trim() };
+    const temPalacio = palTexto.trim() || palSala.trim() || portas.perdao || portas.cofre || portas.sabedoria;
+    const palacio = dia === DIA_PALACIO && temPalacio ? { palacio: { texto: palTexto.trim(), portas, sala: palSala.trim(), em: today() } } : {};
+    const okSave = await update({ sessoes: logs.slice(-60), ...santuario, ...sabio, ...palacio });
     setSaving(false);
     if (!okSave) return setError('Não foi possível salvar agora. Tente de novo.');
     setStep('fim');
   };
+
+  const pedirAviso = async () => {
+    setAvisar('saving');
+    setAvisar((await update({ listaApp: today() })) ? 'ok' : 'erro');
+  };
+
+  const feitas = (jornada?.sessoes ?? []).filter((l) => l.depois !== null);
+  const media = (k: 'antes' | 'depois') => (feitas.length ? (feitas.reduce((a, l) => a + (l[k] ?? 0), 0) / feitas.length).toFixed(1).replace('.', ',') : null);
 
   return (
     <JornadaShell
@@ -253,6 +306,54 @@ export default function SessaoDia() {
                     />
                   </div>
                 )}
+                {dia === DIA_PALACIO && (
+                  <div className="flex flex-col gap-4 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
+                    <div className="flex items-center gap-2">
+                      <Castle className="w-5 h-5 text-indigo-700" aria-hidden="true" />
+                      <h3 className="m-0 text-base font-bold text-gray-900">Como é o seu Palácio?</h3>
+                    </div>
+                    <p className="m-0 text-sm text-gray-700">
+                      Escreva agora, enquanto a imagem está fresca. Poucas palavras bastam: na próxima visita, você lê isto antes de entrar, e o Palácio
+                      fica cada vez mais nítido.
+                    </p>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-gray-800">O grande salão: a cor, o som, o cheiro</span>
+                      <textarea
+                        value={palTexto}
+                        onChange={(e) => setPalTexto(e.target.value.slice(0, 600))}
+                        rows={4}
+                        placeholder="Ex.: paredes de pedra clara, chão de madeira, cheiro de incenso, uma janela grande que dá para a baía…"
+                        className="rounded-lg border border-gray-300 bg-white p-3 text-[15px] text-gray-900 focus:border-indigo-500 focus:outline-none"
+                      />
+                    </label>
+                    <fieldset className="m-0 p-0 border-0 flex flex-col gap-3">
+                      <legend className="text-sm font-semibold text-gray-800 mb-1">Um detalhe de cada porta</legend>
+                      {PORTAS.map((p) => (
+                        <label key={p.key} className="flex flex-col gap-1">
+                          <span className="flex items-center gap-1.5 text-sm text-gray-800">
+                            <DoorClosed className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                            {p.nome}
+                          </span>
+                          <input
+                            value={palPortas[p.key]}
+                            onChange={(e) => setPalPortas({ ...palPortas, [p.key]: e.target.value.slice(0, 120) })}
+                            placeholder={p.dica}
+                            className="min-h-[44px] rounded-lg border border-gray-300 bg-white px-3 text-[15px] text-gray-900 focus:border-indigo-500 focus:outline-none"
+                          />
+                        </label>
+                      ))}
+                    </fieldset>
+                    <label className="flex flex-col gap-1">
+                      <span className="text-sm font-semibold text-gray-800">A sua primeira sala de guardar, e o que ficou nela</span>
+                      <input
+                        value={palSala}
+                        onChange={(e) => setPalSala(e.target.value.slice(0, 200))}
+                        placeholder="Ex.: uma biblioteca com estantes de madeira; guardei um verso de que gosto"
+                        className="min-h-[44px] rounded-lg border border-gray-300 bg-white px-3 text-[15px] text-gray-900 focus:border-indigo-500 focus:outline-none"
+                      />
+                    </label>
+                  </div>
+                )}
                 {error && <p className="m-0 text-sm text-rose-700">{error}</p>}
                 <button type="button" disabled={depois === null || saving} onClick={save} className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-40">
                   {saving ? 'Salvando…' : 'Registrar no Diário de Bordo'}
@@ -278,7 +379,61 @@ export default function SessaoDia() {
                   </div>
                 </div>
                 {dia === DIA_SANTUARIO && jornada.santuario && <SantuarioCard nota={jornada.santuario} titulo="O seu Santuário, guardado no Diário" />}
-                <p className="m-0 text-sm text-gray-700">{dia < 7 ? `A sessão do Dia ${dia + 1} se abre amanhã. Até lá, siga a prática do seu rumo.` : 'Você completou a Primeira Jornada.'}</p>
+                {dia < 7 ? (
+                  <p className="m-0 text-sm text-gray-700">A sessão do Dia {dia + 1} se abre amanhã. Até lá, siga a prática do seu rumo.</p>
+                ) : (
+                  <div className="flex flex-col gap-5">
+                    <div className="flex flex-col gap-2 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 p-5 text-white">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-purple-100">Primeira Jornada completa</span>
+                      <p className="m-0 text-lg font-bold leading-snug">Você chegou, navegante. Sete dias, sete sessões.</p>
+                      {media('antes') && media('depois') && (
+                        <p className="m-0 text-sm text-purple-100">
+                          Nas suas sessões, você começou em média em <strong className="text-white">{media('antes')}</strong> e terminou em{' '}
+                          <strong className="text-white">{media('depois')}</strong>.
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <h3 className="m-0 text-base font-bold text-gray-900">O que você leva desta Jornada</h3>
+                      <ul className="m-0 p-0 list-none flex flex-col gap-1.5">
+                        {CONQUISTAS.map((c) => (
+                          <li key={c} className="flex items-start gap-2 text-sm text-gray-800">
+                            <span className="text-emerald-600 font-bold" aria-hidden="true">✓</span>
+                            {c}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    {jornada.palacio && <PalacioCard nota={jornada.palacio} titulo="O seu Palácio, guardado no Diário" />}
+                    <div className="flex flex-col gap-2 rounded-xl border border-gray-200 p-4">
+                      <h3 className="m-0 text-base font-bold text-gray-900">Voltar ao Palácio</h3>
+                      <p className="m-0 text-sm text-gray-700">
+                        O Palácio cresce a cada visita. A <strong>Visita ao Palácio</strong>, um áudio de uns 10 minutos para voltar sempre que quiser, chega aqui
+                        em breve. Até lá, você pode ouvir de novo a sessão de hoje.
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                      <div className="flex items-center gap-2">
+                        <Bell className="w-5 h-5 text-amber-700" aria-hidden="true" />
+                        <h3 className="m-0 text-base font-bold text-gray-900">O app NeoSapiens está a caminho</h3>
+                      </div>
+                      <p className="m-0 text-sm text-gray-700">Com as próximas portas, as visitas guiadas e o seu Diário sempre à mão. Quer ser avisado(a) quando ele chegar?</p>
+                      {jornada.listaApp || avisar === 'ok' ? (
+                        <p className="m-0 text-sm font-semibold text-emerald-700">✓ Combinado. Você está na lista e vai ser avisado(a) pelo e-mail da sua conta.</p>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={avisar === 'saving'}
+                          onClick={pedirAviso}
+                          className="min-h-[44px] w-fit px-5 rounded-lg bg-amber-500 text-white font-semibold hover:bg-amber-600 disabled:opacity-50"
+                        >
+                          {avisar === 'saving' ? 'Salvando…' : 'Quero ser avisado(a)'}
+                        </button>
+                      )}
+                      {avisar === 'erro' && <p className="m-0 text-sm text-rose-700">Não foi possível salvar agora. Tente de novo.</p>}
+                    </div>
+                  </div>
+                )}
                 <Link href="/voo" className="min-h-[48px] rounded-xl bg-purple-600 text-white font-semibold hover:bg-purple-700 flex items-center justify-center">
                   Voltar à Primeira Jornada
                 </Link>
