@@ -49,7 +49,7 @@ export const SESSOES: Sessao[] = [
   { dia: 4, titulo: 'O Santuário', resumo: 'O veleiro leva você até o seu lugar seguro.', audio: '/audio/primeira-jornada-dia-4.mp3', minutos: 11 },
   { dia: 5, titulo: 'Chegar mais rápido', resumo: 'A chave e o detalhe levam você direto ao seu Santuário.', audio: '/audio/primeira-jornada-dia-5.mp3', minutos: 8 },
   { dia: 6, titulo: 'Alguém se anuncia', resumo: 'O Sábio se apresenta, conta cem ondas com você e mostra uma porta secreta.', audio: '/audio/primeira-jornada-dia-6.mp3', minutos: 18 },
-  { dia: 7, titulo: 'O Palácio', resumo: 'Juntos, vocês começam o seu Palácio Mental.', audio: null, minutos: 20 }
+  { dia: 7, titulo: 'O Palácio', resumo: 'O Sábio mostra o seu Palácio Mental, as três portas e a sua primeira sala de guardar.', audio: '/audio/primeira-jornada-dia-7.mp3', minutos: 21 }
 ];
 
 export type SessaoStatus = 'feita' | 'aberta' | 'amanha' | 'gravacao' | 'fechada';
