@@ -13,7 +13,28 @@ export interface JornadaMeta {
   santuario?: SantuarioNota;
   /** Como era o Sábio, escrito depois da sessão do Dia 6 */
   sabio?: { texto: string; em: string };
+  /** Como é o Palácio Mental, escrito depois da sessão do Dia 7 */
+  palacio?: PalacioNota;
+  /** Data em que pediu para ser avisado(a) quando o app chegar */
+  listaApp?: string;
 }
+
+export interface PalacioNota {
+  texto: string; // cores, sons, cheiros do salão
+  portas: { perdao: string; cofre: string; sabedoria: string }; // um detalhe de cada porta
+  sala: string; // a primeira sala de guardar e o que ficou nela
+  em: string; // YYYY-MM-DD
+}
+
+/** Dia em que o Palácio começa; só nele o campo se abre */
+export const DIA_PALACIO = 7;
+
+/** As três portas apresentadas no Dia 7 */
+export const PORTAS: { key: keyof PalacioNota['portas']; nome: string; dica: string }[] = [
+  { key: 'perdao', nome: 'A Porta do Perdão', dica: 'Ex.: alta, de madeira escura, com uma argola de ferro' },
+  { key: 'cofre', nome: 'O Cofre das tristezas e angústias', dica: 'Ex.: de bronze, embutido na parede, com roda de segredo' },
+  { key: 'sabedoria', nome: 'O Portão da Sabedoria', dica: 'Ex.: de pedra antiga, com um símbolo gravado no alto' }
+];
 
 export interface SantuarioNota {
   texto: string;
