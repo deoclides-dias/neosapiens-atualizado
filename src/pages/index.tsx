@@ -166,6 +166,9 @@ export default function HomePage() {
               <a href="#quem-somos" className="hover:text-white">
                 Quem somos
               </a>
+              <Link href="/laboratorio" className="hover:text-white">
+                Laboratório
+              </Link>
             </div>
             <div className="ml-auto flex items-center gap-2">
               {!user && (
@@ -545,6 +548,9 @@ export default function HomePage() {
             </span>
             <span className="text-purple-300">Uma bússola, não um manual.</span>
             <div className="sm:ml-auto flex flex-wrap gap-x-5 gap-y-2">
+              <Link href="/laboratorio" className="hover:text-white">
+                Laboratório de Ideias
+              </Link>
               <Link href="/privacidade" className="hover:text-white">
                 Privacidade
               </Link>
