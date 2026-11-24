@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Conecta Raras · Teleconsultoria</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<script src="/laboratorio/conecta-raras/support.js" defer></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F7F4}
+a{color:#0B6B64}a:hover{color:#08514C}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #13242B; background: #F6F7F4; min-height: 100vh">
+<div style="background: #13242B; color: #E9EFEC; font-size: 13px; text-align: center; padding: 8px 16px; line-height: 1.6">Prévia conceitual em teste · textos, números e dados ilustrativos · conteúdo clínico em rascunho, sem validação do comitê científico<br><a href="/laboratorio" style="color: #9FE1CB">← Laboratório de Ideias do SouNeoSapiens</a> · <a href="mailto:contato@souneosapiens.com.br?subject=Opini%C3%A3o%20sobre%20o%20Conecta%20Raras" style="color: #9FE1CB; font-weight: 600">Dar minha opinião</a></div>
+<header style="background: #FFFFFF; border-bottom: 1px solid #DCE3DF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<a href="/laboratorio/conecta-raras/inicio.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #13242B">
+<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="12" cy="17" r="8" fill="#0B6B64"></circle><circle cx="22" cy="17" r="8" fill="none" stroke="#0B6B64" stroke-width="3"></circle></svg>
+<span style="font-family: Sora, sans-serif; font-weight: 700; font-size: 20px">Conecta Raras</span>
+</a>
+<nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 15px; font-weight: 500">
+<a href="/laboratorio/conecta-raras/sinais.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Sinais e sintomas</a>
+<a href="/laboratorio/conecta-raras/protocolos.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Protocolos</a>
+<a href="/laboratorio/conecta-raras/capacitacao.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Capacitação</a>
+<a href="/laboratorio/conecta-raras/mapa.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">No seu estado</a>
+<a href="/laboratorio/conecta-raras/teleconsultoria.html" aria-current="page" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #0A5550; background: #E3F1EF">Teleconsultoria</a>
+<a href="/laboratorio/conecta-raras/apoiadores.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Apoiadores</a>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 48px 24px 64px">
+<h1 style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 40px">Teleconsultoria</h1>
+<p style="margin: 0 0 32px; font-size: 18px; color: #3F5058; max-width: 760px">O especialista está longe. A orientação não precisa estar.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch">
+
+<div style="flex: 999 1 600px; min-width: 0; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 24px">Para profissionais de saúde</h2>
+<span style="background: #E3F1EF; color: #0A5550; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600">Disponível no piloto</span>
+</div>
+<p style="margin: 0; color: #3F5058; line-height: 1.55">Descreva o caso sem identificar o paciente. Um especialista do comitê responde com a conduta sugerida e o encaminhamento.</p>
+<div style="background: #FCEFD6; color: #5C3D00; border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.5"><strong>Versão de teste:</strong> este formulário é só uma simulação e não envia nada a ninguém. Não escreva casos reais nem dados de pacientes.</div>
+<sc-if value="{{notSent}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 16px">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="prof" style="font-size: 14px; font-weight: 600">Sua profissão</label>
+<select id="prof" style="font: inherit; font-size: 16px; padding: 11px 12px; border: 1px solid #B9C6C0; border-radius: 10px; background: #FFFFFF">
+<option>Medicina</option><option>Enfermagem</option><option>Farmácia</option><option>Agente comunitário de saúde</option>
+</select>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="mun" style="font-size: 14px; font-weight: 600">Município da UBS</label>
+<input id="mun" type="text" placeholder="Ex.: Bacabal" style="font: inherit; font-size: 16px; padding: 11px 12px; border: 1px solid #B9C6C0; border-radius: 10px">
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="caso" style="font-size: 14px; font-weight: 600">Resumo do caso</label>
+<textarea id="caso" rows="4" placeholder="Idade, sinais observados, evolução, histórico familiar…" style="font: inherit; font-size: 16px; padding: 12px; border: 1px solid #B9C6C0; border-radius: 10px; resize: vertical"></textarea>
+</div>
+<fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="font-size: 14px; font-weight: 600; margin-bottom: 8px">Sinais de alerta presentes</legend>
+<div style="display: flex; flex-wrap: wrap; gap: 10px 20px; font-size: 15px">
+<label style="display: flex; gap: 8px; align-items: center"><input type="checkbox"> Regressão do desenvolvimento</label>
+<label style="display: flex; gap: 8px; align-items: center"><input type="checkbox"> Consanguinidade</label>
+<label style="display: flex; gap: 8px; align-items: center"><input type="checkbox"> Casos na família</label>
+<label style="display: flex; gap: 8px; align-items: center"><input type="checkbox"> Sem resposta ao tratamento habitual</label>
+</div>
+</fieldset>
+<button type="button" onClick="{{send}}" style="align-self: flex-start; background: #0B6B64; color: #FFFFFF; border: 0; padding: 14px 22px; border-radius: 10px; font: inherit; font-weight: 600; cursor: pointer">Enviar para especialista</button>
+</div>
+</sc-if>
+<sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+<div style="background: #E3F1EF; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: Sora, sans-serif; font-weight: 600; font-size: 18px; color: #0A5550">Simulação concluída</span>
+<span style="color: #0A5550; line-height: 1.5">Na versão final, o caso irá para um especialista e a resposta chegará aqui e por e-mail. Nesta versão de teste, nada foi enviado.</span>
+<button type="button" onClick="{{reset}}" style="align-self: flex-start; background: transparent; color: #0B6B64; border: 1px solid #0B6B64; padding: 10px 16px; border-radius: 10px; font: inherit; font-weight: 600; cursor: pointer">Testar de novo</button>
+</div>
+</sc-if>
+</div>
+
+<div style="flex: 1 1 340px; min-width: 0; background: #FFFFFF; border: 1px dashed #B9C6C0; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 24px">Para pacientes</h2>
+<span style="background: #FCEFD6; color: #5C3D00; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600">Em breve</span>
+</div>
+<p style="margin: 0; color: #3F5058; line-height: 1.55">Teleatendimento com especialistas para pessoas com doença rara ou suspeita, sempre junto com a equipe da UBS que acompanha a família.</p>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+<span style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B6B64" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 6 9 17l-5-5"></path></svg>Conforme a lei de telessaúde e as normas do CFM</span>
+<span style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B6B64" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 6 9 17l-5-5"></path></svg>Prontuário seguro e proteção de dados</span>
+<span style="display: flex; gap: 10px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B6B64" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 6 9 17l-5-5"></path></svg>Médicos com registro e especialidade</span>
+</div>
+<a href="mailto:contato@souneosapiens.com.br?subject=Quero%20ser%20avisado%3A%20teleatendimento%20Conecta%20Raras" style="align-self: flex-start; margin-top: auto; background: #FFFFFF; color: #0B6B64; text-decoration: none; border: 1px solid #0B6B64; padding: 12px 18px; border-radius: 10px; font-weight: 600">Quero ser avisado</a>
+</div>
+
+</div>
+</section>
+
+<footer style="background: #FFFFFF; border-top: 1px solid #DCE3DF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px 24px; display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; font-size: 14px; color: #4A5A61">
+<span>Uma iniciativa do [Instituto – nome a definir]. O conteúdo será validado por um comitê científico independente.</span>
+<a href="/laboratorio/conecta-raras/apoiadores.html">Governança e apoiadores</a>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1300}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { sent: false };
+}
+renderVals() {
+var self = this;
+return {
+sent: this.state.sent,
+notSent: !this.state.sent,
+send: function () { self.setState({ sent: true }); },
+reset: function () { self.setState({ sent: false }); }
+};
+}
+}
+</script>
+</body>
+</html>

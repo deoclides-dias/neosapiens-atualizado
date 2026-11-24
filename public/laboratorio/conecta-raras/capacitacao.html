@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Conecta Raras · Capacitação</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<script src="/laboratorio/conecta-raras/support.js" defer></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F7F4}
+a{color:#0B6B64}a:hover{color:#08514C}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #13242B; background: #F6F7F4; min-height: 100vh">
+<div style="background: #13242B; color: #E9EFEC; font-size: 13px; text-align: center; padding: 8px 16px; line-height: 1.6">Prévia conceitual em teste · textos, números e dados ilustrativos · conteúdo clínico em rascunho, sem validação do comitê científico<br><a href="/laboratorio" style="color: #9FE1CB">← Laboratório de Ideias do SouNeoSapiens</a> · <a href="mailto:contato@souneosapiens.com.br?subject=Opini%C3%A3o%20sobre%20o%20Conecta%20Raras" style="color: #9FE1CB; font-weight: 600">Dar minha opinião</a></div>
+<header style="background: #FFFFFF; border-bottom: 1px solid #DCE3DF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<a href="/laboratorio/conecta-raras/inicio.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #13242B">
+<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="12" cy="17" r="8" fill="#0B6B64"></circle><circle cx="22" cy="17" r="8" fill="none" stroke="#0B6B64" stroke-width="3"></circle></svg>
+<span style="font-family: Sora, sans-serif; font-weight: 700; font-size: 20px">Conecta Raras</span>
+</a>
+<nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 15px; font-weight: 500">
+<a href="/laboratorio/conecta-raras/sinais.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Sinais e sintomas</a>
+<a href="/laboratorio/conecta-raras/protocolos.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Protocolos</a>
+<a href="/laboratorio/conecta-raras/capacitacao.html" aria-current="page" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #0A5550; background: #E3F1EF">Capacitação</a>
+<a href="/laboratorio/conecta-raras/mapa.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">No seu estado</a>
+<a href="/laboratorio/conecta-raras/teleconsultoria.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Teleconsultoria</a>
+<a href="/laboratorio/conecta-raras/apoiadores.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Apoiadores</a>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 48px 24px 24px">
+<h1 style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 40px">Capacitação</h1>
+<p style="margin: 0 0 28px; font-size: 18px; color: #3F5058">Aprenda a reconhecer quando pensar em doença rara e o que fazer depois.</p>
+<div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<label for="sinal" style="font-weight: 600">Buscar por sinal ou sintoma</label>
+<div style="display: flex; gap: 8px; flex-wrap: wrap">
+<input id="sinal" type="text" value="{{query}}" onChange="{{onQuery}}" placeholder="Ex.: fraqueza muscular" style="flex: 1 1 320px; min-width: 0; font: inherit; font-size: 16px; padding: 12px 14px; border: 1px solid #B9C6C0; border-radius: 10px">
+<a href="/laboratorio/conecta-raras/sinais.html" style="background: #0B6B64; color: #FFFFFF; text-decoration: none; padding: 12px 22px; border-radius: 10px; font-weight: 600">Buscar</a>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px">
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="5">
+<button type="button" onClick="{{c.pick}}" style="{{c.style}}">{{c.label}}</button>
+</sc-for>
+</div>
+</div>
+</section>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 16px 24px">
+<h2 style="margin: 0 0 16px; font-family: Sora, sans-serif; font-size: 24px">Trilhas por profissão</h2>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+<sc-for list="{{tracks}}" as="t" hint-placeholder-count="4">
+<button type="button" onClick="{{t.pick}}" style="{{t.style}}">
+<span style="display: block; font-family: Sora, sans-serif; font-weight: 600; font-size: 18px; margin-bottom: 6px">{{t.name}}</span>
+<span style="display: block; font-size: 14px; line-height: 1.5; color: #3F5058">{{t.desc}}</span>
+</button>
+</sc-for>
+</div>
+</section>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; display: flex; flex-wrap: wrap; gap: 24px">
+<div style="flex: 999 1 600px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+<div style="background: #13242B; border-radius: 16px; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; position: relative">
+<a href="{{les.u}}" target="_blank" rel="noopener" aria-label="Assistir à aula no YouTube" style="display: flex; flex-direction: column; align-items: center; gap: 14px; text-decoration: none; color: #E9EFEC">
+<span style="width: 76px; height: 76px; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="#0B6B64"></path></svg></span>
+<span style="font-size: 15px; font-weight: 600">Assistir no YouTube</span>
+</a>
+<span style="position: absolute; left: 20px; bottom: 16px; color: #E9EFEC; font-size: 14px">{{les.dur}}Trilha {{trackName}}</span>
+</div>
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #0B6B64; text-transform: uppercase; letter-spacing: 0.06em">Aula {{les.n}} · {{les.g}}</p>
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 28px">{{les.h}}</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.6; color: #3F5058">{{les.d}}</p>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #4A5A61">Vídeo de demonstração, publicado no YouTube: {{les.v}}. Na plataforma, as aulas serão produzidas ou licenciadas com autorização dos autores e revisadas pelo comitê científico.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<span style="background: #FFFFFF; border: 1px solid #DCE3DF; padding: 8px 12px; border-radius: 8px; font-size: 14px">Caso clínico ao final</span>
+<span style="background: #FFFFFF; border: 1px solid #DCE3DF; padding: 8px 12px; border-radius: 8px; font-size: 14px">Material para download</span>
+<span style="background: #FFFFFF; border: 1px solid #DCE3DF; padding: 8px 12px; border-radius: 8px; font-size: 14px">Revisado pelo comitê científico</span>
+</div>
+</div>
+<aside aria-label="Aulas da trilha" style="flex: 1 1 320px; min-width: 0; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; gap: 4px">
+<h3 style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 18px">Grupos de doenças</h3>
+<sc-for list="{{lessons}}" as="l" hint-placeholder-count="6">
+<button type="button" onClick="{{l.pick}}" style="{{l.style}}">
+<span style="width: 28px; height: 28px; border-radius: 50%; background: {{l.dot}}; color: {{l.dotText}}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex: none">{{l.n}}</span>
+<span style="font-size: 15px">{{l.title}}</span>
+</button>
+</sc-for>
+<div style="margin-top: 12px; padding: 14px; border-radius: 10px; background: #E3F1EF; color: #0A5550; font-size: 14px; line-height: 1.5">Ao concluir a trilha você recebe certificado. Parceria de certificação a confirmar.</div>
+</aside>
+</section>
+
+<section aria-labelledby="diag" style="max-width: 1200px; margin: 0 auto; padding: 8px 24px 64px">
+<h2 id="diag" style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 28px">Caminhos do diagnóstico no SUS</h2>
+<p style="margin: 0 0 24px; font-size: 17px; color: #3F5058">Dois exames que a atenção primária precisa conhecer: um no começo da vida, outro quando a suspeita persiste.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch">
+
+<div style="flex: 1 1 460px; min-width: 0; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #0B6B64; text-transform: uppercase; letter-spacing: 0.06em">Recém-nascido</p>
+<h3 style="margin: 0; font-family: Sora, sans-serif; font-size: 22px">Teste do pezinho</h3>
+<p style="margin: 0; line-height: 1.55; color: #3F5058">Coleta ideal entre o 3º e o 5º dia de vida. O teste básico do SUS rastreia:</p>
+<ul style="margin: 0; padding-left: 22px; line-height: 1.7">
+<li>Fenilcetonúria</li><li>Hipotireoidismo congênito</li><li>Doença falciforme e outras hemoglobinopatias</li><li>Fibrose cística</li><li>Hiperplasia adrenal congênita</li><li>Deficiência de biotinidase</li><li>Toxoplasmose congênita</li>
+</ul>
+<p style="margin: 0; line-height: 1.55; color: #3F5058">A Lei nº 14.154/2021 amplia o teste para mais de 50 doenças, em cinco etapas. O Maranhão tem lei estadual de teste ampliado; a lista oferecida hoje na rede pública do estado está [a confirmar com a SES-MA].</p>
+<div style="background: #E3F1EF; color: #0A5550; border-radius: 10px; padding: 14px; font-size: 15px; line-height: 1.5"><strong>Papel da UBS:</strong> garantir a coleta no prazo e buscar ativamente o bebê com resultado alterado.</div>
+</div>
+
+<div style="flex: 1 1 460px; min-width: 0; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 14px; font-weight: 600; color: #0B6B64; text-transform: uppercase; letter-spacing: 0.06em">Suspeita sem resposta</p>
+<h3 style="margin: 0; font-family: Sora, sans-serif; font-size: 22px">Exoma pelo SUS</h3>
+<p style="margin: 0; line-height: 1.55; color: #3F5058">Piloto do Ministério da Saúde para sequenciamento completo do exoma, com laboratório nacional no Instituto Nacional de Cardiologia e apoio do Instituto Fernandes Figueira (Fiocruz).</p>
+<p style="margin: 0; line-height: 1.55"><strong>Para quem:</strong> suspeita de doença genética, deficiência intelectual ou atraso global do desenvolvimento, sem diagnóstico após a investigação inicial.</p>
+<ol style="margin: 0; padding-left: 22px; line-height: 1.6">
+<li>A UBS identifica e encaminha ao Serviço de Referência em Doenças Raras.</li>
+<li>O médico geneticista do serviço avalia, colhe o consentimento e cadastra o caso.</li>
+<li>Coleta por swab bucal e envio ao laboratório nacional.</li>
+<li>Resultado em até 60 dias após a extração do DNA, com devolutiva e aconselhamento genético.</li>
+</ol>
+<div style="background: #FCEFD6; color: #5C3D00; border-radius: 10px; padding: 14px; font-size: 15px; line-height: 1.5"><strong>Atenção no Maranhão:</strong> só serviços de referência habilitados podem pedir o exame, e o estado ainda não tem nenhum. O caminho hoje é o encaminhamento para outro estado, pelo Tratamento Fora de Domicílio (TFD).</div>
+</div>
+
+</div>
+<h3 style="margin: 32px 0 12px; font-family: Sora, sans-serif; font-size: 22px">Cursos gratuitos para complementar</h3>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px">
+<a href="https://ufmavirtual.ufma.br/?p=7137" style="text-decoration: none; color: #13242B; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #0B6B64">UFMA · 180 horas</span>
+<span style="font-family: Sora, sans-serif; font-weight: 600; font-size: 18px">Capacitação e Informação em Doenças Raras</span>
+<span style="font-size: 15px; line-height: 1.5; color: #3F5058">Seis cursos gratuitos da Universidade Federal do Maranhão, para profissionais, familiares e pacientes.</span>
+</a>
+<a href="https://www.gov.br/saude/pt-br/assuntos/noticias-ms/2026/agosto/ministerio-da-saude-incia-curso-nacional-para-ampliar-o-diagnostico-de-doencas-raras-no-sus" style="text-decoration: none; color: #13242B; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; font-weight: 600; color: #0B6B64">Ministério da Saúde · 2026</span>
+<span style="font-family: Sora, sans-serif; font-weight: 600; font-size: 18px">Curso nacional de diagnóstico de doenças raras no SUS</span>
+<span style="font-size: 15px; line-height: 1.5; color: #3F5058">Qualificação da rede pública com foco no acesso à medicina genômica.</span>
+</a>
+</div>
+<p style="margin: 16px 0 0; font-size: 13px; color: #4A5A61">Fontes: Ministério da Saúde, Nota Informativa nº 3/2026-CGRAR/DAET/SAES/MS; Programa Nacional de Triagem Neonatal; Lei nº 14.154/2021.</p>
+</section>
+
+<footer style="background: #FFFFFF; border-top: 1px solid #DCE3DF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 32px 24px; display: flex; flex-wrap: wrap; gap: 24px; justify-content: space-between; font-size: 14px; color: #4A5A61">
+<span>Uma iniciativa do [Instituto – nome a definir]. O conteúdo será validado por um comitê científico independente.</span>
+<a href="/laboratorio/conecta-raras/apoiadores.html">Governança e apoiadores</a>
+</div>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2500}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { query: '', track: 'ACS', lesson: 0 };
+}
+renderVals() {
+var self = this;
+var chipLabels = ['Regressão do desenvolvimento', 'Fraqueza muscular progressiva', 'Hepatomegalia', 'Infecções de repetição', 'Baixa estatura desproporcional'];
+var chips = chipLabels.map(function (label) {
+var on = self.state.query === label;
+return {
+label: label,
+pick: function () { self.setState({ query: label }); },
+style: 'border: 1px solid ' + (on ? '#0B6B64' : '#B9DCD6') + '; background: ' + (on ? '#0B6B64' : '#E3F1EF') + '; color: ' + (on ? '#FFFFFF' : '#0A5550') + '; padding: 8px 12px; border-radius: 999px; font: inherit; font-size: 14px; cursor: pointer'
+};
+});
+var trackData = [
+{ name: 'Medicina', desc: 'Raciocínio clínico, exames iniciais e encaminhamento qualificado.' },
+{ name: 'Enfermagem', desc: 'Puericultura, triagem neonatal e acompanhamento da família.' },
+{ name: 'Farmácia', desc: 'Componente Especializado, adesão e orientação ao paciente.' },
+{ name: 'ACS', desc: 'Reconhecer sinais no território e levar a família até a UBS.' }
+];
+var tracks = trackData.map(function (t) {
+var on = self.state.track === t.name;
+return {
+name: t.name, desc: t.desc,
+pick: function () { self.setState({ track: t.name }); },
+style: 'text-align: left; font: inherit; color: #13242B; cursor: pointer; padding: 22px; border-radius: 14px; background: #FFFFFF; border: 2px solid ' + (on ? '#0B6B64' : '#DCE3DF')
+};
+});
+var L = [{"g": "Erros inatos do metabolismo", "h": "Quando suspeitar: os sinais que a UBS vê primeiro", "d": "Crise metabólica em recém-nascido que mamava bem, regressão após infecção banal, odor diferente na urina, hepatomegalia sem explicação. O que observar, o que perguntar à família e quando encaminhar.", "u": "https://www.youtube.com/watch?v=Fp84SAB81KQ", "v": "“Erros Inatos do Metabolismo”, Dra. Lívia Sobrinho, 1º Workshop de Genética em Pediatria (Neoclínica Oncologia)", "dur": "35 min"}, {"g": "Doenças neuromusculares", "h": "Fraqueza que progride: distrofias, AME e Pompe", "d": "Quedas frequentes, dificuldade para subir escadas, sinal de Gowers, bebê hipotônico. O papel da CK como exame inicial e quando o encaminhamento é prioritário.", "u": "https://www.youtube.com/watch?v=rJsMpQEOkU8", "v": "“Distrofias musculares: sintomas que levam ao médico, como diagnosticar e tratar”, canal Doutor von Mühlen", "dur": ""}, {"g": "Imunodeficiências primárias", "h": "Infecções que se repetem: os sinais de alerta", "d": "Pneumonias e otites de repetição, abscessos, candidíase persistente, reação grave à BCG e história familiar. Exames iniciais na UBS e cuidados com vacinas.", "u": "https://www.youtube.com/watch?v=SAFXaaFA808", "v": "“Erros Inatos da Imunidade (Imunodeficiências Primárias)”, com a imunologista pediátrica Carolina Prando, Hospital Pequeno Príncipe", "dur": ""}, {"g": "Baixa estatura e displasias esqueléticas", "h": "A curva de crescimento como ferramenta de suspeita", "d": "Queda de canal na curva, desproporção corporal, pernas arqueadas e atraso puberal. Como medir bem, quais exames pedir e quando pensar em Turner ou displasia.", "u": "https://www.youtube.com/watch?v=nNseirUYEfw", "v": "“Baixa Estatura”, Dra. Délia Oliveira de Queiroz Braz, II Curso de Especialidades Pediátricas (COOPED-CE)", "dur": ""}, {"g": "Doenças lisossômicas", "h": "Doenças de depósito: Gaucher, Fabry e mucopolissacaridoses", "d": "Fígado e baço aumentados, dor óssea, fáscies grosseira, rigidez articular, dor em queimação nas extremidades. Por que o diagnóstico precoce muda o tratamento.", "u": "https://www.youtube.com/watch?v=7tqeY53koPk", "v": "“O que são as Doenças Lisossomais de Sobrecarga?”, canal Science Animated (introdução em linguagem acessível)", "dur": ""}, {"g": "Síndromes genéticas comuns na UBS", "h": "Como suspeitar e encaminhar ao especialista", "d": "Dismorfias, atraso do desenvolvimento, malformações e história familiar. O que a atenção primária pode fazer antes e depois do encaminhamento à genética.", "u": "https://www.youtube.com/watch?v=46-giDSoqJk", "v": "“Doenças genéticas raras: como suspeitar e enviar para especialista”, webpalestra do Telessaúde Bahia", "dur": ""}];
+var li = this.state.lesson || 0;
+var les = Object.assign({ n: String(li + 1) }, L[li]); les.dur = les.dur ? les.dur + ' · ' : '';
+var lessonTitles = L.map(function (x) { return x.g; });
+var lessons = lessonTitles.map(function (title, i) {
+var on = i === li;
+return {
+n: String(i + 1), title: title, pick: function () { self.setState({ lesson: i }); },
+dot: on ? '#0B6B64' : '#E3F1EF', dotText: on ? '#FFFFFF' : '#0A5550',
+style: 'display: flex; align-items: center; gap: 12px; padding: 10px; border: 0; width: 100%; text-align: left; font: inherit; color: #13242B; cursor: pointer; border-radius: 10px; background: ' + (on ? '#F0F7F5' : 'transparent') + '; font-weight: ' + (on ? '600' : '400')
+};
+});
+return {
+query: this.state.query,
+onQuery: function (e) { self.setState({ query: e.target.value }); },
+chips: chips, tracks: tracks, lessons: lessons, les: les, trackName: this.state.track
+};
+}
+}
+</script>
+</body>
+</html>

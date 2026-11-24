@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Conecta Raras · Sinais e sintomas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:,">
+<script src="/laboratorio/conecta-raras/support.js" defer></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F6F7F4}
+a{color:#0B6B64}a:hover{color:#08514C}
+</style>
+</helmet>
+<div style="font-family: Inter, system-ui, sans-serif; color: #13242B; background: #F6F7F4; min-height: 100vh">
+<div style="background: #13242B; color: #E9EFEC; font-size: 13px; text-align: center; padding: 8px 16px; line-height: 1.6">Prévia conceitual em teste · textos, números e dados ilustrativos · conteúdo clínico em rascunho, sem validação do comitê científico<br><a href="/laboratorio" style="color: #9FE1CB">← Laboratório de Ideias do SouNeoSapiens</a> · <a href="mailto:contato@souneosapiens.com.br?subject=Opini%C3%A3o%20sobre%20o%20Conecta%20Raras" style="color: #9FE1CB; font-weight: 600">Dar minha opinião</a></div>
+<header style="background: #FFFFFF; border-bottom: 1px solid #DCE3DF">
+<div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+<a href="/laboratorio/conecta-raras/inicio.html" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: #13242B">
+<svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><circle cx="12" cy="17" r="8" fill="#0B6B64"></circle><circle cx="22" cy="17" r="8" fill="none" stroke="#0B6B64" stroke-width="3"></circle></svg>
+<span style="font-family: Sora, sans-serif; font-weight: 700; font-size: 20px">Conecta Raras</span>
+</a>
+<nav aria-label="Principal" style="display: flex; flex-wrap: wrap; gap: 4px; font-size: 15px; font-weight: 500">
+<a href="/laboratorio/conecta-raras/sinais.html" aria-current="page" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #0A5550; background: #E3F1EF">Sinais e sintomas</a>
+<a href="/laboratorio/conecta-raras/protocolos.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Protocolos</a>
+<a href="/laboratorio/conecta-raras/capacitacao.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Capacitação</a>
+<a href="/laboratorio/conecta-raras/mapa.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">No seu estado</a>
+<a href="/laboratorio/conecta-raras/teleconsultoria.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Teleconsultoria</a>
+<a href="/laboratorio/conecta-raras/apoiadores.html" style="padding: 10px 14px; border-radius: 8px; text-decoration: none; color: #13242B">Apoiadores</a>
+</nav>
+</div>
+</header>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 48px 24px 8px">
+<h1 style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 40px">Sinais e sintomas</h1>
+<p style="margin: 0; font-size: 18px; color: #3F5058; max-width: 720px">Sinais de alerta que podem indicar uma doença rara e o que fazer diante deles.</p>
+</section>
+
+<section style="max-width: 1200px; margin: 0 auto; padding: 24px 24px 8px">
+<div style="background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 16px">
+<span style="font-family: Sora, sans-serif; font-weight: 600; font-size: 20px">Quem está procurando?</span>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px">
+<button type="button" onClick="{{pickFam}}" aria-pressed="{{isFam}}" style="{{famStyle}}">
+<span style="display: block; font-family: Sora, sans-serif; font-weight: 600; font-size: 19px; margin-bottom: 6px">Sou paciente, familiar ou cuidador</span>
+<span style="display: block; font-size: 15px; line-height: 1.5; color: #3F5058">Sinais em linguagem simples e o que levar à consulta na UBS.</span>
+</button>
+<button type="button" onClick="{{pickPro}}" aria-pressed="{{isPro}}" style="{{proStyle}}">
+<span style="display: block; font-family: Sora, sans-serif; font-weight: 600; font-size: 19px; margin-bottom: 6px">Sou profissional de saúde</span>
+<span style="display: block; font-size: 15px; line-height: 1.5; color: #3F5058">Roteiro clínico: o que perguntar, examinar, pedir e quando encaminhar.</span>
+</button>
+</div>
+<span style="font-size: 13px; color: #4A5A61">Na versão final, a área profissional terá acesso com cadastro e validação do registro profissional.</span>
+</div>
+</section>
+
+<sc-if value="{{chosen}}" hint-placeholder-val="{{ true }}">
+<section style="max-width: 1200px; margin: 0 auto; padding: 16px 24px 64px; display: flex; flex-direction: column; gap: 16px">
+<sc-if value="{{isFam}}" hint-placeholder-val="{{ false }}"><div style="background: #E3F1EF; color: #0A5550; border-radius: 12px; padding: 14px 16px; font-size: 15px; line-height: 1.5"><strong>Estas informações não servem para diagnóstico.</strong> Elas ajudam você a perceber quando vale procurar a UBS e a contar o que observou. Só um profissional pode avaliar.</div></sc-if>
+<sc-if value="{{isPro}}" hint-placeholder-val="{{ true }}"><div style="background: #FCEFD6; color: #5C3D00; border-radius: 12px; padding: 14px 16px; font-size: 15px; line-height: 1.5"><strong>Rascunho para validação do comitê científico.</strong> Material de apoio ao raciocínio clínico na atenção primária; não substitui a avaliação do especialista.</div></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+<div style="flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 10px">
+<label for="sq" style="font-weight: 600">{{searchLabel}}</label>
+<input id="sq" type="text" value="{{q}}" onChange="{{onQ}}" placeholder="{{searchPh}}" style="font: inherit; font-size: 16px; padding: 12px 14px; border: 1px solid #B9C6C0; border-radius: 10px">
+<div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px">
+<sc-for list="{{items}}" as="s" hint-placeholder-count="6"><button type="button" onClick="{{s.pick}}" style="{{s.style}}">{{s.label}}</button></sc-for>
+<sc-if value="{{noItems}}" hint-placeholder-val="{{ false }}"><span style="font-size: 14px; color: #4A5A61">Nenhum sinal encontrado. Tente outra palavra.</span></sc-if>
+</div>
+</div>
+
+<div style="flex: 999 1 600px; min-width: 0; background: #FFFFFF; border: 1px solid #DCE3DF; border-radius: 18px; padding: 28px; display: flex; flex-direction: column; gap: 18px">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 26px; line-height: 1.2">{{cur.title}}</h2>
+
+<sc-if value="{{isFam}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">O que você pode perceber</p>
+<ul style="margin: 0; padding-left: 22px; line-height: 1.6; font-size: 16px"><sc-for list="{{cur.see}}" as="x" hint-placeholder-count="3"><li>{{x.t}}</li></sc-for></ul>
+</div>
+<div style="background: #E3F1EF; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">O que fazer</p>
+<span style="font-size: 16px; line-height: 1.55; color: #13242B">{{cur.do}}</span>
+</div>
+<sc-if value="{{cur.hasUrg}}" hint-placeholder-val="{{ true }}"><div style="background: #FBE4E1; color: #7A1F14; border-radius: 12px; padding: 16px; font-size: 16px; line-height: 1.55"><strong>Atenção:</strong> {{cur.urg}}</div></sc-if>
+<div style="border: 1px dashed #B9C6C0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">Leve isto à consulta</p>
+<span style="font-size: 15px; color: #3F5058">Antes de ir à UBS, anote as respostas:</span>
+<ul style="margin: 0; padding-left: 22px; line-height: 1.7; font-size: 15px">
+<li>Desde quando você percebeu? O que mudou desde então?</li>
+<li>Alguém na família tem ou teve algo parecido?</li>
+<li>Os pais são parentes entre si (primos, por exemplo)?</li>
+<li>Fotos ou vídeos que mostrem o que acontece</li>
+<li>Caderneta de saúde, cartão de vacina e exames anteriores</li>
+</ul>
+<span style="font-size: 13px; color: #4A5A61">Em breve: preencher e imprimir esta ficha pela plataforma.</span>
+</div>
+<span style="font-size: 15px">Precisa de medicamento do SUS? <a href="/laboratorio/conecta-raras/medicamentos.html">Veja como conseguir</a>.</span>
+</div>
+</sc-if>
+
+<sc-if value="{{isPro}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">Quando preocupa</p><span style="font-size: 16px; line-height: 1.6">{{cur.q}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">O que perguntar e examinar</p>
+<ul style="margin: 0; padding-left: 22px; line-height: 1.6; font-size: 16px"><sc-for list="{{cur.ask}}" as="x" hint-placeholder-count="3"><li>{{x.t}}</li></sc-for></ul></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">Exames iniciais</p><span style="font-size: 16px; line-height: 1.6">{{cur.ex}}</span></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">Grupos de doenças a considerar</p>
+<ul style="margin: 0; padding-left: 22px; line-height: 1.6; font-size: 16px"><sc-for list="{{cur.grp}}" as="x" hint-placeholder-count="3"><li>{{x.t}}</li></sc-for></ul></div>
+<sc-if value="{{cur.hasUrg}}" hint-placeholder-val="{{ true }}"><div style="background: #FBE4E1; color: #7A1F14; border-radius: 12px; padding: 16px; font-size: 16px; line-height: 1.55"><strong>Urgência:</strong> {{cur.urg}}</div></sc-if>
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<div style="flex: 1 1 240px; background: #F0F7F5; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">Encaminhar para</p><span style="font-size: 16px; line-height: 1.5">{{cur.enc}}</span></div>
+<div style="flex: 1 1 240px; background: #F0F7F5; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px"><p style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: #0B6B64">No CEAF (medicamento pelo SUS)</p><span style="font-size: 15px; line-height: 1.5">{{cur.ceaf}}</span><a href="/laboratorio/conecta-raras/medicamentos.html" style="font-size: 14px; font-weight: 600">Ver documentos e protocolos</a></div>
+</div>
+<span style="font-size: 15px">Dúvida no caso? <a href="/laboratorio/conecta-raras/teleconsultoria.html">Discuta com um especialista na teleconsultoria</a>.</span>
+</div>
+</sc-if>
+</div>
+</div>
+</section>
+</sc-if>
+
+<sc-if value="{{notChosen}}" hint-placeholder-val="{{ false }}">
+<section style="max-width: 1200px; margin: 0 auto; padding: 8px 24px 64px"><p style="margin: 0; color: #4A5A61">Escolha uma das opções acima para ver os sinais de alerta.</p></section>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":2000}}'>
+class Component extends DCLogic {
+constructor(props) {
+super(props);
+this.state = { aud: '', sel: 'fraqueza', q: '' };
+}
+renderVals() {
+var self = this;
+var S = [{"id": "regressao", "t": "Regressão do desenvolvimento", "tf": "Perdeu habilidades que já tinha", "kw": "regressao desenvolvimento perda marcos convulsao fala andar neurologico", "fam": {"see": ["Deixou de fazer algo que já fazia: falar palavras, andar, segurar objetos, brincar como antes", "A piora começou ou acelerou depois de febre, vômitos ou uma infecção comum", "Começou a ter convulsões, ou ficou desajeitado, tropeçando e caindo mais"], "do": "Marque consulta na UBS o quanto antes e conte o que a criança fazia antes e o que deixou de fazer. Vídeos antigos no celular ajudam muito a comparar.", "urg": "Convulsão, sonolência com dificuldade para acordar ou vômitos sem parar: vá direto à emergência."}, "pro": {"q": "Perda de marcos já adquiridos (diferente de atraso global estável), sobretudo se desencadeada por jejum, febre ou infecção. Crises epilépticas de início recente, ataxia ou perda visual reforçam a suspeita.", "ask": ["Consanguinidade dos pais, casos semelhantes ou óbitos precoces na família", "Relação com infecções, jejum ou mudança alimentar", "Perímetro cefálico, hepatoesplenomegalia, fáscies grosseira, alterações oculares"], "ex": "Glicemia capilar na hora. Hemograma, função hepática e renal; amônia, lactato e gasometria quando houver acesso (em geral, no serviço de urgência).", "grp": ["Erros inatos do metabolismo (aminoacidopatias, acidemias orgânicas, defeitos do ciclo da ureia)", "Doenças lisossômicas: mucopolissacaridoses e lipofuscinose ceroide neuronal (CLN2)", "Leucodistrofias e outras doenças neurodegenerativas"], "ceaf": "CLN2 (cerliponase alfa) e mucopolissacaridoses I, II, IV A, VI e VII", "urg": "Rebaixamento de consciência, vômitos persistentes ou crises convulsivas: emergência (possível descompensação metabólica).", "enc": "Neuropediatria e genética médica."}}, {"id": "fraqueza", "t": "Fraqueza muscular progressiva", "tf": "Cai muito e está perdendo força", "kw": "fraqueza muscular quedas escada gowers panturrilha distrofia duchenne miastenia", "fam": {"see": ["Cai com frequência, tem dificuldade para correr, pular ou subir escadas", "Para se levantar do chão, apoia as mãos nas pernas ou em móveis", "Está perdendo força que já tinha, ou as panturrilhas parecem grossas e duras"], "do": "Procure a UBS. Se puder, grave um vídeo da criança se levantando do chão e subindo um degrau e mostre na consulta.", "urg": "Dificuldade para respirar, engasgos frequentes ou dificuldade para engolir: emergência."}, "pro": {"q": "Fraqueza progressiva, sobretudo proximal; perda de marcos motores; sinal de Gowers; pseudo-hipertrofia de panturrilhas. Em adultos, fraqueza com fasciculações ou que flutua ao longo do dia.", "ask": ["Idade de início e velocidade de progressão; história familiar (herança ligada ao X em meninos)", "Padrão da fraqueza (proximal ou distal), reflexos, fasciculações, ptose e diplopia", "Queixas respiratórias, de deglutição e cardíacas"], "ex": "CK (creatinoquinase): barata e muito informativa, elevada nas distrofias e na doença de Pompe. ECG e radiografia de tórax se houver suspeita de Pompe.", "grp": ["Distrofias musculares (como Duchenne)", "Atrofia muscular espinhal (AME)", "Doença de Pompe", "Miastenia gravis; em adultos, considerar também ELA"], "ceaf": "AME 5q (nusinersena, risdiplam), Pompe (alfa-alglicosidase), miastenia gravis e ELA (riluzol)", "urg": "Desconforto respiratório, disfagia ou crise miastênica: encaminhamento imediato.", "enc": "Neurologia ou neuropediatria."}}, {"id": "bebe-molinho", "t": "Hipotonia no lactente", "tf": "Bebê molinho, que não firma a cabeça", "kw": "hipotonia lactente bebe molinho cabeca ame pompe respiracao lingua fasciculacao", "fam": {"see": ["O bebê parece molinho e escorrega quando é segurado por baixo dos braços", "Não firma a cabeça, ou parou de mexer bem braços e pernas", "Respira mexendo muito a barriga, tem choro fraco, mama devagar ou se engasga", "A língua tem pequenos tremores"], "do": "Procure a UBS logo, sem esperar a próxima consulta de rotina. Em algumas dessas doenças, o tratamento funciona melhor quanto mais cedo começa.", "urg": "Cansaço para respirar, lábios arroxeados ou dificuldade para mamar: emergência."}, "pro": {"q": "Hipotonia com fraqueza (bebê alerta, mas sem força) é diferente de hipotonia com sonolência. Arreflexia, respiração paradoxal e fasciculações de língua sugerem AME; cardiomegalia e macroglossia sugerem Pompe infantil.", "ask": ["Movimentação fetal, idade de início e evolução dos marcos", "Reflexos, fasciculações de língua, padrão respiratório, sucção e deglutição", "Hepatomegalia, macroglossia, sopro ou sinais de insuficiência cardíaca"], "ex": "CK; radiografia de tórax e ECG (cardiomegalia e alterações típicas na doença de Pompe). Os testes confirmatórios ficam com o especialista.", "grp": ["Atrofia muscular espinhal (AME tipos 1 e 2)", "Doença de Pompe infantil", "Miopatias e distrofias congênitas; causas centrais (síndromes genéticas)"], "ceaf": "AME 5q (nusinersena, risdiplam) e Pompe (alfa-alglicosidase)", "urg": "Na suspeita de AME tipo 1, o encaminhamento é prioritário: o tempo até o tratamento muda o prognóstico. Desconforto respiratório ou dificuldade alimentar: emergência.", "enc": "Neuropediatria, com prioridade."}}, {"id": "bebe-crise", "t": "Recém-nascido que piora após começar a mamar", "tf": "Bebê que mamava bem e de repente piora", "kw": "recem nascido crise metabolica vomitos sonolencia hipoglicemia urina cheiro teste do pezinho hiperplasia adrenal", "fam": {"see": ["Bebê que estava bem e passa a recusar o peito ou a mamadeira", "Vômitos, muita sonolência, fica molinho ou respira rápido", "Cheiro diferente e forte na urina ou no suor", "Genitália diferente ao nascer, ou desidratação com vômitos"], "do": "Esses sinais pedem atendimento rápido. Confira também se o teste do pezinho foi coletado e se o resultado já saiu.", "urg": "Bebê muito sonolento, que não mama, vomita repetidamente ou respira com esforço: vá direto à emergência."}, "pro": {"q": "Quadro semelhante a sepse, sem foco, em recém-nascido previamente bem, após início da alimentação; hipoglicemia, acidose ou alteração de consciência; desidratação com hiponatremia e hiperpotassemia (hiperplasia adrenal congênita perdedora de sal).", "ask": ["Consanguinidade e óbitos neonatais na família", "Resultado do teste do pezinho", "Genitália atípica, odor peculiar, hepatomegalia"], "ex": "Glicemia capilar imediata. No serviço de urgência: gasometria, eletrólitos, amônia, lactato e cetonúria.", "grp": ["Erros inatos do metabolismo (aminoacidopatias, acidemias orgânicas, defeitos do ciclo da ureia)", "Hiperplasia adrenal congênita", "Fenilcetonúria e deficiência de biotinidase (rastreadas no teste do pezinho)"], "ceaf": "Hiperplasia adrenal congênita, fenilcetonúria e deficiência de biotinidase", "urg": "É emergência: encaminhar imediatamente para serviço com suporte pediátrico.", "enc": "Emergência pediátrica; depois, genética médica e endocrinologia pediátrica."}}, {"id": "figado-baco", "t": "Hepatomegalia ou esplenomegalia", "tf": "Barriga crescendo, cansaço e manchas roxas", "kw": "hepatomegalia esplenomegalia figado baco plaquetas anemia sangramento dor ossea gaucher", "fam": {"see": ["A barriga está aumentando ou parece dura de um dos lados", "Cansaço, palidez, sangramento no nariz ou na gengiva, manchas roxas sem pancada", "Dores nos ossos ou fraturas com pouco esforço"], "do": "Procure a UBS e conte há quanto tempo percebeu cada coisa. Leve os exames de sangue que a pessoa já tenha feito.", "urg": "Sangramento que não para, febre alta com muita fraqueza ou desmaio: emergência."}, "pro": {"q": "Hepatomegalia e/ou esplenomegalia sem causa infecciosa, hemolítica ou hepática definida, sobretudo com citopenias, dor óssea ou alteração do crescimento.", "ask": ["Antes, excluir causas frequentes na região: leishmaniose visceral (endêmica no Maranhão), esquistossomose, hemoglobinopatias, hepatopatias", "Plaquetopenia, anemia, dor óssea e fraturas (doença de Gaucher)", "Fáscies grosseira, rigidez articular, hérnias e baixa estatura (mucopolissacaridoses); hipoglicemia de jejum (glicogenoses)"], "ex": "Hemograma com plaquetas, função hepática e ultrassonografia de abdome; sorologias conforme a epidemiologia local.", "grp": ["Doença de Gaucher", "Mucopolissacaridoses", "Glicogenoses e outros erros inatos", "Doenças hematológicas raras"], "ceaf": "Doença de Gaucher (imiglucerase e outras) e mucopolissacaridoses", "urg": "Sangramento ativo, plaquetopenia grave ou hipoglicemia: urgência.", "enc": "Hematologia, hepatologia ou genética médica, conforme o quadro."}}, {"id": "infeccoes", "t": "Infecções de repetição", "tf": "Vive doente, com infecções que voltam", "kw": "infeccoes repeticao pneumonia otite abscesso imunodeficiencia bcg candidiase", "fam": {"see": ["Várias pneumonias ou otites no mesmo ano, ou infecções que só melhoram com antibiótico na veia", "Feridas, abscessos ou sapinho na boca que voltam sempre", "Não ganha peso nem cresce bem", "Alguém na família com o mesmo problema, ou bebê que faleceu por infecção"], "do": "Procure a UBS e leve a caderneta de vacinação e um resumo das infecções: quando foram, quanto tempo duraram e como foram tratadas.", "urg": "Febre alta com respiração difícil, muita moleza ou manchas na pele: emergência."}, "pro": {"q": "Sinais de alerta de imunodeficiência primária: duas ou mais pneumonias no ano, quatro ou mais otites no ano, abscessos de repetição, candidíase persistente, necessidade de antibiótico venoso, reação grave à BCG, déficit de crescimento e história familiar.", "ask": ["Histórico detalhado das infecções e dos germes, se conhecidos", "Reações a vacinas, sobretudo à BCG", "Consanguinidade e óbitos precoces por infecção na família"], "ex": "Hemograma com contagem de linfócitos e dosagem de imunoglobulinas (IgG, IgA, IgM). Excluir HIV e, conforme o quadro, fibrose cística.", "grp": ["Imunodeficiências primárias com defeito de anticorpos", "Outras imunodeficiências primárias (combinadas, de fagócitos, de complemento)"], "ceaf": "Imunodeficiência primária com defeito de anticorpos (imunoglobulina humana)", "urg": "Na suspeita de imunodeficiência grave, discutir com o especialista antes de aplicar vacinas de vírus vivos. Infecção grave: emergência.", "enc": "Alergia e imunologia."}}, {"id": "crescimento", "t": "Baixa estatura", "tf": "Não cresce como as outras crianças", "kw": "baixa estatura crescimento curva turner gh raquitismo pernas arqueadas displasia puberdade", "fam": {"see": ["Está sempre entre as mais baixas, e a diferença aumenta com o tempo", "O ponto na curva de crescimento da caderneta está caindo", "Braços e pernas curtos em relação ao tronco, ou pernas arqueadas", "Em meninas, falta de sinais de puberdade na idade esperada"], "do": "Leve a caderneta com as medidas anotadas e peça que a criança seja medida na consulta, para comparar com as medidas anteriores.", "urg": ""}, "pro": {"q": "Queda de canal na curva de crescimento, estatura abaixo de –2 desvios-padrão, desproporção corporal ou atraso puberal.", "ask": ["Estatura dos pais (alvo familiar) e velocidade de crescimento", "Proporção entre segmentos, deformidades ósseas, pernas arqueadas", "Em meninas: pescoço alado, linfedema ao nascer, implantação baixa dos cabelos (síndrome de Turner)"], "ex": "Idade óssea; TSH e T4 livre; cálcio, fósforo e fosfatase alcalina (raquitismo hipofosfatêmico); cariótipo em meninas com baixa estatura sem causa aparente.", "grp": ["Síndrome de Turner", "Deficiência do hormônio de crescimento", "Displasias esqueléticas e mucopolissacaridose IV A", "Raquitismo hipofosfatêmico ligado ao X"], "ceaf": "Somatropina (deficiência de GH e Turner), burosumabe (raquitismo) e MPS IV A (alfaelosulfase)", "urg": "", "enc": "Endocrinologia pediátrica ou genética médica."}}, {"id": "falciforme", "t": "Crises de dor, palidez e icterícia", "tf": "Crises de dor, olhos amarelos e palidez", "kw": "falciforme anemia dor crise ictericia palidez dactilite hemoglobina hemomar", "fam": {"see": ["Crises de dor forte nos ossos, nas costas ou na barriga", "No bebê, mãos e pés inchados e doloridos", "Olhos amarelados, palidez e cansaço", "Teste do pezinho com resultado alterado para hemoglobina"], "do": "Procure a UBS para confirmar o diagnóstico e iniciar o acompanhamento. Quem tem doença falciforme precisa das vacinas especiais em dia e de acompanhamento no hemocentro.", "urg": "Em quem tem doença falciforme, febre é urgência. Vá também à emergência se houver palidez súbita com a barriga crescendo, falta de ar, dor no peito, fraqueza de um lado do corpo ou dificuldade para falar."}, "pro": {"q": "Crises vaso-oclusivas, dactilite no lactente, anemia hemolítica crônica e icterícia; triagem neonatal ou eletroforese de hemoglobina alteradas.", "ask": ["Resultado da triagem neonatal e da eletroforese de hemoglobina", "Penicilina profilática (dos 3 meses aos 5 anos), ácido fólico e vacinas especiais (CRIE)", "Doppler transcraniano anual dos 2 aos 16 anos (rastreamento de risco de AVC)"], "ex": "Hemograma com reticulócitos e eletroforese de hemoglobina.", "grp": ["Doença falciforme (HbSS, HbSC, HbS-beta talassemia)"], "ceaf": "Doença falciforme (hidroxiureia)", "urg": "Febre, sequestro esplênico (palidez súbita com aumento do baço), síndrome torácica aguda, sinais neurológicos ou priapismo: emergência.", "enc": "Hematologia e hemocentro (HEMOMAR)."}}, {"id": "pele", "t": "Pele espessa e descamativa desde o nascimento", "tf": "Pele muito seca, grossa e com escamas", "kw": "pele ictiose escamas colodio descamacao eritrodermia", "fam": {"see": ["Pele com escamas grossas pelo corpo desde o nascimento", "Bebê que nasceu envolto numa película brilhante, parecida com plástico", "Sua pouco e sofre muito no calor"], "do": "Procure a UBS para acompanhamento e encaminhamento à dermatologia. Hidratar bem a pele ajuda no dia a dia.", "urg": "Recém-nascido com a película, febre, recusa para mamar ou sinais de desidratação: emergência."}, "pro": {"q": "Descamação generalizada desde o nascimento, bebê colódio, eritrodermia. Diferenciar da ictiose vulgar, mais leve e comum.", "ask": ["Início ao nascimento, consanguinidade e casos familiares", "Extensão, eritrodermia, ectrópio, alterações de unhas e cabelos", "Intolerância ao calor e infecções de pele"], "ex": "Diagnóstico clínico, confirmado pelo especialista.", "grp": ["Ictioses hereditárias"], "ceaf": "Ictioses hereditárias (acitretina; medicamento teratogênico, exige contracepção eficaz)", "urg": "Bebê colódio: internação para controle de temperatura, hidratação e prevenção de infecção.", "enc": "Dermatologia."}}, {"id": "inchaco", "t": "Angioedema recorrente sem urticária", "tf": "Inchaços que vão e voltam, sem coceira", "kw": "angioedema inchaco edema laringe c1 esterase dor abdominal hereditario", "fam": {"see": ["Inchaço no rosto, lábios, mãos, pés ou genitais que dura dias e some sozinho", "O inchaço não coça e não melhora com antialérgico", "Crises de dor forte na barriga, às vezes com vômitos", "Outras pessoas da família com o mesmo problema"], "do": "Procure a UBS e mostre fotos das crises. Conte se alguém da família tem o mesmo.", "urg": "Inchaço na garganta, voz rouca ou dificuldade para respirar ou engolir: emergência imediatamente."}, "pro": {"q": "Angioedema recorrente sem urticária, sem resposta a anti-histamínico e corticoide, com crises de dor abdominal e história familiar.", "ask": ["Frequência, duração e gatilhos (trauma, procedimentos dentários, estrogênios, IECA)", "História familiar (herança autossômica dominante)", "Episódios anteriores de edema de laringe"], "ex": "Dosagem de C4 como triagem; C1-inibidor quantitativo e funcional.", "grp": ["Angioedema hereditário por deficiência de C1-inibidor"], "ceaf": "Angioedema por deficiência de C1 esterase (danazol, icatibanto, C1-inibidor). Não há guia da SES-MA para esta doença.", "urg": "Edema de laringe é risco de vida: emergência. Evitar IECA e estrogênios.", "enc": "Alergia e imunologia."}}, {"id": "queimacao", "t": "Dor em queimação nas mãos e pés", "tf": "Queimação nas mãos e pés, pouco suor", "kw": "queimacao dor maos pes fabry neuropatia amiloidose transtirretina suor angioqueratoma", "fam": {"see": ["Dor em queimação nas mãos e nos pés, que piora com calor, febre ou exercício", "Sua pouco e passa mal no calor", "Pontinhos vermelho-escuros na pele, principalmente entre o umbigo e os joelhos", "Em adultos: dormência que começa nos pés e sobe, perda de peso, intestino desregulado"], "do": "Procure a UBS e conte quando a dor começou e o que a piora. Pergunte na família se alguém teve doença nos rins, no coração ou derrame cedo.", "urg": ""}, "pro": {"q": "Acroparestesias em crianças e jovens, com hipo-hidrose e angioqueratomas (doença de Fabry); em adultos, polineuropatia sensitivo-motora ascendente com disautonomia e perda de peso (amiloidose por transtirretina).", "ask": ["História familiar de doença renal, cardiopatia, AVC precoce ou neuropatia", "Disautonomia: alternância de diarreia e constipação, hipotensão postural, disfunção erétil", "Proteinúria, hipertrofia ventricular, arritmias"], "ex": "Exame de urina (proteinúria), creatinina e ECG.", "grp": ["Doença de Fabry", "Polineuropatia amiloidótica familiar (PAF-TTR) e cardiopatia amiloide (ATTR-CM)"], "ceaf": "Fabry (alfagalsidase, agalsidase beta) e amiloidose por transtirretina (tafamidis). Não há guia da SES-MA para essas doenças.", "urg": "", "enc": "Neurologia, nefrologia ou cardiologia; genética médica."}}];
+function norm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+
+var aud = this.state.aud, fam = aud === 'fam', pro = aud === 'pro';
+var card = function (on) { return 'text-align: left; font: inherit; color: #13242B; cursor: pointer; padding: 20px; border-radius: 14px; background: ' + (on ? '#F0F7F5' : '#FFFFFF') + '; border: 2px solid ' + (on ? '#0B6B64' : '#DCE3DF'); };
+var n = norm(this.state.q).trim();
+var list = S.filter(function (s) { return !n || norm(s.t + ' ' + s.tf + ' ' + s.kw).indexOf(n) >= 0; });
+var items = list.map(function (s) {
+var on = s.id === self.state.sel;
+return { label: fam ? s.tf : s.t, pick: function () { self.setState({ sel: s.id }); },
+style: 'text-align: left; font: inherit; font-size: 15px; cursor: pointer; padding: 12px 14px; border-radius: 10px; border: 1px solid ' + (on ? '#0B6B64' : '#DCE3DF') + '; background: ' + (on ? '#0B6B64' : '#FFFFFF') + '; color: ' + (on ? '#FFFFFF' : '#13242B') + '; font-weight: ' + (on ? '600' : '400') };
+});
+var s = S.filter(function (x) { return x.id === self.state.sel; })[0] || S[0];
+var wrap = function (a) { return (a || []).map(function (t) { return { t: t }; }); };
+var src = fam ? s.fam : s.pro;
+var cur = { title: fam ? s.tf : s.t, see: wrap(s.fam.see), do: s.fam.do, q: s.pro.q, ask: wrap(s.pro.ask), ex: s.pro.ex, grp: wrap(s.pro.grp), ceaf: s.pro.ceaf, enc: s.pro.enc, urg: src.urg, hasUrg: !!src.urg };
+return {
+isFam: fam, isPro: pro, chosen: fam || pro, notChosen: !(fam || pro),
+famStyle: card(fam), proStyle: card(pro),
+pickFam: function () { self.setState({ aud: 'fam' }); },
+pickPro: function () { self.setState({ aud: 'pro' }); },
+searchLabel: fam ? 'O que você está percebendo?' : 'Buscar sinal ou sintoma',
+searchPh: fam ? 'Ex.: cai muito, barriga inchada' : 'Ex.: hepatomegalia, hipotonia',
+q: this.state.q, onQ: function (e) { self.setState({ q: e.target.value }); },
+items: items, noItems: items.length === 0, cur: cur
+};
+}
+}
+</script>
+</body>
+</html>
