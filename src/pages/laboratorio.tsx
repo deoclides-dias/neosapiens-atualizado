@@ -49,6 +49,7 @@ const PROJETOS: {
     fase: 'Prévia conceitual em construção, buscando parceiros e o comitê científico. O conteúdo clínico é rascunho até a validação do comitê.',
     transparencia:
       'O Conecta Raras será conduzido por um instituto independente, com comitê científico próprio. O SouNeoSapiens apoia a fase de desenvolvimento. O apoio de empresas vai para um fundo comum e a plataforma não mostra produtos de nenhum apoiador.',
+    previa: '/laboratorio/conecta-raras/inicio.html',
     exemplo: true,
     participar: [
       'Profissionais de saúde: ajudem a revisar os conteúdos e a testar a plataforma.',
@@ -124,8 +125,8 @@ function ExemploConectaRaras() {
         </div>
       </div>
       <figcaption className="px-5 sm:px-6 pb-5 text-sm leading-relaxed" style={{ color: '#3F5058' }}>
-        A plataforma completa terá 11 sinais de alerta como este, cada um com uma versão para famílias e um roteiro clínico para profissionais (com acesso
-        por cadastro), além de protocolos, capacitação, mapa por estado e teleconsultoria.
+        A prévia tem 11 sinais de alerta como este, cada um com uma versão para famílias e um roteiro clínico para profissionais, além de protocolos,
+        capacitação, mapa por estado e teleconsultoria. Use o botão “Testar a plataforma” para navegar por tudo.
       </figcaption>
     </figure>
   );
@@ -229,11 +230,9 @@ export default function Laboratorio() {
                   {p.previa && (
                     <a
                       href={p.previa}
-                      target="_blank"
-                      rel="noopener noreferrer"
                       className="inline-flex min-h-[44px] items-center gap-2 px-5 rounded-full bg-indigo-950 text-white text-sm font-semibold hover:bg-indigo-900"
                     >
-                      Ver prévia
+                      Testar a plataforma
                       <ExternalLink className="w-4 h-4" aria-hidden="true" />
                     </a>
                   )}
